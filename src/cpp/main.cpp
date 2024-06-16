@@ -134,37 +134,39 @@ const vector<string> clang_format = {"Language: Cpp",
                                      "BreakAfterAttributes: Always",
                                      "PenaltyBreakBeforeFirstCallParameter: 0"};
 
-const vector<string> vsCodeSettings = {"{",
-                                       "    \"editor.formatOnSave\": true,",
-                                       "    \"editor.defaultFormatter\": \"xaver.clang-format\",",
-                                       "    \"clang-format.executable\": \"/usr/bin/clang-format\",",
-                                       "    \"clang-format.style\": \"file\",",
-                                       "    \"editor.foldingHighlight\": false,",
-                                       "    \"C_Cpp.intelliSenseEngine\": \"disabled\",",
-                                       "    \"breadcrumbs.showTypeParameters\": false,",
-                                       "    \"editor.suggest.showTypeParameters\": false,",
-                                       "    \"clangd.arguments\": [",
-                                       "    \"    --header-insertion=never\",",
-                                       "    \"    --header-insertion-decorators\"",
-                                       "    ],",
-                                       "    \"clangd.enableCodeCompletion\": true,",
-                                       "    \"editor.semanticHighlighting.enabled\": true,",
-                                       "    \"editor.inlayHints.enabled\": \"offUnlessPressed\",",
-                                       "    \"accessibility.signals.noInlayHints\": {",
-                                       "        \"sound\": \"off\",",
-                                       "        \"announcement\": \"off\"",
-                                       "    },",
-                                       "    \"editor.defaultFoldingRangeProvider\": \"xaver.clang-format\",",
-                                       "    \"clangd.path\": \"/usr/bin/clangd\",",
-                                       "    \"editor.folding\": true,",
-                                       "    \"editor.foldingStrategy\": \"auto\",",
-                                       "    \"editor.foldingImportsByDefault\": true,",
-                                       "    \"editor.unfoldOnClickAfterEndOfLine\": false,",
-                                       "    \"[cpp]\": {",
-                                       "        \"editor.foldingStrategy\": \"auto\",",
-                                       "        \"editor.showFoldingControls\": \"always\"",
-                                       "    },",
-                                       "}"};
+const vector<string> vsCodeSettings = {
+    "{",
+    "    \"editor.formatOnSave\": true,",
+    "    \"editor.defaultFormatter\": \"xaver.clang-format\",",
+    "    \"clang-format.executable\": \"/usr/bin/clang-format\",",
+    "    \"clang-format.style\": \"file\",",
+    "    \"editor.foldingHighlight\": false,",
+    "    \"C_Cpp.intelliSenseEngine\": \"disabled\",",
+    "    \"breadcrumbs.showTypeParameters\": false,",
+    "    \"editor.suggest.showTypeParameters\": false,",
+    "    \"clangd.arguments\": [",
+    "        \"--header-insertion=never\",",
+    "        \"--header-insertion-decorators\"",
+    "    ],",
+    "    \"clangd.enableCodeCompletion\": true,",
+    "    \"editor.semanticHighlighting.enabled\": true,",
+    "    \"editor.inlayHints.enabled\": \"offUnlessPressed\",",
+    "    \"accessibility.signals.noInlayHints\": {",
+    "        \"sound\": \"off\",",
+    "        \"announcement\": \"off\"",
+    "    },",
+    "    \"clangd.path\": \"/usr/bin/clangd\",",
+    "    \"editor.folding\": true,",
+    "    \"editor.foldingImportsByDefault\": true,",
+    "    \"editor.unfoldOnClickAfterEndOfLine\": false,",
+    "    \"[cpp]\": {",
+    "        \"editor.foldingStrategy\": \"auto\",",
+    "        \"editor.showFoldingControls\": \"always\"",
+    "    },",
+    "    \"editor.foldingStrategy\": \"auto\",",
+    "    \"editor.showFoldingControls\": \"always\"",
+    "    \"editor.defaultFoldingRangeProvider\": \"llvm-vs-code-extensions.vscode-clangd\",",
+    "}"};
 
 namespace AmakeCpp {
     namespace Options {
@@ -242,7 +244,6 @@ namespace AmakeCpp {
     using namespace Options;
     namespace Tools {
         /// @name printC
-        /// @returns void
         /// @brief Print string with color
         /// @param s string to print
         /// @param color color code
@@ -256,6 +257,7 @@ namespace AmakeCpp {
         ///   - ESC_CODE_CYAN
         ///   - ESC_CODE_WHITE
         ///   - ESC_CODE_RESET
+        /// @returns void
         void
         printC(const string& str, const char* color)
         {
@@ -459,6 +461,10 @@ namespace AmakeCpp {
                         printC(e.what(), ESC_CODE_RED);
                     }
                     break;
+
+                default :
+                    printC("Unknown sub option", ESC_CODE_RED);
+                    break;
             }
         }
     }
@@ -514,6 +520,7 @@ main(int argc, char** argv)
             case H :
                 Help();
                 break;
+
             case C :
                 if (i + 1 < sArgv.size())
                 {
