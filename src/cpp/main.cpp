@@ -164,7 +164,7 @@ const vector<string> vsCodeSettings = {
     "        \"editor.showFoldingControls\": \"always\"",
     "    },",
     "    \"editor.foldingStrategy\": \"auto\",",
-    "    \"editor.showFoldingControls\": \"always\"",
+    "    \"editor.showFoldingControls\": \"always\",",
     "    \"editor.defaultFoldingRangeProvider\": \"llvm-vs-code-extensions.vscode-clangd\",",
     "}"};
 
