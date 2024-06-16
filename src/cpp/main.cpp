@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 #define VERSION "0.1"
-#define NAME "AmakeCpp"
+#define NAME    "AmakeCpp"
 
 using namespace std;
 using namespace Mlib;
@@ -118,36 +118,53 @@ vector<string> clang_format = {"Language: Cpp",
                                "AllowAllParametersOfDeclarationOnNextLine: false",
                                "AllowAllArgumentsOnNextLine: false",
                                "AllowShortLambdasOnASingleLine: None",
-                               "LambdaBodyIndentation: Signature"};
+                               "LambdaBodyIndentation: Signature",
+                               "AlignConsecutiveMacros:",
+                               "  Enabled: true",
+                               "  AcrossEmptyLines: true",
+                               "  AcrossComments: true",
+                               "  AlignCompound: true",
+                               "  PadOperators: true",
+                               "AlignConsecutiveShortCaseStatements:",
+                               "  Enabled: true",
+                               "  AcrossEmptyLines: true",
+                               "  AcrossComments: true",
+                               "  AlignCaseColons: true",
+                               "AlignEscapedNewlines: Left",
+                               "BreakAfterAttributes: Always",
+                               "PenaltyBreakBeforeFirstCallParameter: 0"};
 
-vector<string> vsCodeSettings = {
-    "{",
-    "    \"editor.formatOnSave\": true,",
-    "    \"editor.defaultFormatter\": \"xaver.clang-format\",",
-    "    \"clang-format.executable\": \"/usr/bin/clang-format\",",
-    "    \"clang-format.style\": \"file\",",
-    "    \"editor.foldingHighlight\": false,",
-    "    \"C_Cpp.intelliSenseEngine\": \"disabled\",",
-    "    \"breadcrumbs.showTypeParameters\": false,",
-    "    \"editor.suggest.showTypeParameters\": false,",
-    "    \"clangd.arguments\": [",
-    "    \"--header-insertion=never\",",
-    "    \"--header-insertion-decorators\"",
-    "    ],",
-    "    \"clangd.enableCodeCompletion\": true,",
-    "    \"editor.semanticHighlighting.enabled\": true,",
-    "    \"editor.inlayHints.enabled\": \"offUnlessPressed\",",
-    "    \"accessibility.signals.noInlayHints\": {",
-    "    \"sound\": \"off\",",
-    "    \"announcement\": \"off\"",
-    "    },",
-    "    \"editor.defaultFoldingRangeProvider\": \"llvm-vs-code-extensions.vscode-clangd\",",
-    "    \"clangd.path\": \"/usr/bin/clangd\",",
-    "    \"editor.folding\": true,",
-    "    \"editor.foldingStrategy\": \"auto\",",
-    "    \"editor.foldingImportsByDefault\": true,",
-    "    \"editor.unfoldOnClickAfterEndOfLine\": false,",
-    "}"};
+vector<string> vsCodeSettings = {"{",
+                                 "    \"editor.formatOnSave\": true,",
+                                 "    \"editor.defaultFormatter\": \"xaver.clang-format\",",
+                                 "    \"clang-format.executable\": \"/usr/bin/clang-format\",",
+                                 "    \"clang-format.style\": \"file\",",
+                                 "    \"editor.foldingHighlight\": false,",
+                                 "    \"C_Cpp.intelliSenseEngine\": \"disabled\",",
+                                 "    \"breadcrumbs.showTypeParameters\": false,",
+                                 "    \"editor.suggest.showTypeParameters\": false,",
+                                 "    \"clangd.arguments\": [",
+                                 "    \"    --header-insertion=never\",",
+                                 "    \"    --header-insertion-decorators\"",
+                                 "    ],",
+                                 "    \"clangd.enableCodeCompletion\": true,",
+                                 "    \"editor.semanticHighlighting.enabled\": true,",
+                                 "    \"editor.inlayHints.enabled\": \"offUnlessPressed\",",
+                                 "    \"accessibility.signals.noInlayHints\": {",
+                                 "    \"    sound\": \"off\",",
+                                 "    \"    announcement\": \"off\"",
+                                 "    },",
+                                 "    \"editor.defaultFoldingRangeProvider\": \"xaver.clang-format\",",
+                                 "    \"clangd.path\": \"/usr/bin/clangd\",",
+                                 "    \"editor.folding\": true,",
+                                 "    \"editor.foldingStrategy\": \"auto\",",
+                                 "    \"editor.foldingImportsByDefault\": true,",
+                                 "    \"editor.unfoldOnClickAfterEndOfLine\": false,",
+                                 "    \"[cpp]\": {",
+                                 "        \"editor.foldingStrategy\": \"auto\",",
+                                 "        \"editor.showFoldingControls\": \"always\"",
+                                 "    },",
+                                 "}"};
 
 namespace AmakeCpp {
     namespace Options {

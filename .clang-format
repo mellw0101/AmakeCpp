@@ -96,3 +96,17 @@ AllowAllParametersOfDeclarationOnNextLine: false
 AllowAllArgumentsOnNextLine: false
 AllowShortLambdasOnASingleLine: None
 LambdaBodyIndentation: Signature
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+  AlignCompound: true
+  PadOperators: true
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+  AlignCaseColons: true
+AlignEscapedNewlines: Left
+BreakAfterAttributes: Always
+PenaltyBreakBeforeFirstCallParameter: 0
