@@ -167,6 +167,10 @@ const vector<string> vsCodeSettings = {
     "    \"editor.showFoldingControls\": \"always\",",
     "    \"editor.defaultFoldingRangeProvider\": \"llvm-vs-code-extensions.vscode-clangd\",",
     "}"};
+// ConstructorInitializerIndentWidth: 4
+// DerivePointerAlignment: false
+// IndentExternBlock: AfterExternBlock
+// IndentFunctionDeclarationAfterType: true
 
 namespace AmakeCpp {
     namespace Options {
