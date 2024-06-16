@@ -1,9 +1,8 @@
 #include <Mlib/Args.h>
 #include <Mlib/FileSys.h>
-#include <Mlib/def.h>
-#include <string>
+#include <Mlib/Sys.h>
+
 #include <unordered_map>
-#include <vector>
 
 #define VERSION "0.1"
 #define NAME "AmakeCpp"
@@ -21,6 +20,133 @@ string const C_DIR       = SRC_DIR + "/c";
 string const BUILD_DIR   = cwd + "/build";
 string const OBJ_DIR     = BUILD_DIR + "/obj";
 string const BIN_DIR     = BUILD_DIR + "/bin";
+
+vector<string> clang_format = {"Language: Cpp",
+                               "BasedOnStyle: LLVM",
+                               "AccessModifierOffset: -4",
+                               "AlignConsecutiveAssignments: true",
+                               "AlignConsecutiveDeclarations: true",
+                               "AlignOperands: AlignAfterOperator",
+                               "AlignTrailingComments:",
+                               "  Kind: Always",
+                               "  OverEmptyLines: 2",
+                               "AllowShortBlocksOnASingleLine: Empty",
+                               "AllowShortCaseLabelsOnASingleLine: false",
+                               "AllowShortFunctionsOnASingleLine: None",
+                               "AllowShortIfStatementsOnASingleLine: false",
+                               "AllowShortLoopsOnASingleLine: false",
+                               "BreakConstructorInitializers: BeforeComma",
+                               "BreakBeforeBinaryOperators: None",
+                               "AlwaysBreakAfterDefinitionReturnType: All",
+                               "AlwaysBreakAfterReturnType: None",
+                               "AlwaysBreakTemplateDeclarations: Yes",
+                               "BinPackArguments: true",
+                               "BinPackParameters: true",
+                               "BraceWrapping:",
+                               "  AfterCaseLabel: true",
+                               "  AfterClass: true",
+                               "  AfterControlStatement: true",
+                               "  AfterEnum: true",
+                               "  AfterFunction: true",
+                               "  AfterNamespace: False",
+                               "  AfterStruct: true",
+                               "  AfterUnion: true",
+                               "  AfterExternBlock: true",
+                               "  AfterObjCDeclaration: false",
+                               "  BeforeCatch: true",
+                               "  BeforeElse: true",
+                               "  BeforeLambdaBody: true",
+                               "  BeforeWhile: true",
+                               "  IndentBraces: false",
+                               "  SplitEmptyFunction: false",
+                               "  SplitEmptyRecord: false",
+                               "  SplitEmptyNamespace: false",
+                               "BreakBeforeBraces: Custom",
+                               "BreakBeforeTernaryOperators: true",
+                               "ColumnLimit: 120",
+                               "CompactNamespaces: false",
+                               "ContinuationIndentWidth: 4",
+                               "EmptyLineAfterAccessModifier: Never",
+                               "EmptyLineBeforeAccessModifier: LogicalBlock",
+                               "IncludeBlocks: Preserve",
+                               "IncludeCategories:",
+                               "  - Regex: '^<.*'",
+                               "    Priority: 1",
+                               "  - Regex: '^\".*'",
+                               "    Priority: 2",
+                               "  - Regex: '.*'",
+                               "    Priority: 3",
+                               "IncludeIsMainRegex: '([-_](test|unittest))?$'",
+                               "IndentCaseBlocks: false",
+                               "IndentCaseLabels: true",
+                               "IndentGotoLabels: true",
+                               "IndentPPDirectives: AfterHash",
+                               "IndentRequiresClause: True",
+                               "IndentWidth: 4",
+                               "IndentWrappedFunctionNames: false",
+                               "InsertBraces: True",
+                               "InsertNewlineAtEOF: True",
+                               "MacroBlockBegin: ''",
+                               "MacroBlockEnd: ''",
+                               "MaxEmptyLinesToKeep: 2",
+                               "NamespaceIndentation: All",
+                               "SpaceAfterCStyleCast: false",
+                               "SpaceAfterLogicalNot: false",
+                               "SpaceAfterTemplateKeyword: true",
+                               "SpaceBeforeAssignmentOperators: True",
+                               "SpaceBeforeCaseColon: true",
+                               "SpaceBeforeCpp11BracedList: True",
+                               "SpaceBeforeInheritanceColon: true",
+                               "SpaceBeforeParens: ControlStatements",
+                               "SpaceBeforeRangeBasedForLoopColon: true",
+                               "SpaceBeforeSquareBrackets: false",
+                               "SpaceInEmptyParentheses: false",
+                               "SpacesBeforeTrailingComments: 1",
+                               "SpacesInAngles: false",
+                               "SpacesInContainerLiterals: true",
+                               "SpacesInConditionalStatement: False",
+                               "BracedInitializerIndentWidth: 4",
+                               "SpacesInCStyleCastParentheses: false",
+                               "SpacesInParentheses: false",
+                               "SpacesInSquareBrackets: false",
+                               "TabWidth: 4",
+                               "UseTab: Never",
+                               "PointerAlignment: Left",
+                               "Standard: Latest",
+                               "AlignAfterOpenBracket: Align",
+                               "AlignArrayOfStructures: Right",
+                               "AllowAllParametersOfDeclarationOnNextLine: false",
+                               "AllowAllArgumentsOnNextLine: false",
+                               "AllowShortLambdasOnASingleLine: None",
+                               "LambdaBodyIndentation: Signature"};
+
+vector<string> vsCodeSettings = {"{",
+                                 "    \"editor.formatOnSave\": true,",
+                                 "    \"editor.defaultFormatter\": \"xaver.clang-format\",",
+                                 "    \"clang-format.executable\": \"/usr/bin/clang-format\",",
+                                 "    \"clang-format.style\": \"file\",",
+                                 "    \"editor.foldingHighlight\": false,",
+                                 "    \"C_Cpp.intelliSenseEngine\": \"disabled\",",
+                                 "    \"breadcrumbs.showTypeParameters\": false,",
+                                 "    \"editor.suggest.showTypeParameters\": false,",
+                                 "    \"clangd.arguments\": [",
+                                 "    \"--header-insertion=never\",",
+                                 "    \"--header-insertion-decorators\"",
+                                 "    ],",
+                                 "    \"clangd.enableCodeCompletion\": true,",
+                                 "    \"editor.semanticHighlighting.enabled\": true,",
+                                 "    \"editor.inlayHints.enabled\": \"offUnlessPressed\",",
+                                 "    \"accessibility.signals.noInlayHints\": {",
+                                 "    \"sound\": \"off\",",
+                                 "    \"announcement\": \"off\"",
+                                 "    },",
+                                 "    \"editor.defaultFoldingRangeProvider\": \"ms-vscode.cpptools\",",
+                                 "    \"clangd.path\": \"/usr/bin/clangd\",",
+                                 "    \"editor.folding\": true,",
+                                 "    \"editor.foldingStrategy\": \"auto\",",
+                                 "    \"editor.foldingImportsByDefault\": true,",
+                                 "    \"editor.unfoldOnClickAfterEndOfLine\": false,",
+                                 "}"};
 
 namespace AmakeCpp {
     namespace Options {
@@ -113,7 +239,7 @@ namespace AmakeCpp {
         ///   - ESC_CODE_WHITE
         ///   - ESC_CODE_RESET
         void
-        printC(string const& str, const char* color)
+        printC(const string& str, const char* color)
         {
             cout << NAME << " - [ " << color << str << ESC_CODE_RESET << " ]" << '\n';
         }
@@ -148,21 +274,32 @@ namespace AmakeCpp {
         compileCpp()
         {
             printC("Compiling .cpp -> .o", ESC_CODE_GREEN);
-            vector<string> files;
             try
             {
-                files = FileSys::dirContentToStrVec(cwd + "/src/cpp");
-                for (auto const& file : files)
+                vector<string> files = FileSys::dirContentToStrVec(cwd + "/src/cpp");
+                for (const auto& file : files)
                 {
                     string fileName = file.substr(file.find_last_of("/") + 1);
                     string objName  = cwd + "/build/obj/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
-                    printC(file + " -> " + objName, ESC_CODE_BLUE);
-                    system(("clang++ -O3 -march=native -c " + file + " -o " + objName).c_str());
+                    try
+                    {
+                        Sys::run_binary("/usr/bin/clang++", {"-c", file, "-o", objName});
+                        printC(file + " -> " + objName, ESC_CODE_BLUE);
+                        printC(".cpp File Size: " + to_string(FileSys::fileSize(file)) + " Bytes" +
+                                   " .o File Size: " + to_string(FileSys::fileSize(objName)) + " Bytes",
+                               ESC_CODE_GRAY);
+                    }
+                    catch (const exception& e)
+                    {
+                        printC(e.what(), ESC_CODE_RED);
+                        exit(EXIT_FAILURE);
+                    }
                 }
             }
-            catch (exception const& e)
+            catch (const exception& e)
             {
                 printC(e.what(), ESC_CODE_RED);
+                exit(EXIT_FAILURE);
             }
         }
 
@@ -176,7 +313,15 @@ namespace AmakeCpp {
             printC("Linking Obj Files -> " + cwd + "/build/bin/" + projectName, ESC_CODE_GREEN);
             vector<string> objVec = FileSys::dirContentToStrVec(cwd + "/build/obj");
             string         objStr = Args::strFromStrVec(objVec);
-            system(("clang++ -O3 -march=native " + objStr + " -o " + cwd + "/build/bin/" + projectName).c_str());
+            try
+            {
+                Sys::run_binary("/usr/bin/clang++", {"-O3", "-march=native", objStr, "-o",
+                                                     cwd + "/build/bin/" + projectName, "/usr/lib/Mlib.a", "-lcurl"});
+            }
+            catch (exception const& e)
+            {
+                printC(e.what(), ESC_CODE_RED);
+            }
         }
 
         void
@@ -195,7 +340,55 @@ namespace AmakeCpp {
         void
         configureClangFormat()
         {
-            cout << "Configuring .clang-format\n";
+            printC("Configuring Clang-Format", ESC_CODE_GREEN);
+            try
+            {
+                while (true)
+                {
+                    string answer = Sys::Prompt("Do you want to add standard .clang-format file? (y/n): ");
+                    if (answer == "n" || answer == "N" || answer == "no" || answer == "NO" || answer == "No")
+                    {
+                        break;
+                    }
+                    else if (answer == "y" || answer == "Y" || answer == "yes" || answer == "YES" || answer == "Yes")
+                    {
+                        FileSys::writeStrVecToFile(cwd + "/.clang-format", clang_format);
+                        printC("Clang-Format configured", ESC_CODE_GREEN);
+                        while (true)
+                        {
+                            string answer = Sys::Prompt("Do you want format on save in vscode? (y/n): ");
+                            if (answer == "n" || answer == "N" || answer == "no" || answer == "NO" || answer == "No")
+                            {
+                                break;
+                            }
+                            else if (answer == "y" || answer == "Y" || answer == "yes" || answer == "YES" ||
+                                     answer == "Yes")
+                            {
+                                if (!FileSys::exists(cwd + "/.vscode"))
+                                {
+                                    createProjectDir(cwd + "/.vscode");
+                                }
+                                FileSys::writeStrVecToFile(cwd + "/.vscode/settings.json", vsCodeSettings);
+                                printC("Format on save configured", ESC_CODE_GREEN);
+                                break;
+                            }
+                            else
+                            {
+                                printC("Invalid answer, must be (Y/n)", ESC_CODE_RED);
+                            }
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        printC("Invalid answer, must be (Y/n)", ESC_CODE_RED);
+                    }
+                }
+            }
+            catch (const exception& e)
+            {
+                printC(e.what(), ESC_CODE_RED);
+            }
         }
     } // namespace Tools
     using namespace Tools;
@@ -263,7 +456,7 @@ namespace AmakeCpp {
 
     /// @name Clean
     /// @brief
-    /// - Clean project
+    /// - Clean project meaning remove build directory
     /// @returns void
     void
     Clean()
@@ -273,7 +466,7 @@ namespace AmakeCpp {
             printC("Cleaning project", ESC_CODE_GREEN);
             FileSys::rmdir(cwd + "/build");
         }
-        catch (exception const& e)
+        catch (const exception& e)
         {
             printC(e.what(), ESC_CODE_RED);
         }

@@ -3,8 +3,10 @@ BasedOnStyle: LLVM
 AccessModifierOffset: -4
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
-AlignOperands: false
-AlignTrailingComments: true
+AlignOperands: AlignAfterOperator
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 2
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
@@ -12,11 +14,11 @@ AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 BreakConstructorInitializers: BeforeComma
 BreakBeforeBinaryOperators: None
-AlwaysBreakAfterDefinitionReturnType: All # ( None / All / TopLevel / NoneIfEmpty ) - If true, always break after the return type of a function declaration.
+AlwaysBreakAfterDefinitionReturnType: All
 AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: true
-BinPackParameters: true # ( true / false ) - If true, function parameters will be packed onto lines if they fit within the column limit.
+BinPackParameters: true
 BraceWrapping:
   AfterCaseLabel: true
   AfterClass: true
@@ -90,6 +92,7 @@ PointerAlignment: Left
 Standard: Latest
 AlignAfterOpenBracket: Align
 AlignArrayOfStructures: Right
-AllowAllParametersOfDeclarationOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: false
 AllowAllArgumentsOnNextLine: false
-AllowShortLambdasOnASingleLine: false
+AllowShortLambdasOnASingleLine: None
+LambdaBodyIndentation: Signature
