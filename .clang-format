@@ -88,7 +88,7 @@ SpacesInParentheses: false
 SpacesInSquareBrackets: false
 TabWidth: 4
 UseTab: Never
-PointerAlignment: Left
+PointerAlignment: Right
 Standard: Latest
 AlignAfterOpenBracket: Align
 AlignArrayOfStructures: Right

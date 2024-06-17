@@ -4,22 +4,25 @@
 
 #include <unordered_map>
 
-#define VERSION "0.1"
-#define NAME    "AmakeCpp"
+#define VERSION      "0.1"
+#define PROJECT_NAME "AmakeCpp"
 
 using namespace std;
 using namespace Mlib;
 
-string const cwd         = FileSys::currentWorkingDir();
-string const projectName = cwd.substr(cwd.find_last_of("/") + 1);
-string const SRC_DIR     = cwd + "/src";
-string const INCLUDE_DIR = SRC_DIR + "/include";
-string const AS_DIR      = SRC_DIR + "/as";
-string const CPP_DIR     = SRC_DIR + "/cpp";
-string const C_DIR       = SRC_DIR + "/c";
-string const BUILD_DIR   = cwd + "/build";
-string const OBJ_DIR     = BUILD_DIR + "/obj";
-string const BIN_DIR     = BUILD_DIR + "/bin";
+string const cwd            = FileSys::currentWorkingDir();
+string const projectName    = cwd.substr(cwd.find_last_of("/") + 1);
+string const AMAKE_CONF_DIR = cwd + "/.amake";
+string const SRC_DIR        = cwd + "/src";
+string const INCLUDE_DIR    = SRC_DIR + "/include";
+string const AS_DIR         = SRC_DIR + "/as";
+string const CPP_DIR        = SRC_DIR + "/cpp";
+string const C_DIR          = SRC_DIR + "/c";
+string const LIB_SRC_DIR    = SRC_DIR + "/lib";
+string const BUILD_DIR      = cwd + "/build";
+string const OBJ_DIR        = BUILD_DIR + "/obj";
+string const BIN_DIR        = BUILD_DIR + "/bin";
+string const LIB_BUILD_DIR  = BUILD_DIR + "/lib";
 
 const vector<string> clang_format = {"Language: Cpp",
                                      "BasedOnStyle: LLVM",
@@ -111,7 +114,7 @@ const vector<string> clang_format = {"Language: Cpp",
                                      "SpacesInSquareBrackets: false",
                                      "TabWidth: 4",
                                      "UseTab: Never",
-                                     "PointerAlignment: Left",
+                                     "PointerAlignment: Right",
                                      "Standard: Latest",
                                      "AlignAfterOpenBracket: Align",
                                      "AlignArrayOfStructures: Right",
@@ -179,13 +182,14 @@ namespace AmakeCpp {
         /// - Enum representing cli options
         enum Option
         {
-            H,
-            C,
-            V,
-            B,
-            CL,
-            I,
-            UNKNOWN
+            UNKNOWN_OPTION = (1 << 0),
+            HELP           = (1 << 1),
+            CONF           = (1 << 2),
+            VER            = (1 << 3),
+            BUILD          = (1 << 4),
+            CLEAN          = (1 << 5),
+            INSTALL        = (1 << 6),
+            LIB            = (1 << 7)
         };
 
         /// @name optionFromArg
@@ -197,22 +201,23 @@ namespace AmakeCpp {
         /// @note
         /// - Option is an @enum
         Option
-        optionFromArg(const string& arg)
+        optionFromArg(const string &arg)
         {
-            static const unordered_map<string, Option> optionMap = {
-                {     "--help",  H},
-                {"--configure",  C},
-                {  "--version",  V},
-                {    "--build",  B},
-                {    "--clean", CL},
-                {  "--install",  I}
+            const static unordered_map<string, Option> optionMap = {
+                {     "--help",    HELP},
+                {"--configure",    CONF},
+                {  "--version",     VER},
+                {    "--build",   BUILD},
+                {    "--clean",   CLEAN},
+                {  "--install", INSTALL},
+                {      "--lib",     LIB}
             };
-            auto const it = optionMap.find(arg);
+            const auto it = optionMap.find(arg);
             if (it != optionMap.end())
             {
                 return it->second;
             }
-            return UNKNOWN;
+            return UNKNOWN_OPTION;
         }
 
         /// @enum ConfigureOption
@@ -220,7 +225,8 @@ namespace AmakeCpp {
         /// - Enum representing configure sub options
         enum ConfigureOption
         {
-            CLANG_FORMAT
+            UNKNOWN_CONFIGURE_OPTION = (1 << 0),
+            CLANG_FORMAT             = (1 << 1)
         };
 
         /// @name configureOptionFromArg
@@ -232,12 +238,12 @@ namespace AmakeCpp {
         /// @note
         /// - ConfigureOption is an @enum
         ConfigureOption
-        configureOptionFromArg(const string& arg)
+        configureOptionFromArg(const string &arg)
         {
-            static const unordered_map<string, ConfigureOption> configureOptionMap = {
+            const static unordered_map<string, ConfigureOption> configureOptionMap = {
                 {"--clang-format", CLANG_FORMAT}
             };
-            auto const it = configureOptionMap.find(arg);
+            const auto it = configureOptionMap.find(arg);
             if (it != configureOptionMap.end())
             {
                 return it->second;
@@ -263,9 +269,9 @@ namespace AmakeCpp {
         ///   - ESC_CODE_RESET
         /// @returns void
         void
-        printC(const string& str, const char* color)
+        printC(const string &str, const s8 *color)
         {
-            cout << NAME << " - [ " << color << str << ESC_CODE_RESET << " ]" << '\n';
+            cout << PROJECT_NAME << " - [ " << color << str << ESC_CODE_RESET << " ]" << '\n';
         }
 
         /// @name createProjectDir
@@ -277,14 +283,14 @@ namespace AmakeCpp {
         /// - Creates directory in current working directory ( cwd + subPath )
         /// @returns void
         void
-        createProjectDir(const string& path)
+        createProjectDir(const string &path)
         {
             try
             {
                 printC("Creating Dir -> " + path, ESC_CODE_GREEN);
                 FileSys::mkdir(path);
             }
-            catch (exception const& e)
+            catch (exception const &e)
             {
                 printC(e.what(), ESC_CODE_RED);
             }
@@ -301,7 +307,7 @@ namespace AmakeCpp {
             try
             {
                 vector<string> files = FileSys::dirContentToStrVec(cwd + "/src/cpp");
-                for (const auto& file : files)
+                for (const auto &file : files)
                 {
                     string fileName = file.substr(file.find_last_of("/") + 1);
                     string objName  = cwd + "/build/obj/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
@@ -313,14 +319,14 @@ namespace AmakeCpp {
                                    " .o File Size: " + to_string(FileSys::fileSize(objName)) + " Bytes",
                                ESC_CODE_GRAY);
                     }
-                    catch (const exception& e)
+                    catch (const exception &e)
                     {
                         printC(e.what(), ESC_CODE_RED);
                         exit(EXIT_FAILURE);
                     }
                 }
             }
-            catch (const exception& e)
+            catch (const exception &e)
             {
                 printC(e.what(), ESC_CODE_RED);
                 exit(EXIT_FAILURE);
@@ -332,17 +338,26 @@ namespace AmakeCpp {
         /// - Link .o files in build/obj to binary in build/bin
         /// @returns void
         void
-        linkBinary()
+        linkBinary(const vector<string> &strVec = {})
         {
             printC("Linking Obj Files -> " + cwd + "/build/bin/" + projectName, ESC_CODE_GREEN);
-            vector<string> objVec = FileSys::dirContentToStrVec(cwd + "/build/obj");
-            string         objStr = Args::strFromStrVec(objVec);
+            vector<string> objVec      = FileSys::dirContentToStrVec(cwd + "/build/obj");
+            string         objStr      = Args::strFromStrVec(objVec);
+            vector<string> linkArgsVec = {
+                "-O3", "-march=native", "-o", cwd + "/build/bin/" + projectName, "/usr/lib/Mlib.a", "-lcurl"};
+            for (const auto &obj : objVec)
+            {
+                linkArgsVec.push_back(obj);
+            }
+            for (const auto &arg : strVec)
+            {
+                linkArgsVec.push_back(arg);
+            }
             try
             {
-                Sys::run_binary("/usr/bin/clang++", {"-O3", "-march=native", objStr, "-o",
-                                                     cwd + "/build/bin/" + projectName, "/usr/lib/Mlib.a", "-lcurl"});
+                Sys::run_binary("/usr/bin/clang++", linkArgsVec);
             }
-            catch (exception const& e)
+            catch (exception const &e)
             {
                 printC(e.what(), ESC_CODE_RED);
             }
@@ -356,9 +371,11 @@ namespace AmakeCpp {
             createProjectDir(AS_DIR);
             createProjectDir(CPP_DIR);
             createProjectDir(C_DIR);
+            createProjectDir(LIB_SRC_DIR);
             createProjectDir(BUILD_DIR);
             createProjectDir(OBJ_DIR);
             createProjectDir(BIN_DIR);
+            createProjectDir(LIB_BUILD_DIR);
         }
 
         void
@@ -409,12 +426,42 @@ namespace AmakeCpp {
                     }
                 }
             }
-            catch (const exception& e)
+            catch (const exception &e)
             {
                 printC(e.what(), ESC_CODE_RED);
             }
         }
-    } // namespace Tools
+
+        namespace Libs {
+            enum LibOption
+            {
+                UNKNOWN_LIB     = (1 << 0),
+                NCURSESW_STATIC = (1 << 1)
+            };
+
+            LibOption
+            getLibOption(const string &lib)
+            {
+                const static unordered_map<string, LibOption> libOptionMap = {
+                    {"ncursesw-static", NCURSESW_STATIC}
+                };
+                const auto it = libOptionMap.find(lib);
+                if (it != libOptionMap.end())
+                {
+                    return it->second;
+                }
+                return UNKNOWN_LIB;
+            }
+
+            int
+            installNcurseswStatic()
+            {
+                printC("Installing Ncursesw Static Lib -> ", ESC_CODE_GREEN);
+                return 0;
+            }
+        } // namespace Libs
+        using namespace Libs;
+    }     // namespace Tools
     using namespace Tools;
 
     /// @name Help
@@ -424,7 +471,7 @@ namespace AmakeCpp {
     void
     Help()
     {
-        cout << "Usage: " << NAME << " [options]\n"
+        cout << "Usage: " << PROJECT_NAME << " [options]\n"
              << "Options:\n"
              << "   --help                      Show this help message\n"
              << "   --version                   Show version information\n"
@@ -444,7 +491,7 @@ namespace AmakeCpp {
     /// - Sub options for configure
     /// @returns void
     void
-    Configure(const string& subOption = "")
+    Configure(const string &subOption = "")
     {
         if (subOption.empty())
         {
@@ -452,23 +499,21 @@ namespace AmakeCpp {
         }
         else
         {
-            ConfigureOption const option = configureOptionFromArg(subOption);
-            switch (option)
+            const ConfigureOption option = configureOptionFromArg(subOption);
+            if (option & CLANG_FORMAT)
             {
-                case CLANG_FORMAT :
-                    try
-                    {
-                        configureClangFormat();
-                    }
-                    catch (exception const& e)
-                    {
-                        printC(e.what(), ESC_CODE_RED);
-                    }
-                    break;
-
-                default :
-                    printC("Unknown sub option", ESC_CODE_RED);
-                    break;
+                try
+                {
+                    configureClangFormat();
+                }
+                catch (exception const &e)
+                {
+                    printC(e.what(), ESC_CODE_RED);
+                }
+            }
+            if (option & UNKNOWN_CONFIGURE_OPTION)
+            {
+                printC("Unknown sub option '" + subOption + "', run 'Amake --help'", ESC_CODE_RED);
             }
         }
     }
@@ -493,8 +538,16 @@ namespace AmakeCpp {
         {
             printC("Cleaning project", ESC_CODE_GREEN);
             FileSys::rmdir(cwd + "/build");
+            if (FileSys::exists(cwd + "/build"))
+            {
+                printC("Failed to clean project", ESC_CODE_RED);
+            }
+            else
+            {
+                printC("Project cleaned", ESC_CODE_GREEN);
+            }
         }
-        catch (const exception& e)
+        catch (const exception &e)
         {
             printC(e.what(), ESC_CODE_RED);
         }
@@ -505,53 +558,106 @@ namespace AmakeCpp {
     /// - Install project
     /// @returns void
     void
-    Install()
+    Install(const vector<string> &strVec = {})
     {
-        linkBinary();
+        linkBinary(strVec);
+    }
+
+    void
+    Lib(const vector<string> &strVec = {})
+    {
+        if (strVec.empty())
+        {
+            printC("No library specified", ESC_CODE_RED);
+            return;
+        }
+        for (const auto &lib : strVec)
+        {
+            const LibOption option = getLibOption(lib);
+            if (option & NCURSESW_STATIC)
+            {
+                installNcurseswStatic();
+            }
+            if (option & UNKNOWN_LIB)
+            {
+                printC("Unknown library( Or Installer Not Implemented ): " + lib, ESC_CODE_RED);
+            }
+        }
     }
 } // namespace AmakeCpp
 using namespace AmakeCpp;
 
-int
-main(int argc, char** argv)
+s32
+main(s32 argc, s8 **argv)
 {
-    auto sArgv = Args::argvToStrVec(argc, argv);
-    for (int i = 1; i < sArgv.size(); ++i)
+    const auto sArgv = Args::argvToStrVec(argc, argv);
+    for (s32 i = 1; i < sArgv.size(); ++i)
     {
         Option const option = optionFromArg(sArgv[i]);
-        switch (option)
+        if (option & HELP)
         {
-            case H :
-                Help();
-                break;
+            Help();
+        }
+        if (option & CONF)
+        {
 
-            case C :
-                if (i + 1 < sArgv.size())
+            if (i + 1 < sArgv.size())
+            {
+                if (optionFromArg(sArgv[i + 1]) & UNKNOWN_OPTION)
                 {
-                    if (optionFromArg(sArgv[i + 1]) == UNKNOWN)
-                    {
-                        Configure(sArgv[i + 1]);
-                        ++i;
-                        break;
-                    }
+                    Configure(sArgv[i + 1]);
+                    ++i;
+                    break;
                 }
-                Configure();
-                break;
-            case V :
-                cout << "Version: " << VERSION << '\n';
-                break;
-            case B :
-                Build();
-                break;
-            case CL :
-                Clean();
-                break;
-            case I :
-                Install();
-                break;
-            case UNKNOWN :
-                cerr << "Error: Unknown option '" << sArgv[i] << "'\n";
-                break;
+            }
+            Configure();
+        }
+        if (option & VER)
+        {
+            cout << "Version: " << VERSION << '\n';
+        }
+        if (option & BUILD)
+        {
+            Build();
+        }
+        if (option & CLEAN)
+        {
+            Clean();
+        }
+        if (option & INSTALL)
+        {
+            if (i + 1 < sArgv.size())
+            {
+                vector<string> args;
+                while (optionFromArg(sArgv[i + 1]) == UNKNOWN_OPTION && i + 1 < sArgv.size())
+                {
+                    ++i;
+                    args.push_back(sArgv[i]);
+                }
+                Install(args);
+                continue;
+            }
+            Install();
+        }
+        if (option & LIB)
+        {
+            if (i + 1 < sArgv.size())
+            {
+                vector<string> args;
+                while (optionFromArg(sArgv[i + 1]) & UNKNOWN_OPTION && i + 1 < sArgv.size())
+                {
+                    ++i;
+                    args.push_back(sArgv[i]);
+                }
+                Lib(args);
+                continue;
+            }
+            Lib();
+        }
+        if (option & UNKNOWN_OPTION)
+        {
+            printC("Error: Unknown option '" + sArgv[i] + "'. Run: " + PROJECT_NAME + " '--help' to display help msg",
+                   ESC_CODE_RED);
         }
     }
     return 0;
