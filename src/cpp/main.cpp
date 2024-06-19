@@ -24,156 +24,164 @@ string const OBJ_DIR        = BUILD_DIR + "/obj";
 string const BIN_DIR        = BUILD_DIR + "/bin";
 string const LIB_BUILD_DIR  = BUILD_DIR + "/lib";
 
-const vector<string> clang_format = {"Language: Cpp",
-                                     "BasedOnStyle: LLVM",
-                                     "AccessModifierOffset: -4",
-                                     "AlignConsecutiveAssignments: true",
-                                     "AlignConsecutiveDeclarations: true",
-                                     "AlignOperands: AlignAfterOperator",
-                                     "AlignTrailingComments:",
-                                     "  Kind: Always",
-                                     "  OverEmptyLines: 2",
-                                     "AllowShortBlocksOnASingleLine: Empty",
-                                     "AllowShortCaseLabelsOnASingleLine: false",
-                                     "AllowShortFunctionsOnASingleLine: None",
-                                     "AllowShortIfStatementsOnASingleLine: false",
-                                     "AllowShortLoopsOnASingleLine: false",
-                                     "BreakConstructorInitializers: BeforeComma",
-                                     "BreakBeforeBinaryOperators: None",
-                                     "AlwaysBreakAfterDefinitionReturnType: All",
-                                     "AlwaysBreakAfterReturnType: None",
-                                     "AlwaysBreakTemplateDeclarations: Yes",
-                                     "BinPackArguments: true",
-                                     "BinPackParameters: true",
-                                     "BraceWrapping:",
-                                     "  AfterCaseLabel: true",
-                                     "  AfterClass: true",
-                                     "  AfterControlStatement: true",
-                                     "  AfterEnum: true",
-                                     "  AfterFunction: true",
-                                     "  AfterNamespace: False",
-                                     "  AfterStruct: true",
-                                     "  AfterUnion: true",
-                                     "  AfterExternBlock: true",
-                                     "  AfterObjCDeclaration: false",
-                                     "  BeforeCatch: true",
-                                     "  BeforeElse: true",
-                                     "  BeforeLambdaBody: true",
-                                     "  BeforeWhile: true",
-                                     "  IndentBraces: false",
-                                     "  SplitEmptyFunction: false",
-                                     "  SplitEmptyRecord: false",
-                                     "  SplitEmptyNamespace: false",
-                                     "BreakBeforeBraces: Custom",
-                                     "BreakBeforeTernaryOperators: true",
-                                     "ColumnLimit: 120",
-                                     "CompactNamespaces: false",
-                                     "ContinuationIndentWidth: 4",
-                                     "EmptyLineAfterAccessModifier: Never",
-                                     "EmptyLineBeforeAccessModifier: LogicalBlock",
-                                     "IncludeBlocks: Preserve",
-                                     "IncludeCategories:",
-                                     "  - Regex: '^<.*'",
-                                     "    Priority: 1",
-                                     "  - Regex: '^\".*'",
-                                     "    Priority: 2",
-                                     "  - Regex: '.*'",
-                                     "    Priority: 3",
-                                     "IncludeIsMainRegex: '([-_](test|unittest))?$'",
-                                     "IndentCaseBlocks: false",
-                                     "IndentCaseLabels: true",
-                                     "IndentGotoLabels: true",
-                                     "IndentPPDirectives: AfterHash",
-                                     "IndentRequiresClause: True",
-                                     "IndentWidth: 4",
-                                     "IndentWrappedFunctionNames: false",
-                                     "InsertBraces: True",
-                                     "InsertNewlineAtEOF: True",
-                                     "MacroBlockBegin: ''",
-                                     "MacroBlockEnd: ''",
-                                     "MaxEmptyLinesToKeep: 2",
-                                     "NamespaceIndentation: All",
-                                     "SpaceAfterCStyleCast: false",
-                                     "SpaceAfterLogicalNot: false",
-                                     "SpaceAfterTemplateKeyword: true",
-                                     "SpaceBeforeAssignmentOperators: True",
-                                     "SpaceBeforeCaseColon: true",
-                                     "SpaceBeforeCpp11BracedList: True",
-                                     "SpaceBeforeInheritanceColon: true",
-                                     "SpaceBeforeParens: ControlStatements",
-                                     "SpaceBeforeRangeBasedForLoopColon: true",
-                                     "SpaceBeforeSquareBrackets: false",
-                                     "SpaceInEmptyParentheses: false",
-                                     "SpacesBeforeTrailingComments: 1",
-                                     "SpacesInAngles: false",
-                                     "SpacesInContainerLiterals: true",
-                                     "SpacesInConditionalStatement: False",
-                                     "BracedInitializerIndentWidth: 4",
-                                     "SpacesInCStyleCastParentheses: false",
-                                     "SpacesInParentheses: false",
-                                     "SpacesInSquareBrackets: false",
-                                     "TabWidth: 4",
-                                     "UseTab: Never",
-                                     "PointerAlignment: Right",
-                                     "Standard: Latest",
-                                     "AlignAfterOpenBracket: Align",
-                                     "AlignArrayOfStructures: Right",
-                                     "AllowAllParametersOfDeclarationOnNextLine: false",
-                                     "AllowAllArgumentsOnNextLine: false",
-                                     "AllowShortLambdasOnASingleLine: None",
-                                     "LambdaBodyIndentation: Signature",
-                                     "AlignConsecutiveMacros:",
-                                     "  Enabled: true",
-                                     "  AcrossEmptyLines: true",
-                                     "  AcrossComments: true",
-                                     "  AlignCompound: true",
-                                     "  PadOperators: true",
-                                     "AlignConsecutiveShortCaseStatements:",
-                                     "  Enabled: true",
-                                     "  AcrossEmptyLines: true",
-                                     "  AcrossComments: true",
-                                     "  AlignCaseColons: true",
-                                     "AlignEscapedNewlines: Left",
-                                     "BreakAfterAttributes: Always",
-                                     "PenaltyBreakBeforeFirstCallParameter: 0"};
+namespace ConfigStrVecS {
+    const vector<string> clang_format = {"Language: Cpp",
+                                         "BasedOnStyle: LLVM",
+                                         "AccessModifierOffset: -4",
+                                         "AlignConsecutiveAssignments: true",
+                                         "AlignConsecutiveDeclarations: true",
+                                         "AlignOperands: AlignAfterOperator",
+                                         "AlignTrailingComments:",
+                                         "  Kind: Always",
+                                         "  OverEmptyLines: 2",
+                                         "AllowShortBlocksOnASingleLine: Empty",
+                                         "AllowShortCaseLabelsOnASingleLine: false",
+                                         "AllowShortFunctionsOnASingleLine: None",
+                                         "AllowShortIfStatementsOnASingleLine: false",
+                                         "AllowShortLoopsOnASingleLine: false",
+                                         "BreakConstructorInitializers: BeforeComma",
+                                         "BreakBeforeBinaryOperators: None",
+                                         "AlwaysBreakAfterDefinitionReturnType: All",
+                                         "AlwaysBreakAfterReturnType: None",
+                                         "AlwaysBreakTemplateDeclarations: Yes",
+                                         "BinPackArguments: true",
+                                         "BinPackParameters: true",
+                                         "BraceWrapping:",
+                                         "  AfterCaseLabel: true",
+                                         "  AfterClass: true",
+                                         "  AfterControlStatement: true",
+                                         "  AfterEnum: true",
+                                         "  AfterFunction: true",
+                                         "  AfterNamespace: False",
+                                         "  AfterStruct: true",
+                                         "  AfterUnion: true",
+                                         "  AfterExternBlock: true",
+                                         "  AfterObjCDeclaration: false",
+                                         "  BeforeCatch: true",
+                                         "  BeforeElse: true",
+                                         "  BeforeLambdaBody: true",
+                                         "  BeforeWhile: true",
+                                         "  IndentBraces: false",
+                                         "  SplitEmptyFunction: false",
+                                         "  SplitEmptyRecord: false",
+                                         "  SplitEmptyNamespace: false",
+                                         "BreakBeforeBraces: Custom",
+                                         "BreakBeforeTernaryOperators: true",
+                                         "ColumnLimit: 120",
+                                         "CompactNamespaces: false",
+                                         "ContinuationIndentWidth: 4",
+                                         "EmptyLineAfterAccessModifier: Never",
+                                         "EmptyLineBeforeAccessModifier: LogicalBlock",
+                                         "IncludeBlocks: Preserve",
+                                         "IncludeCategories:",
+                                         "  - Regex: '^<.*'",
+                                         "    Priority: 1",
+                                         "  - Regex: '^\".*'",
+                                         "    Priority: 2",
+                                         "  - Regex: '.*'",
+                                         "    Priority: 3",
+                                         "IncludeIsMainRegex: '([-_](test|unittest))?$'",
+                                         "IndentCaseBlocks: false",
+                                         "IndentCaseLabels: true",
+                                         "IndentGotoLabels: true",
+                                         "IndentPPDirectives: AfterHash",
+                                         "IndentRequiresClause: True",
+                                         "IndentWidth: 4",
+                                         "IndentWrappedFunctionNames: false",
+                                         "InsertBraces: True",
+                                         "InsertNewlineAtEOF: True",
+                                         "MacroBlockBegin: ''",
+                                         "MacroBlockEnd: ''",
+                                         "MaxEmptyLinesToKeep: 2",
+                                         "NamespaceIndentation: All",
+                                         "SpaceAfterCStyleCast: false",
+                                         "SpaceAfterLogicalNot: false",
+                                         "SpaceAfterTemplateKeyword: true",
+                                         "SpaceBeforeAssignmentOperators: True",
+                                         "SpaceBeforeCaseColon: true",
+                                         "SpaceBeforeCpp11BracedList: True",
+                                         "SpaceBeforeInheritanceColon: true",
+                                         "SpaceBeforeParens: ControlStatements",
+                                         "SpaceBeforeRangeBasedForLoopColon: true",
+                                         "SpaceBeforeSquareBrackets: false",
+                                         "SpaceInEmptyParentheses: false",
+                                         "SpacesBeforeTrailingComments: 1",
+                                         "SpacesInAngles: false",
+                                         "SpacesInContainerLiterals: true",
+                                         "SpacesInConditionalStatement: False",
+                                         "BracedInitializerIndentWidth: 4",
+                                         "SpacesInCStyleCastParentheses: false",
+                                         "SpacesInParentheses: false",
+                                         "SpacesInSquareBrackets: false",
+                                         "TabWidth: 4",
+                                         "UseTab: Never",
+                                         "PointerAlignment: Right",
+                                         "Standard: Latest",
+                                         "AlignAfterOpenBracket: Align",
+                                         "AlignArrayOfStructures: Right",
+                                         "AllowAllParametersOfDeclarationOnNextLine: false",
+                                         "AllowAllArgumentsOnNextLine: false",
+                                         "AllowShortLambdasOnASingleLine: None",
+                                         "LambdaBodyIndentation: Signature",
+                                         "AlignConsecutiveMacros:",
+                                         "  Enabled: true",
+                                         "  AcrossEmptyLines: true",
+                                         "  AcrossComments: true",
+                                         "  AlignCompound: true",
+                                         "  PadOperators: true",
+                                         "AlignConsecutiveShortCaseStatements:",
+                                         "  Enabled: true",
+                                         "  AcrossEmptyLines: true",
+                                         "  AcrossComments: true",
+                                         "  AlignCaseColons: true",
+                                         "AlignEscapedNewlines: Left",
+                                         "BreakAfterAttributes: Always",
+                                         "PenaltyBreakBeforeFirstCallParameter: 0"};
 
-const vector<string> vsCodeSettings = {
-    "{",
-    "    \"editor.formatOnSave\": true,",
-    "    \"editor.defaultFormatter\": \"xaver.clang-format\",",
-    "    \"clang-format.executable\": \"/usr/bin/clang-format\",",
-    "    \"clang-format.style\": \"file\",",
-    "    \"editor.foldingHighlight\": false,",
-    "    \"C_Cpp.intelliSenseEngine\": \"disabled\",",
-    "    \"breadcrumbs.showTypeParameters\": false,",
-    "    \"editor.suggest.showTypeParameters\": false,",
-    "    \"clangd.arguments\": [",
-    "        \"--header-insertion=never\",",
-    "        \"--header-insertion-decorators\"",
-    "    ],",
-    "    \"clangd.enableCodeCompletion\": true,",
-    "    \"editor.semanticHighlighting.enabled\": true,",
-    "    \"editor.inlayHints.enabled\": \"offUnlessPressed\",",
-    "    \"accessibility.signals.noInlayHints\": {",
-    "        \"sound\": \"off\",",
-    "        \"announcement\": \"off\"",
-    "    },",
-    "    \"clangd.path\": \"/usr/bin/clangd\",",
-    "    \"editor.folding\": true,",
-    "    \"editor.foldingImportsByDefault\": true,",
-    "    \"editor.unfoldOnClickAfterEndOfLine\": false,",
-    "    \"[cpp]\": {",
-    "        \"editor.foldingStrategy\": \"auto\",",
-    "        \"editor.showFoldingControls\": \"always\"",
-    "    },",
-    "    \"editor.foldingStrategy\": \"auto\",",
-    "    \"editor.showFoldingControls\": \"always\",",
-    "    \"editor.defaultFoldingRangeProvider\": \"llvm-vs-code-extensions.vscode-clangd\",",
-    "}"};
-// ConstructorInitializerIndentWidth: 4
-// DerivePointerAlignment: false
-// IndentExternBlock: AfterExternBlock
-// IndentFunctionDeclarationAfterType: true
+    const vector<string> vsCodeSettings = {
+        "{",
+        "    \"editor.formatOnSave\": true,",
+        "    \"editor.defaultFormatter\": \"xaver.clang-format\",",
+        "    \"clang-format.executable\": \"/usr/bin/clang-format\",",
+        "    \"clang-format.style\": \"file\",",
+        "    \"editor.foldingHighlight\": false,",
+        "    \"C_Cpp.intelliSenseEngine\": \"disabled\",",
+        "    \"breadcrumbs.showTypeParameters\": false,",
+        "    \"editor.suggest.showTypeParameters\": false,",
+        "    \"clangd.arguments\": [",
+        "        \"--header-insertion=never\",",
+        "        \"--header-insertion-decorators\"",
+        "    ],",
+        "    \"clangd.enableCodeCompletion\": true,",
+        "    \"editor.semanticHighlighting.enabled\": true,",
+        "    \"editor.inlayHints.enabled\": \"offUnlessPressed\",",
+        "    \"accessibility.signals.noInlayHints\": {",
+        "        \"sound\": \"off\",",
+        "        \"announcement\": \"off\"",
+        "    },",
+        "    \"clangd.path\": \"/usr/bin/clangd\",",
+        "    \"editor.folding\": true,",
+        "    \"editor.foldingImportsByDefault\": true,",
+        "    \"editor.unfoldOnClickAfterEndOfLine\": false,",
+        "    \"[cpp]\": {",
+        "        \"editor.foldingStrategy\": \"auto\",",
+        "        \"editor.showFoldingControls\": \"always\"",
+        "    },",
+        "    \"editor.foldingStrategy\": \"auto\",",
+        "    \"editor.showFoldingControls\": \"always\",",
+        "    \"editor.defaultFoldingRangeProvider\": \"llvm-vs-code-extensions.vscode-clangd\",",
+        "}"};
+    // ConstructorInitializerIndentWidth: 4
+    // DerivePointerAlignment: false
+    // IndentExternBlock: AfterExternBlock
+    // IndentFunctionDeclarationAfterType: true
+
+    const static vector<string> compileArgs {
+        "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto", "-m64",
+        "-Wall", "-Werror",       "-static",        "-stdlib=libc++",
+    };
+} // namespace ConfigStrVecS
+using namespace ConfigStrVecS;
 
 namespace AmakeCpp {
     namespace Options {
@@ -309,11 +317,15 @@ namespace AmakeCpp {
                 vector<string> files = FileSys::dirContentToStrVec(cwd + "/src/cpp");
                 for (const auto &file : files)
                 {
-                    string fileName = file.substr(file.find_last_of("/") + 1);
-                    string objName  = cwd + "/build/obj/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
+                    string fileName     = file.substr(file.find_last_of("/") + 1);
+                    string objName      = cwd + "/build/obj/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
+                    vector<string> args = {
+                        "-c",   "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
+                        "-m64", "-Wall", "-Werror",       "-static",        "-stdlib=libc++",        "-std=c++23",
+                        file,   "-o",    objName};
                     try
                     {
-                        Sys::run_binary("/usr/bin/clang++", {"-c", file, "-o", objName});
+                        Sys::run_binary("/usr/bin/clang++", args);
                         printC(file + " -> " + objName, ESC_CODE_BLUE);
                         printC(".cpp File Size: " + to_string(FileSys::fileSize(file)) + " Bytes" +
                                    " .o File Size: " + to_string(FileSys::fileSize(objName)) + " Bytes",
@@ -341,10 +353,23 @@ namespace AmakeCpp {
         linkBinary(const vector<string> &strVec = {})
         {
             printC("Linking Obj Files -> " + cwd + "/build/bin/" + projectName, ESC_CODE_GREEN);
-            vector<string> objVec      = FileSys::dirContentToStrVec(cwd + "/build/obj");
-            string         objStr      = Args::strFromStrVec(objVec);
-            vector<string> linkArgsVec = {
-                "-O3", "-march=native", "-o", cwd + "/build/bin/" + projectName, "/usr/lib/Mlib.a", "-lcurl"};
+            vector<string> objVec = FileSys::dirContentToStrVec(OBJ_DIR);
+            vector<string> libVec = FileSys::dirContentToStrVec(LIB_BUILD_DIR);
+
+            vector<string> linkArgsVec = {"-stdlib=libc++",
+                                          "-std=c++23",
+                                          "-s",
+                                          "-flto",
+                                          "-O3",
+                                          "-march=native",
+                                          "-o",
+                                          cwd + "/build/bin/" + projectName,
+                                          "/usr/lib/Mlib.a",
+                                          "-L/usr/lib",
+                                          "-l:libc++.a",
+                                          "-l:libc++abi.a",
+                                          "-l:libunwind.a",
+                                          "-l:libz.a"};
             for (const auto &obj : objVec)
             {
                 linkArgsVec.push_back(obj);
@@ -352,6 +377,12 @@ namespace AmakeCpp {
             for (const auto &arg : strVec)
             {
                 linkArgsVec.push_back(arg);
+            }
+            linkArgsVec.push_back("-L" + LIB_BUILD_DIR);
+            for (const string &lib : libVec)
+            {
+                const string libName = "-l:" + lib.substr(lib.find_last_of("/") + 1);
+                linkArgsVec.push_back(lib);
             }
             try
             {
@@ -433,31 +464,193 @@ namespace AmakeCpp {
         }
 
         namespace Libs {
-            enum LibOption
-            {
-                UNKNOWN_LIB     = (1 << 0),
-                NCURSESW_STATIC = (1 << 1)
-            };
-
-            LibOption
-            getLibOption(const string &lib)
-            {
-                const static unordered_map<string, LibOption> libOptionMap = {
-                    {"ncursesw-static", NCURSESW_STATIC}
-                };
-                const auto it = libOptionMap.find(lib);
-                if (it != libOptionMap.end())
+            namespace Options {
+                enum LibOption
                 {
-                    return it->second;
+                    UNKNOWN_LIB     = (1 << 0),
+                    NCURSESW_STATIC = (1 << 1)
+                };
+
+                LibOption
+                getLibOption(const string &lib)
+                {
+                    const static unordered_map<string, LibOption> libOptionMap = {
+                        {"ncursesw-static", NCURSESW_STATIC}
+                    };
+                    const auto it = libOptionMap.find(lib);
+                    if (it != libOptionMap.end())
+                    {
+                        return it->second;
+                    }
+                    return UNKNOWN_LIB;
                 }
-                return UNKNOWN_LIB;
+            } // namespace Options
+            using namespace Options;
+            namespace Tools {
+                /// @name printIL ( printInstallLib )
+                void
+                printIL(const string &libName)
+                {
+                    printC("Installing Static Lib " + libName + " -> " + LIB_BUILD_DIR + "/" + libName, ESC_CODE_GREEN);
+                }
+            } // namespace Tools
+            using namespace Tools;
+
+            int
+            installNcursesPart(const string &libName)
+            {
+                printIL(libName);
+                if (FileSys::exists(LIB_SRC_DIR + "/ncurses-6.3"))
+                {
+                    printC("Folder lib/ncurses-6.3 Already Exists", ESC_CODE_YELLOW);
+                }
+                else
+                {
+                    printC("Downloading ncurses-6.3.tar.gz", ESC_CODE_GREEN);
+                    if (FileSys::exists("/usr/bin/wget"))
+                    {
+                        try
+                        {
+                            Sys::run_binary("/usr/bin/wget", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz"});
+                        }
+                        catch (const exception &e)
+                        {
+                            printC(e.what(), ESC_CODE_RED);
+                            return 1;
+                        }
+                    }
+                    else if (FileSys::exists("/usr/bin/axel"))
+                    {
+                        try
+                        {
+                            Sys::run_binary("/usr/bin/axel", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz",
+                                                              "-o", LIB_SRC_DIR + "/ncurses-6.3.tar.gz"});
+                        }
+                        catch (const exception &e)
+                        {
+                            printC(e.what(), ESC_CODE_RED);
+                            return 1;
+                        }
+                        if (FileSys::exists(LIB_SRC_DIR + "/ncurses-6.3.tar.gz"))
+                        {
+                            printC("Successfully Downloaded ncurses-6.3.tar.gz", ESC_CODE_GREEN);
+                        }
+                        else
+                        {
+                            printC("Failed to download ncurses-6.3.tar.gz", ESC_CODE_RED);
+                            return 1;
+                        }
+                    }
+                    else
+                    {
+                        if (FileSys::exists("/usr/bin/pacman"))
+                        {
+                            try
+                            {
+                                Sys::run_binary(
+                                    "/usr/bin/sudo", {"/usr/bin/pacman", "-S", "--needed", "--noconfirm", "wget"});
+                            }
+                            catch (const exception &e)
+                            {
+                                printC(e.what(), ESC_CODE_RED);
+                                return 1;
+                            }
+                        }
+                        else if (FileSys::exists("/usr/bin/apt"))
+                        {
+                            try
+                            {
+                                Sys::run_binary("/usr/bin/sudo", {"/usr/bin/apt", "install", "-y", "wget"});
+                            }
+                            catch (const exception &e)
+                            {
+                                printC(e.what(), ESC_CODE_RED);
+                                return 1;
+                            }
+                        }
+                        else
+                        {
+                            printC("No download manager found", ESC_CODE_RED);
+                            return 1;
+                        }
+                    }
+                    if (FileSys::exists("/usr/bin/tar"))
+                    {
+                        printC("Extracting " + LIB_SRC_DIR + "/ncurses-6.3.tar.gz -> " + LIB_SRC_DIR + "/ncurses-6.3",
+                               ESC_CODE_GREEN);
+                        try
+                        {
+                            Sys::run_binary(
+                                "/usr/bin/tar", {"-xzf", LIB_SRC_DIR + "/ncurses-6.3.tar.gz", "-C", LIB_SRC_DIR + "/"});
+                        }
+                        catch (const exception &e)
+                        {
+                            printC(e.what(), ESC_CODE_RED);
+                            return 1;
+                        }
+                        if (!FileSys::exists(LIB_SRC_DIR + "/ncurses-6.3"))
+                        {
+                            printC("Failed to extract ncurses-6.3.tar.gz", ESC_CODE_RED);
+                            return 1;
+                        }
+                        printC("Successfully Extracted ncurses-6.3.tar.gz", ESC_CODE_GREEN);
+                        FileSys::rmFile(LIB_SRC_DIR + "/ncurses-6.3.tar.gz");
+                    }
+                    else
+                    {
+                        printC("tar Not found", ESC_CODE_RED);
+                        return 1;
+                    }
+                }
+                try
+                {
+                    FileSys::cd(LIB_SRC_DIR + "/ncurses-6.3");
+                    string binary_path = "./configure";
+
+                    vector<string> args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
+                                           "--enable-widec",      "--enable-static", "--disable-shared"};
+
+                    vector<string> env_vars = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 -march=native",
+                                               "CXXFLAGS=-O3 -march=native", "LDFLAGS=-O3 -march=native -flto"};
+
+                    if (!FileSys::exists("lib/" + libName))
+                    {
+                        Sys::run_binary(binary_path, args, env_vars);
+                        Sys::run_binary("/usr/bin/make", {"-j", "4"});
+                    }
+                    if (!FileSys::exists(LIB_BUILD_DIR + "/" + libName))
+                    {
+                        FileSys::fileContentToFile(
+                            LIB_SRC_DIR + "/ncurses-6.3/lib/" + libName, LIB_BUILD_DIR + "/" + libName);
+                    }
+                    FileSys::cd(cwd);
+                }
+                catch (const exception &e)
+                {
+                    printC(e.what(), ESC_CODE_RED);
+                    return 1;
+                }
+                if (FileSys::exists(LIB_BUILD_DIR + "/" + libName))
+                {
+                    printC("Sizes " + to_string(FileSys::fileSize(LIB_SRC_DIR + "/ncurses-6.3/lib/" + libName)) +
+                               " -> " + to_string(FileSys::fileSize(LIB_BUILD_DIR + "/" + libName)),
+                           ESC_CODE_GRAY);
+                }
+                return EXIT_SUCCESS;
             }
 
             int
             installNcurseswStatic()
             {
-                printC("Installing Ncursesw Static Lib -> ", ESC_CODE_GREEN);
-                return 0;
+                installNcursesPart("libncurses++w.a");
+                installNcursesPart("libncursesw.a");
+                installNcursesPart("libformw.a");
+                installNcursesPart("libmenuw.a");
+                installNcursesPart("libpanelw.a");
+                FileSys::cd(LIB_SRC_DIR + "/ncurses-6.3");
+                Sys::run_binary("sudo", {"make", "install"});
+                FileSys::rmdir(LIB_SRC_DIR + "/ncurses-6.3");
+                return EXIT_SUCCESS;
             }
         } // namespace Libs
         using namespace Libs;
@@ -560,7 +753,24 @@ namespace AmakeCpp {
     void
     Install(const vector<string> &strVec = {})
     {
-        linkBinary(strVec);
+        vector<string> args;
+        bool           installBin = false;
+        for (const string &arg : strVec)
+        {
+            if (arg == "--bin")
+            {
+                installBin = true;
+            }
+            else
+            {
+                args.push_back(arg);
+            }
+        }
+        linkBinary(args);
+        if (installBin)
+        {
+            FileSys::fileContentToFile(BIN_DIR + "/" + projectName, "/usr/bin/" + projectName);
+        }
     }
 
     void

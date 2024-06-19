@@ -29,4 +29,7 @@
     "editor.foldingStrategy": "auto",
     "editor.showFoldingControls": "always",
     "editor.defaultFoldingRangeProvider": "llvm-vs-code-extensions.vscode-clangd",
+    "workbench.startupEditor": "terminal",
+    "github.copilot.chat.terminalChatLocation": "quickChat",
+    "terminal.explorerKind": "integrated",
 }
