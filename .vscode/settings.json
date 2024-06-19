@@ -8,8 +8,12 @@
     "breadcrumbs.showTypeParameters": false,
     "editor.suggest.showTypeParameters": false,
     "clangd.arguments": [
+        "--background-index",
+        "--clang-tidy",
         "--header-insertion=never",
-        "--header-insertion-decorators"
+        "--header-insertion-decorators",
+        "--completion-style=detailed",
+        "--log=verbose"
     ],
     "clangd.enableCodeCompletion": true,
     "editor.semanticHighlighting.enabled": true,
@@ -29,7 +33,26 @@
     "editor.foldingStrategy": "auto",
     "editor.showFoldingControls": "always",
     "editor.defaultFoldingRangeProvider": "llvm-vs-code-extensions.vscode-clangd",
-    "workbench.startupEditor": "terminal",
-    "github.copilot.chat.terminalChatLocation": "quickChat",
-    "terminal.explorerKind": "integrated",
+    "editor.fontFamily": "JetBrains Mono",
+    "editor.fontWeight": "360",  // Use 600 for semi-bold
+    "editor.fontLigatures": true,  // Enable font ligatures
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": [
+                    "comment",
+                    "comment.block",
+                    "comment.line",
+                    "comment.block.documentation"
+                ],
+                "settings": {
+                    "fontStyle": ""
+                }
+            }
+        ]
+    },
+    "editor.fontSize": 15,  // Adjust this to your preferred font size
+    "editor.lineHeight": 18,  // Adjust this to your preferred line height
+    "terminal.integrated.fontFamily": "JetBrains Mono",
+    "terminal.integrated.fontWeight": "400",  // Use 600 for semi-bold in terminal
 }

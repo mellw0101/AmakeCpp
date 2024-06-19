@@ -770,6 +770,7 @@ namespace AmakeCpp {
         if (installBin)
         {
             FileSys::fileContentToFile(BIN_DIR + "/" + projectName, "/usr/bin/" + projectName);
+			printC(to_string(FileSys::fileSize("/usr/bin/" + projectName)) + " Bytes", ESC_CODE_GRAY);
         }
     }
 
