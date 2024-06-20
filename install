@@ -1,0 +1,4 @@
+#!/bin/bash
+
+AmakeCpp --build --install /usr/lib/Mlib.a
+sudo cp build/bin/AmakeCpp /usr/bin/AmakeCpp

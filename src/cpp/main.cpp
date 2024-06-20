@@ -10,19 +10,23 @@
 using namespace std;
 using namespace Mlib;
 
-string const cwd            = FileSys::currentWorkingDir();
-string const projectName    = cwd.substr(cwd.find_last_of("/") + 1);
-string const AMAKE_CONF_DIR = cwd + "/.amake";
-string const SRC_DIR        = cwd + "/src";
-string const INCLUDE_DIR    = SRC_DIR + "/include";
-string const AS_DIR         = SRC_DIR + "/as";
-string const CPP_DIR        = SRC_DIR + "/cpp";
-string const C_DIR          = SRC_DIR + "/c";
-string const LIB_SRC_DIR    = SRC_DIR + "/lib";
-string const BUILD_DIR      = cwd + "/build";
-string const OBJ_DIR        = BUILD_DIR + "/obj";
-string const BIN_DIR        = BUILD_DIR + "/bin";
-string const LIB_BUILD_DIR  = BUILD_DIR + "/lib";
+const string cwd         = FileSys::currentWorkingDir();
+const string projectName = cwd.substr(cwd.find_last_of("/") + 1);
+
+const string AMAKE_CONF_DIR  = cwd + "/.amake";
+const string AMAKE_CPP_SIZES = AMAKE_CONF_DIR + "/cppSizes";
+
+const string SRC_DIR     = cwd + "/src";
+const string INCLUDE_DIR = SRC_DIR + "/include";
+const string AS_DIR      = SRC_DIR + "/as";
+const string CPP_DIR     = SRC_DIR + "/cpp";
+const string C_DIR       = SRC_DIR + "/c";
+const string LIB_SRC_DIR = SRC_DIR + "/lib";
+
+const string BUILD_DIR     = cwd + "/build";
+const string OBJ_DIR       = BUILD_DIR + "/obj";
+const string BIN_DIR       = BUILD_DIR + "/bin";
+const string LIB_BUILD_DIR = BUILD_DIR + "/lib";
 
 namespace ConfigStrVecS {
     const vector<string> clang_format = {"Language: Cpp",
@@ -282,21 +286,16 @@ namespace AmakeCpp {
             cout << PROJECT_NAME << " - [ " << color << str << ESC_CODE_RESET << " ]" << '\n';
         }
 
-        /// @name createProjectDir
-        /// @brief
-        /// - Create project directory
-        /// @param subPath
-        /// - Sub path to create
-        /// @note
-        /// - Creates directory in current working directory ( cwd + subPath )
-        /// @returns void
+        //
+        //  Creates a directory
+        //
         void
-        createProjectDir(const string &path)
+        createProjectDir(const string &path, u8 mode = FileSys::NONE)
         {
             try
             {
                 printC("Creating Dir -> " + path, ESC_CODE_GREEN);
-                FileSys::mkdir(path);
+                FileSys::mkdir(path, mode);
             }
             catch (exception const &e)
             {
@@ -304,20 +303,68 @@ namespace AmakeCpp {
             }
         }
 
-        /// @name compileCpp
-        /// @brief
-        /// - Compile ( .cpp -> .o ) in src/cpp
-        /// @returns void
+        void
+        configAmakeDir()
+        {
+            if (!FileSys::exists(AMAKE_CONF_DIR))
+            {
+                createProjectDir(AMAKE_CONF_DIR, FileSys::NO_THROW);
+            }
+            if (!FileSys::exists(AMAKE_CPP_SIZES))
+            {
+                FileSys::touch(AMAKE_CPP_SIZES);
+            }
+        }
+
+        //
+        //  Compile ( .cpp in src/cpp -> .o in build/obj )
+        //
         void
         compileCpp()
         {
+            configAmakeDir();
             printC("Compiling .cpp -> .o", ESC_CODE_GREEN);
             try
             {
-                vector<string> files = FileSys::dirContentToStrVec(cwd + "/src/cpp");
+                auto cppSizes        = FileSys::fileContentToStrVec(AMAKE_CPP_SIZES);
+                auto cppSizesToPrint = cppSizes;
+
+                vector<string> files = FileSys::dirContentToStrVec(CPP_DIR);
+
                 for (const auto &file : files)
                 {
-                    string fileName     = file.substr(file.find_last_of("/") + 1);
+                    const string fileName   = file.substr(file.find_last_of("/") + 1);
+                    bool         hasChanged = true;
+
+                    if (!cppSizes.empty())
+                    {
+                        for (const auto &cppSize : cppSizes)
+                        {
+                            const string fileId = cppSize.substr(0, cppSize.find_first_of(':'));
+                            if (fileId == fileName)
+                            {
+                                const string size = cppSize.substr(cppSize.find_first_of(':') + 1);
+                                if (size == to_string(FileSys::fileSize(file)))
+                                {
+                                    printC(
+                                        "Skipping " + file + " -> " + OBJ_DIR + "/" + fileName + ".o", ESC_CODE_YELLOW);
+
+                                    cppSizesToPrint.push_back(fileName + ":" + to_string(FileSys::fileSize(file)));
+                                    hasChanged = false;
+                                }
+                                else
+                                {
+                                    printC("Recompiling " + file + " -> " + OBJ_DIR + "/" + fileName + ".o",
+                                           ESC_CODE_YELLOW);
+                                }
+                            }
+                        }
+                    }
+                    if (!hasChanged)
+                    {
+                        continue;
+                    }
+
                     string objName      = cwd + "/build/obj/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
                     vector<string> args = {
                         "-c",   "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
@@ -330,12 +377,15 @@ namespace AmakeCpp {
                         printC(".cpp File Size: " + to_string(FileSys::fileSize(file)) + " Bytes" +
                                    " .o File Size: " + to_string(FileSys::fileSize(objName)) + " Bytes",
                                ESC_CODE_GRAY);
+
+                        cppSizesToPrint.push_back(fileName + ":" + to_string(FileSys::fileSize(file)));
                     }
                     catch (const exception &e)
                     {
                         printC(e.what(), ESC_CODE_RED);
                         exit(EXIT_FAILURE);
                     }
+                    FileSys::writeStrVecToFile(AMAKE_CPP_SIZES, cppSizesToPrint);
                 }
             }
             catch (const exception &e)
@@ -345,10 +395,9 @@ namespace AmakeCpp {
             }
         }
 
-        /// @name linkBinary
-        /// @brief
-        /// - Link .o files in build/obj to binary in build/bin
-        /// @returns void
+        //
+        //  Link .o files in build/obj to binary in build/bin
+        //
         void
         linkBinary(const vector<string> &strVec = {})
         {
@@ -770,7 +819,7 @@ namespace AmakeCpp {
         if (installBin)
         {
             FileSys::fileContentToFile(BIN_DIR + "/" + projectName, "/usr/bin/" + projectName);
-			printC(to_string(FileSys::fileSize("/usr/bin/" + projectName)) + " Bytes", ESC_CODE_GRAY);
+            printC(to_string(FileSys::fileSize("/usr/bin/" + projectName)) + " Bytes", ESC_CODE_GRAY);
         }
     }
 
