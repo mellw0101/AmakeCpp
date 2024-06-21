@@ -372,12 +372,16 @@ namespace AmakeCpp {
                         file,   "-o",    objName};
                     try
                     {
-                        Sys::run_binary("/usr/bin/clang++", args);
+                        s8 result = Sys::run_binary("/usr/bin/clang++", args);
                         printC(file + " -> " + objName, ESC_CODE_BLUE);
                         printC(".cpp File Size: " + to_string(FileSys::fileSize(file)) + " Bytes" +
                                    " .o File Size: " + to_string(FileSys::fileSize(objName)) + " Bytes",
                                ESC_CODE_GRAY);
-
+                        if (result != EXIT_SUCCESS)
+                        {
+                            printC("Failed to compile " + file, ESC_CODE_RED);
+                            exit(EXIT_FAILURE);
+                        }
                         cppSizesToPrint.push_back(fileName + ":" + to_string(FileSys::fileSize(file)));
                     }
                     catch (const exception &e)
@@ -385,6 +389,7 @@ namespace AmakeCpp {
                         printC(e.what(), ESC_CODE_RED);
                         exit(EXIT_FAILURE);
                     }
+                    FileSys::rmFile(AMAKE_CPP_SIZES);
                     FileSys::writeStrVecToFile(AMAKE_CPP_SIZES, cppSizesToPrint);
                 }
             }
