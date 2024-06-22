@@ -575,7 +575,7 @@ namespace AmakeCpp {
             printC("Linking Obj Files -> " + output, ESC_CODE_GREEN);
 
             vector<string> objVec = FileSys::dirContentToStrVec(OBJ_DIR);
-            objVec                = cleanObjVec(objVec);
+            // objVec                = cleanObjVec(objVec);
 
             vector<string> linkArgsVec = getArgsBasedOnArch(LINKARGS, output);
             //
