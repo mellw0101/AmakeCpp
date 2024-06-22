@@ -757,10 +757,10 @@ namespace AmakeCpp {
                 LDFLAGS  = (1 << 2)
             };
 
-            string_view
+            string
             getLibInstalArgs(const u8 mode)
             {
-                string_view args;
+                string args;
 #if defined(__x86_64__) || defined(_M_X64)
                 if (mode & CFLAGS)
                 {
@@ -768,7 +768,7 @@ namespace AmakeCpp {
                 }
                 else if (mode & CXXFLAGS)
                 {
-                    args = "CXXFLAGS-O3 -march=native";
+                    args = "CXXFLAGS=-O3 -march=native";
                 }
                 else if (mode & LDFLAGS)
                 {
@@ -781,14 +781,25 @@ namespace AmakeCpp {
                 }
                 else if (mode & CXXFLAGS)
                 {
-                    args = "CXXFLAGS-O3 --target=aarch64-linux-gnu -march=armv8-a";
+                    args = "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a";
                 }
                 else if (mode & LDFLAGS)
                 {
                     args = "LDFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -flto";
                 }
 #elif defined(__arm__) || defined(_M_ARM)
-                return "-march=armv7-a";
+                if (mode & CFLAGS)
+                {
+                    args = "CFLAGS=-O3 -march=armv7-a";
+                }
+                else if (mode & CXXFLAGS)
+                {
+                    args = "CXXFLAGS=-O3 -march=armv7-a";
+                }
+                else if (mode & LDFLAGS)
+                {
+                    args = "LDFLAGS=-O3 -march=armv7-a -flto";
+                }
 #endif
                 return args;
             }
@@ -908,8 +919,8 @@ namespace AmakeCpp {
                     vector<string> args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
                                            "--enable-widec",      "--enable-static", "--disable-shared"};
 
-                    vector<string> env_vars = {"CC=clang", "CXX=clang++", getLibInstalArgs(CFLAGS).data(),
-                                               getLibInstalArgs(CXXFLAGS).data(), getLibInstalArgs(LDFLAGS).data()};
+                    vector<string> env_vars = {"CC=clang", "CXX=clang++", getLibInstalArgs(CFLAGS),
+                                               getLibInstalArgs(CXXFLAGS), getLibInstalArgs(LDFLAGS)};
 
                     if (!FileSys::exists("lib/" + libName))
                     {
