@@ -757,6 +757,25 @@ namespace AmakeCpp {
             {
                 vector<string> args;
 #if defined(__x86_64__) || defined(_M_X64)
+                args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
+                        "--enable-widec",      "--enable-static", "--disable-shared"};
+#elif defined(__aarch64__) || defined(_M_ARM64)
+                args = {"CC=clang",          "CXX=clang++",         "CFLAGS=-O3",      "CXXFLAGS=-O3",
+                        "LDFLAGS=-O3 -flto", "--prefix=/usr/local", "--with-shared",   "--with-normal",
+                        "--enable-widec",    "--enable-static",     "--disable-shared"};
+#elif defined(__arm__) || defined(_M_ARM)
+                args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
+                        "CXXFLAGS=-O3 -march=armv8-a", "LDFLAGS=-O3 -march=armv8-a -flto"};
+#endif
+                return args;
+            }
+
+
+            vector<string>
+            getLibInstallEnvArgs()
+            {
+                vector<string> args;
+#if defined(__x86_64__) || defined(_M_X64)
                 args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3", "CXXFLAGS=-O3", "LDFLAGS=-O3 -flto"};
 #elif defined(__aarch64__) || defined(_M_ARM64)
                 args = {};
@@ -879,10 +898,9 @@ namespace AmakeCpp {
                     FileSys::cd(LIB_SRC_DIR + "/ncurses-6.3");
                     string binary_path = "./configure";
 
-                    vector<string> args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
-                                           "--enable-widec",      "--enable-static", "--disable-shared"};
+                    vector<string> args = getLibInstallArgs();
 
-                    vector<string> env_vars = getLibInstallArgs();
+                    vector<string> env_vars = getLibInstallEnvArgs();
 
                     if (!FileSys::exists("lib/" + libName))
                     {
