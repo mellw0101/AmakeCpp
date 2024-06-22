@@ -2,10 +2,34 @@
 
 # AmakeCpp --build --install /usr/lib/Mlib.a
 
-clang++ -stdlib=libc++ -std=c++23 -c -O2 -march=native -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static   src/cpp/main.cpp -o build/obj/main.o
-clang++ -stdlib=libc++ -std=c++20 -c -O2 --target=aarch64-linux-gnu -march=armv8-a -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static   src/cpp/main.cpp -o build/obj/main.arm.o
+# Get the architecture of the machine
+ARCH=$(uname -m)
 
-clang++ -stdlib=libc++ -std=c++23 -s -flto -O2 -march=native /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a  build/obj/main.o /usr/lib/Mlib.a -o build/bin/AmakeCpp
-clang++ -stdlib=libc++ -std=c++20 -s -flto -O2 --target=aarch64-linux-gnu -march=armv8-a  build/obj/main.arm.o /usr/lib/Mlib.a -o build/bin/AmakeCpp-arm -v
+# Print the architecture
+echo "Architecture: $ARCH"
 
-sudo cp build/bin/AmakeCpp /usr/bin/AmakeCpp
+# Perform actions based on the architecture
+case "$ARCH" in
+    x86_64)
+        echo "This is a 64-bit x86 architecture."
+        clang++ -stdlib=libc++ -std=c++20 -c -O2 --target=aarch64-linux-gnu -march=armv8-a -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static   src/cpp/main.cpp -o build/obj/main.arm.o
+        clang++ -stdlib=libc++ -std=c++23 -s -flto -O2 -march=native /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a  build/obj/main.o /usr/lib/Mlib.a -o build/bin/AmakeCpp
+        sudo cp build/bin/AmakeCpp /usr/bin/AmakeCpp
+        ;;
+    aarch64)
+        echo "This is a 64-bit ARM architecture."
+        clang++ -stdlib=libc++ -std=c++23 -c -O2 -march=native -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static   src/cpp/main.cpp -o build/obj/main.o
+        clang++ -stdlib=libc++ -std=c++20 -s -flto -O2 --target=aarch64-linux-gnu -march=armv8-a  build/obj/main.arm.o /usr/lib/Mlib.a -o build/bin/AmakeCpp-arm -v
+        sudo cp build/bin/AmakeCpp-arm /usr/bin/AmakeCpp-arm
+        ;;
+    armv7l)
+        echo "This is a 32-bit ARM architecture."
+        # Add your commands for ARM32 architecture here
+        ;;
+    *)
+        echo "Unknown architecture: $ARCH"
+        # Add your commands for other architectures here
+        ;;
+esac
+
+
