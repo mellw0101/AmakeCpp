@@ -367,23 +367,35 @@ namespace AmakeCpp {
                         continue;
                     }
 
-                    string iArch;
-                    string objName;
+                    const string   objName = OBJ_DIR + fileName.substr(0, fileName.find_last_of(".")) + ".arm.o";
+                    vector<string> args;
                     if (!arm)
                     {
-                        iArch   = "-march=native";
-                        objName = cwd + "/build/obj/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
+                        args = {
+                            "-c",   "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
+                            "-m64", "-Wall", "-Werror",       "-static",        "-stdlib=libc++",        "-std=c++23",
+                            file,   "-o",    objName};
                     }
                     else
                     {
-                        objName = cwd + "/build/obj/" + fileName.substr(0, fileName.find_last_of(".")) + ".arm.o";
-                        arm     = true;
+                        args = {"-c",
+                                "-O3",
+                                "--target=aarch64-linux-gnu",
+                                "-march=armv8-a",
+                                "-funroll-loops",
+                                "-Rpass=loop-vectorize",
+                                "-flto",
+                                "-m64",
+                                "-Wall",
+                                "-Werror",
+                                "-static",
+                                "-stdlib=libc++",
+                                "-std=c++20",
+                                file,
+                                "-o",
+                                objName};
                     }
 
-                    vector<string> args = {
-                        "-c",   "-O3",   iArch,     "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
-                        "-m64", "-Wall", "-Werror", "-static",        "-stdlib=libc++",        "-std=c++23",
-                        file,   "-o",    objName};
 
                     try
                     {
@@ -422,57 +434,50 @@ namespace AmakeCpp {
         linkBinary(const vector<string> &strVec = {})
         {
             vector<string> objVec = FileSys::dirContentToStrVec(OBJ_DIR);
+            const string   output = cwd + "/build/bin/" + projectName;
+            printC("Linking Obj Files -> " + output, ESC_CODE_GREEN);
+            vector<string> linkArgsVec;
 
-            string arch;
-            string output;
-
-            if (arm)
+            if (!arm)
             {
-                printC("ARM Architecture Detected", ESC_CODE_YELLOW);
-                for (auto &obj : objVec)
-                {
-                    string str = obj.substr(obj.find(".") + 1);
-                    if (str == "o")
-                    {
-                        printC("Removing " + obj, ESC_CODE_YELLOW);
-                        Args::eraseFromVector(objVec, obj);
-                    }
-                }
-                arch   = "-march=armv8-a";
-                output = cwd + "/build/bin/" + projectName + "-arm";
+
+                linkArgsVec = {"-stdlib=libc++",
+                               "-std=c++23",
+                               "-s",
+                               "-flto",
+                               "-O3",
+                               "-march=native",
+                               "-o",
+                               output,
+                               "/usr/lib/Mlib.a",
+                               "-L/usr/lib",
+                               "-l:libc++.a",
+                               "-l:libc++abi.a",
+                               "-l:libunwind.a",
+                               "-l:libz.a"};
             }
             else
             {
-                for (auto &obj : objVec)
-                {
-                    string str = obj.substr(obj.find(".") + 1);
-                    if (str == "arm.o")
-                    {
-                        Args::eraseFromVector(objVec, obj);
-                    }
-                }
-                arch   = "-march=native";
-                output = cwd + "/build/bin/" + projectName;
+                linkArgsVec = {"-stdlib=libc++",
+                               "-std=c++20",
+                               "-s",
+                               "-flto",
+                               "-O3",
+                               "--target=aarch64-linux-gnu",
+                               "-march=armv8-a",
+                               "-o",
+                               output,
+                               "/usr/lib/Mlib.a",
+                               "-L/usr/lib",
+                               "-l:libc++.a",
+                               "-l:libc++abi.a",
+                               "-l:libunwind.a",
+                               "-l:libz.a"};
             }
 
-            printC("Linking Obj Files -> " + output, ESC_CODE_GREEN);
 
             vector<string> libVec = FileSys::dirContentToStrVec(LIB_BUILD_DIR);
 
-            vector<string> linkArgsVec = {"-stdlib=libc++",
-                                          "-std=c++23",
-                                          "-s",
-                                          "-flto",
-                                          "-O3",
-                                          arch,
-                                          "-o",
-                                          output,
-                                          "/usr/lib/Mlib.a",
-                                          "-L/usr/lib",
-                                          "-l:libc++.a",
-                                          "-l:libc++abi.a",
-                                          "-l:libunwind.a",
-                                          "-l:libz.a"};
             for (const auto &obj : objVec)
             {
                 linkArgsVec.push_back(obj);
