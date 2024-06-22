@@ -152,34 +152,29 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
     }
 
 
-#elif defined(__aarch64__) || defined(_M_ARM64_)
+    // #elif defined(__aarch64__) || defined(_M_ARM64)
     printC("This is a 64-bit ARM architecture.", ESC_CODE_YELLOW);
     if (mode & BUILDARGS)
     {
-        args = {"-c",
-                "-O3",
-                "--target=aarch64-linux-gnu",
-                "-march=armv8-a",
-                "-funroll-loops",
-                "-Rpass=loop-vectorize",
-                "-flto",
-                "-m64",
-                "-Wall",
-                "-Werror",
-                "-static",
-                "-stdlib=libc++",
-                "-std=c++20",
-                file.data(),
-                "-o",
-                output.data()};
+        args = {"-c",        "-O3",   "-march=armv8-a", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
+                "-m64",      "-Wall", "-Werror",        "-static",        "-stdlib=libc++",        "-std=c++20",
+                file.data(), "-o",    output.data()};
     }
     else if (mode & LINKARGS)
     {
-        args = {"-stdlib=libc++",  "-std=c++20", "-s",
-                "-flto",           "-O3",        "--target=aarch64-linux-gnu",
-                "-march=armv8-a",  "-o",         output.data(),
-                "/usr/lib/Mlib.a", "-L/usr/lib", "-l:libc++.a",
-                "-l:libc++abi.a",  "-l:libz.a"};
+        args = {"-stdlib=libc++",
+                "-std=c++20",
+                "-s",
+                "-flto",
+                "-O3",
+                "-march=armv8-a",
+                "-o",
+                output.data(),
+                "/usr/lib/Mlib.a",
+                "-L/usr/lib",
+                "-l:libc++.a",
+                "-l:libc++abi.a",
+                "-l:libz.a"};
     }
 
 #elif defined(__arm__) || defined(_M_ARM)
@@ -758,7 +753,7 @@ namespace AmakeCpp {
 #if defined(__x86_64__) || defined(_M_X64)
                 args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
                         "--enable-widec",      "--enable-static", "--disable-shared"};
-#elif defined(__aarch64__) || defined(_M_ARM64_)
+#elif defined(__aarch64__) || defined(_M_ARM64)
                 args = {"CC=clang",
                         "CXX=clang++",
                         "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -stdlib=libc -std=c20",
