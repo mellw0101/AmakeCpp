@@ -175,20 +175,11 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
     }
     else if (mode & LINKARGS)
     {
-        args = {"-stdlib=libc++",
-                "-std=c++20",
-                "-s",
-                "-flto",
-                "-O3",
-                "--target=aarch64-linux-gnu",
-                "-march=armv8-a",
-                "-o",
-                output.data(),
-                "/usr/lib/Mlib.a"
-                "-L/usr/lib",
-                "-l:libc++.a",
-                "-l:libc++abi.a",
-                "-l:libz.a"};
+        args = {"-stdlib=libc++",  "-std=c++20", "-s",
+                "-flto",           "-O3",        "--target=aarch64-linux-gnu",
+                "-march=armv8-a",  "-o",         output.data(),
+                "/usr/lib/Mlib.a", "-L/usr/lib", "-l:libc++.a",
+                "-l:libc++abi.a",  "-l:libz.a"};
     }
 
 #elif defined(__arm__) || defined(_M_ARM)
