@@ -19,8 +19,8 @@ case "$ARCH" in
     aarch64)
         echo "This is a 64-bit ARM architecture."
         clang++ -stdlib=libc++ -std=c++20 -c -O2 --target=aarch64-linux-gnu -march=armv8-a -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static   src/cpp/main.cpp -o build/obj/main.arm.o
-        clang++ -stdlib=libc++ -std=c++20 -s -flto -O2 --target=aarch64-linux-gnu -march=armv8-a  build/obj/main.arm.o /usr/lib/Mlib.a -o build/bin/AmakeCpp -v
-        sudo cp build/bin/AmakeCpp-arm /usr/bin/AmakeCpp-arm
+        clang++ -stdlib=libc++ -std=c++20 -s -flto -O2 --target=aarch64-linux-gnu -march=armv8-a  build/obj/main.arm.o /usr/lib/Mlib.a -o build/bin/AmakeCpp-arm -v
+        sudo cp build/bin/AmakeCpp-arm /usr/bin/AmakeCpp
         ;;
     armv7l)
         echo "This is a 32-bit ARM architecture."
