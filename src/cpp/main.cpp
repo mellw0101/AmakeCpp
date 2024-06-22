@@ -761,7 +761,7 @@ namespace AmakeCpp {
 #elif defined(__aarch64__) || defined(_M_ARM64)
                 args = {"CC=clang",
                         "CXX=clang++",
-                        "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
+                        "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -stdlib=libc -std=c20",
                         "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -stdlib=libc++ -std=c++20",
                         "LDFLAGS=-O3 -flto",
                         "--prefix=/usr",
