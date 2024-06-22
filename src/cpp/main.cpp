@@ -28,6 +28,8 @@ const string OBJ_DIR       = BUILD_DIR + "/obj";
 const string BIN_DIR       = BUILD_DIR + "/bin";
 const string LIB_BUILD_DIR = BUILD_DIR + "/lib";
 
+bool arm = false;
+
 namespace ConfigStrVecS {
     const vector<string> clang_format = {"Language: Cpp",
                                          "BasedOnStyle: LLVM",
@@ -365,11 +367,24 @@ namespace AmakeCpp {
                         continue;
                     }
 
-                    string objName      = cwd + "/build/obj/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
+                    string iArch;
+                    string objName;
+                    if (!arm)
+                    {
+                        iArch   = "-march=native";
+                        objName = cwd + "/build/obj/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
+                    }
+                    else
+                    {
+                        objName = cwd + "/build/obj/" + fileName.substr(0, fileName.find_last_of(".")) + ".arm.o";
+                        arm     = true;
+                    }
+
                     vector<string> args = {
-                        "-c",   "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
-                        "-m64", "-Wall", "-Werror",       "-static",        "-stdlib=libc++",        "-std=c++23",
+                        "-c",   "-O3",   iArch,     "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
+                        "-m64", "-Wall", "-Werror", "-static",        "-stdlib=libc++",        "-std=c++23",
                         file,   "-o",    objName};
+
                     try
                     {
                         s8 result = Sys::run_binary("/usr/bin/clang++", args);
@@ -406,8 +421,42 @@ namespace AmakeCpp {
         void
         linkBinary(const vector<string> &strVec = {})
         {
-            printC("Linking Obj Files -> " + cwd + "/build/bin/" + projectName, ESC_CODE_GREEN);
             vector<string> objVec = FileSys::dirContentToStrVec(OBJ_DIR);
+
+            string arch;
+            string output;
+
+            if (arm)
+            {
+                printC("ARM Architecture Detected", ESC_CODE_YELLOW);
+                for (auto &obj : objVec)
+                {
+                    string str = obj.substr(obj.find(".") + 1);
+                    if (str == "o")
+                    {
+                        printC("Removing " + obj, ESC_CODE_YELLOW);
+                        Args::eraseFromVector(objVec, obj);
+                    }
+                }
+                arch   = "-march=armv8-a";
+                output = cwd + "/build/bin/" + projectName + "-arm";
+            }
+            else
+            {
+                for (auto &obj : objVec)
+                {
+                    string str = obj.substr(obj.find(".") + 1);
+                    if (str == "arm.o")
+                    {
+                        Args::eraseFromVector(objVec, obj);
+                    }
+                }
+                arch   = "-march=native";
+                output = cwd + "/build/bin/" + projectName;
+            }
+
+            printC("Linking Obj Files -> " + output, ESC_CODE_GREEN);
+
             vector<string> libVec = FileSys::dirContentToStrVec(LIB_BUILD_DIR);
 
             vector<string> linkArgsVec = {"-stdlib=libc++",
@@ -415,9 +464,9 @@ namespace AmakeCpp {
                                           "-s",
                                           "-flto",
                                           "-O3",
-                                          "-march=native",
+                                          arch,
                                           "-o",
-                                          cwd + "/build/bin/" + projectName,
+                                          output,
                                           "/usr/lib/Mlib.a",
                                           "-L/usr/lib",
                                           "-l:libc++.a",
@@ -519,17 +568,18 @@ namespace AmakeCpp {
 
         namespace Libs {
             namespace Options {
-                enum LibOption
+                enum LibOption : u32
                 {
                     UNKNOWN_LIB     = (1 << 0),
                     NCURSESW_STATIC = (1 << 1)
                 };
 
-                LibOption
+                u32
                 getLibOption(const string &lib)
                 {
                     const static unordered_map<string, LibOption> libOptionMap = {
-                        {"ncursesw-static", NCURSESW_STATIC}
+                        {"ncursesw-static", NCURSESW_STATIC},
+                        {             "ss", NCURSESW_STATIC}
                     };
                     const auto it = libOptionMap.find(lib);
                     if (it != libOptionMap.end())
@@ -565,7 +615,8 @@ namespace AmakeCpp {
                     {
                         try
                         {
-                            Sys::run_binary("/usr/bin/wget", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz"});
+                            Sys::run_binary("/usr/bin/wget", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz",
+                                                              "-O", LIB_SRC_DIR + "/ncurses-6.3.tar.gz"});
                         }
                         catch (const exception &e)
                         {
@@ -823,30 +874,36 @@ namespace AmakeCpp {
         linkBinary(args);
         if (installBin)
         {
-            FileSys::fileContentToFile(BIN_DIR + "/" + projectName, "/usr/bin/" + projectName);
-            printC(to_string(FileSys::fileSize("/usr/bin/" + projectName)) + " Bytes", ESC_CODE_GRAY);
+            if (arm)
+            {
+                FileSys::fileContentToFile(BIN_DIR + "/" + projectName, "/usr/bin/" + projectName + ".arm");
+                printC(to_string(FileSys::fileSize("/usr/bin/" + projectName + ".arm")) + " Bytes", ESC_CODE_GRAY);
+            }
+            else
+            {
+                FileSys::fileContentToFile(BIN_DIR + "/" + projectName, "/usr/bin/" + projectName);
+                printC(to_string(FileSys::fileSize("/usr/bin/" + projectName)) + " Bytes", ESC_CODE_GRAY);
+            }
         }
     }
 
     void
-    Lib(const vector<string> &strVec = {})
+    Lib(const string &str = "")
     {
-        if (strVec.empty())
+        if (str.empty())
         {
             printC("No library specified", ESC_CODE_RED);
             return;
         }
-        for (const auto &lib : strVec)
+
+        const u32 option = getLibOption(str);
+        if (option & NCURSESW_STATIC)
         {
-            const LibOption option = getLibOption(lib);
-            if (option & NCURSESW_STATIC)
-            {
-                installNcurseswStatic();
-            }
-            if (option & UNKNOWN_LIB)
-            {
-                printC("Unknown library( Or Installer Not Implemented ): " + lib, ESC_CODE_RED);
-            }
+            installNcurseswStatic();
+        }
+        if (option & UNKNOWN_LIB)
+        {
+            printC("Unknown library( Or Installer Not Implemented ): " + str, ESC_CODE_RED);
         }
     }
 } // namespace AmakeCpp
@@ -856,6 +913,14 @@ s32
 main(s32 argc, s8 **argv)
 {
     const auto sArgv = Args::argvToStrVec(argc, argv);
+    for (const auto &arg : sArgv)
+    {
+        if (arg == "--arm")
+        {
+            arm = true;
+        }
+    }
+
     for (s32 i = 1; i < sArgv.size(); ++i)
     {
         Option const option = optionFromArg(sArgv[i]);
@@ -899,8 +964,11 @@ main(s32 argc, s8 **argv)
                     ++i;
                     args.push_back(sArgv[i]);
                 }
-                Install(args);
-                continue;
+                if (!args.empty())
+                {
+                    Install(args);
+                    continue;
+                }
             }
             Install();
         }
@@ -908,14 +976,12 @@ main(s32 argc, s8 **argv)
         {
             if (i + 1 < sArgv.size())
             {
-                vector<string> args;
-                while (optionFromArg(sArgv[i + 1]) & UNKNOWN_OPTION && i + 1 < sArgv.size())
+                if (optionFromArg(sArgv[i + 1]) & UNKNOWN_OPTION)
                 {
+                    Lib(sArgv[i + 1]);
                     ++i;
-                    args.push_back(sArgv[i]);
+                    continue;
                 }
-                Lib(args);
-                continue;
             }
             Lib();
         }
