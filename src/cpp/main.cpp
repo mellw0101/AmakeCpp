@@ -750,56 +750,18 @@ namespace AmakeCpp {
 
             using namespace Tools;
 
-            enum getLibInstalArgsMode : u8
+            vector<string>
+            getLibInstallArgs()
             {
-                CFLAGS   = (1 << 0),
-                CXXFLAGS = (1 << 1),
-                LDFLAGS  = (1 << 2)
-            };
-
-            string
-            getLibInstalArgs(const u8 mode)
-            {
-                string args;
+                vector<string> args;
 #if defined(__x86_64__) || defined(_M_X64)
-                if (mode & CFLAGS)
-                {
-                    args = "CFLAGS=-O3 -march=native";
-                }
-                else if (mode & CXXFLAGS)
-                {
-                    args = "CXXFLAGS=-O3 -march=native";
-                }
-                else if (mode & LDFLAGS)
-                {
-                    args = "LDFLAGS=-O3 -march=native -flto";
-                }
+                args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3", "CXXFLAGS=-O3", "LDFLAGS=-O3 -flto"};
 #elif defined(__aarch64__) || defined(_M_ARM64)
-                if (mode & CFLAGS)
-                {
-                    args = "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a";
-                }
-                else if (mode & CXXFLAGS)
-                {
-                    args = "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a";
-                }
-                else if (mode & LDFLAGS)
-                {
-                    args = "LDFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -flto";
-                }
+                args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 -march=armv8-a", "CXXFLAGS=-O3 -march=armv8-a",
+                        "LDFLAGS=-O3 -march=armv8-a -flto"};
 #elif defined(__arm__) || defined(_M_ARM)
-                if (mode & CFLAGS)
-                {
-                    args = "CFLAGS=-O3 -march=armv7-a";
-                }
-                else if (mode & CXXFLAGS)
-                {
-                    args = "CXXFLAGS=-O3 -march=armv7-a";
-                }
-                else if (mode & LDFLAGS)
-                {
-                    args = "LDFLAGS=-O3 -march=armv7-a -flto";
-                }
+                args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 -march=armv8-a", "CXXFLAGS=-O3 -march=armv8-a",
+                        "LDFLAGS=-O3 -march=armv8-a -flto"};
 #endif
                 return args;
             }
@@ -919,8 +881,7 @@ namespace AmakeCpp {
                     vector<string> args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
                                            "--enable-widec",      "--enable-static", "--disable-shared"};
 
-                    vector<string> env_vars = {"CC=clang", "CXX=clang++", getLibInstalArgs(CFLAGS),
-                                               getLibInstalArgs(CXXFLAGS), getLibInstalArgs(LDFLAGS)};
+                    vector<string> env_vars = getLibInstallArgs();
 
                     if (!FileSys::exists("lib/" + libName))
                     {
