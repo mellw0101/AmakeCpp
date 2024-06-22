@@ -759,9 +759,9 @@ namespace AmakeCpp {
                 args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
                         "--enable-widec",      "--enable-static", "--disable-shared"};
 #elif defined(__aarch64__) || defined(_M_ARM64)
-                args = {"CC=clang",          "CXX=clang++",         "CFLAGS=-O3",      "CXXFLAGS=-O3",
-                        "LDFLAGS=-O3 -flto", "--prefix=/usr/local", "--with-shared",   "--with-normal",
-                        "--enable-widec",    "--enable-static",     "--disable-shared"};
+                args = {"CC=clang",          "CXX=clang++",         "CFLAGS=-O3",     "CXXFLAGS=-O3",
+                        "LDFLAGS=-O3 -flto", "--prefix=/usr/local", "--with-shared",  "--with-normal",
+                        "--enable-widec",    "--enable-static",     "--enable-shared"};
 #elif defined(__arm__) || defined(_M_ARM)
                 args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
                         "CXXFLAGS=-O3 -march=armv8-a", "LDFLAGS=-O3 -march=armv8-a -flto"};
@@ -906,11 +906,12 @@ namespace AmakeCpp {
                         Sys::run_binary(binary_path, args, env_vars);
                         Sys::run_binary("/usr/bin/make", {"-j", "4"});
                     }
-                    if (!FileSys::exists(LIB_BUILD_DIR + "/" + libName))
+                    if (FileSys::exists(LIB_BUILD_DIR + "/" + libName))
                     {
-                        FileSys::fileContentToFile(
-                            LIB_SRC_DIR + "/ncurses-6.3/lib/" + libName, LIB_BUILD_DIR + "/" + libName);
+                        FileSys::rmFile(LIB_BUILD_DIR + "/" + libName);
                     }
+                    FileSys::fileContentToFile(
+                        LIB_SRC_DIR + "/ncurses-6.3/lib/" + libName, LIB_BUILD_DIR + "/" + libName);
                     FileSys::cd(cwd);
                 }
                 catch (const exception &e)
