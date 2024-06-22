@@ -171,7 +171,11 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
                 "-std=c++20",
                 file.data(),
                 "-o",
-                output.data()};
+                output.data(),
+                "-L/usr/lib",
+                "-l:libc++.a",
+                "-l:libc++abi.a",
+                "-l:libz.a"};
     }
     else if (mode & LINKARGS)
     {
@@ -630,10 +634,8 @@ namespace AmakeCpp {
             {
                 linkArgsVec.push_back(arg);
             }
-            linkArgsVec.push_back("-L" + LIB_BUILD_DIR);
             for (const string &lib : libVec)
             {
-                const string libName = "-l:" + lib.substr(lib.find_last_of("/") + 1);
                 linkArgsVec.push_back(lib);
             }
             try
@@ -781,7 +783,7 @@ namespace AmakeCpp {
                 args = {};
 #elif defined(__arm__) || defined(_M_ARM)
                 args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
-                        "CXXFLAGS=-O3 -march=armv8-a", "LDFLAGS=-O3 -march=armv8-a -flto"};
+                        "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a", "LDFLAGS=-O3 -march=armv8-a -flto"};
 #endif
                 return args;
             }
