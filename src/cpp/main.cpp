@@ -488,15 +488,17 @@ namespace AmakeCpp {
                                 const string size = cppSize.substr(cppSize.find_first_of(':') + 1);
                                 if (size == to_string(FileSys::fileSize(file)))
                                 {
-                                    printC(
-                                        "Skipping " + file + " -> " + OBJ_DIR + "/" + fileName + ".o", ESC_CODE_YELLOW);
+                                    printC("Skipping " + file + " -> " + OBJ_DIR + "/" +
+                                               fileName.substr(0, fileName.find_last_of(".")) + ".o",
+                                           ESC_CODE_YELLOW);
 
                                     cppSizesToPrint.push_back(fileName + ":" + to_string(FileSys::fileSize(file)));
                                     hasChanged = false;
                                 }
                                 else
                                 {
-                                    printC("Recompiling " + file + " -> " + OBJ_DIR + "/" + fileName + ".o",
+                                    printC("Recompiling " + file + " -> " + OBJ_DIR + "/" +
+                                               fileName.substr(0, fileName.find_last_of(".")) + ".o",
                                            ESC_CODE_YELLOW);
                                 }
                             }
@@ -507,8 +509,8 @@ namespace AmakeCpp {
                         continue;
                     }
 
-                    const string         objName = OBJ_DIR + fileName.substr(0, fileName.find_last_of(".")) + ".arm.o";
-                    const vector<string> args    = getArgsBasedOnArch(BUILDARGS, objName, file);
+                    const string objName      = OBJ_DIR + "/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
+                    const vector<string> args = getArgsBasedOnArch(BUILDARGS, objName, file);
                     //
                     // if (!arm)
                     // {
