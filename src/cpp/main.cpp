@@ -152,7 +152,7 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
     }
 
 
-#elif defined(__aarch64__) || defined(_M_ARM64)
+    // #elif defined(__aarch64__) || defined(_M_ARM64)
     printC("This is a 64-bit ARM architecture.", ESC_CODE_YELLOW);
     if (mode & BUILDARGS)
     {
@@ -164,10 +164,15 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
     }
     else if (mode & LINKARGS)
     {
-        args = {/* "-stdlib=libc++",  */ "-std=c++20", "-s", "-flto", "-O3",
-                /* "--target=aarch64-linux-gnu",
-"-march=armv8-a", */
-                "-o", output.data(), "/usr/lib/Mlib.a"};
+        args = {/* "-stdlib=libc++",  */ "-std=c++20",
+                "-s",
+                "-flto",
+                "-O3",
+                "--target=aarch64-linux-gnu",
+                "-march=armv8-a",
+                "-o",
+                output.data(),
+                "/usr/lib/Mlib.a"};
     }
 
 #elif defined(__arm__) || defined(_M_ARM)
