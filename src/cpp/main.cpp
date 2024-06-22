@@ -139,7 +139,7 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
                 "-std=c++20",
                 file.data(),
                 "-o",
-                objName.data()};
+                output.data()};
     }
     else if (mode & LINKARGS)
     {
