@@ -89,6 +89,38 @@ enum getArgsMode : u8
 };
 
 vector<string>
+cleanObjVec(const vector<string> &vec)
+{
+    vector<string> cleanVec;
+#if defined(__x86_64__) || defined(_M_X64)
+    for (const string &str : vec)
+    {
+        if (str.find(".o") != string::npos)
+        {
+            cleanVec.push_back(str);
+        }
+    }
+#elif defined(__aarch64__) || defined(_M_ARM64)
+    for (const string &str : vec)
+    {
+        if (str.find(".arm.o") != string::npos)
+        {
+            cleanVec.push_back(str);
+        }
+    }
+#elif defined(__arm__) || defined(_M_ARM)
+    for (const string &str : vec)
+    {
+        if (str.find(".arm.o") != string::npos)
+        {
+            cleanVec.push_back(str);
+        }
+    }
+#endif
+    return cleanVec;
+}
+
+vector<string>
 getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
 {
     vector<string> args;
@@ -143,21 +175,10 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
     }
     else if (mode & LINKARGS)
     {
-        args = {"-stdlib=libc++",
-                "-std=c++20",
-                "-s",
-                "-flto",
-                "-O3",
-                "--target=aarch64-linux-gnu",
-                "-march=armv8-a",
-                "-o",
-                output.data(),
-                "/usr/lib/Mlib.a",
-                "-L/usr/lib",
-                "-l:libc++.a",
-                "-l:libc++abi.a",
-                "-l:libunwind.a",
-                "-l:libz.a"};
+        args = {
+            "-stdlib=libc++", "-std=c++20", "-s",          "-flto",           "-O3", "--target=aarch64-linux-gnu",
+            "-march=armv8-a", "-o",         output.data(), "/usr/lib/Mlib.a",
+        };
     }
 
 #elif defined(__arm__) || defined(_M_ARM)
@@ -552,15 +573,16 @@ namespace AmakeCpp {
         void
         linkBinary(const vector<string> &strVec = {})
         {
-            vector<string> objVec = FileSys::dirContentToStrVec(OBJ_DIR);
-            const string   output = cwd + "/build/bin/" + projectName;
+            const string output = cwd + "/build/bin/" + projectName;
             printC("Linking Obj Files -> " + output, ESC_CODE_GREEN);
-            vector<string> linkArgsVec = getArgsBasedOnArch(LINKARGS, output);
 
+            vector<string> objVec = FileSys::dirContentToStrVec(OBJ_DIR);
+            objVec                = cleanObjVec(objVec);
+
+            vector<string> linkArgsVec = getArgsBasedOnArch(LINKARGS, output);
             //
             // if (!arm)
             // {
-
             //     linkArgsVec = {"-stdlib=libc++",
             //                    "-std=c++23",
             //                    "-s",
