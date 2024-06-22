@@ -12,13 +12,13 @@ echo "Architecture: $ARCH"
 case "$ARCH" in
     x86_64)
         echo "This is a 64-bit x86 architecture."
-        clang++ -stdlib=libc++ -std=c++20 -c -O2 --target=aarch64-linux-gnu -march=armv8-a -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static   src/cpp/main.cpp -o build/obj/main.arm.o
+        clang++ -stdlib=libc++ -std=c++23 -c -O2 -march=native -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static   src/cpp/main.cpp -o build/obj/main.o
         clang++ -stdlib=libc++ -std=c++23 -s -flto -O2 -march=native /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a  build/obj/main.o /usr/lib/Mlib.a -o build/bin/AmakeCpp
         sudo cp build/bin/AmakeCpp /usr/bin/AmakeCpp
         ;;
     aarch64)
         echo "This is a 64-bit ARM architecture."
-        clang++ -stdlib=libc++ -std=c++23 -c -O2 -march=native -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static   src/cpp/main.cpp -o build/obj/main.o
+        clang++ -stdlib=libc++ -std=c++20 -c -O2 --target=aarch64-linux-gnu -march=armv8-a -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static   src/cpp/main.cpp -o build/obj/main.arm.o
         clang++ -stdlib=libc++ -std=c++20 -s -flto -O2 --target=aarch64-linux-gnu -march=armv8-a  build/obj/main.arm.o /usr/lib/Mlib.a -o build/bin/AmakeCpp-arm -v
         sudo cp build/bin/AmakeCpp-arm /usr/bin/AmakeCpp-arm
         ;;
