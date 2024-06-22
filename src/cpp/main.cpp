@@ -759,9 +759,17 @@ namespace AmakeCpp {
                 args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
                         "--enable-widec",      "--enable-static", "--disable-shared"};
 #elif defined(__aarch64__) || defined(_M_ARM64)
-                args = {"CC=clang",          "CXX=clang++",         "CFLAGS=-O3",     "CXXFLAGS=-O3",
-                        "LDFLAGS=-O3 -flto", "--prefix=/usr/local", "--with-shared",  "--with-normal",
-                        "--enable-widec",    "--enable-static",     "--enable-shared"};
+                args = {"CC=clang",
+                        "CXX=clang++",
+                        "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
+                        "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -stdlib=libc++ -std=c++20",
+                        "LDFLAGS=-O3 -flto",
+                        "--prefix=/usr",
+                        "--with-shared",
+                        "--with-normal",
+                        "--enable-widec",
+                        "--enable-static",
+                        "--disable-shared"};
 #elif defined(__arm__) || defined(_M_ARM)
                 args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
                         "CXXFLAGS=-O3 -march=armv8-a", "LDFLAGS=-O3 -march=armv8-a -flto"};
