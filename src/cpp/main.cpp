@@ -30,6 +30,143 @@ const string LIB_BUILD_DIR = BUILD_DIR + "/lib";
 
 bool arm = false;
 
+///
+/// @name printC
+/// @brief Print string with color
+/// @param s string to print
+/// @param color color code
+/// @note
+/// - color codes available:
+///   - ESC_CODE_RED
+///   - ESC_CODE_GREEN
+///   - ESC_CODE_YELLOW
+///   - ESC_CODE_BLUE
+///   - ESC_CODE_MAGENTA
+///   - ESC_CODE_CYAN
+///   - ESC_CODE_WHITE
+///   - ESC_CODE_RESET
+/// @returns void
+void
+printC(const string &str, const s8 *color)
+{
+    cout << PROJECT_NAME << " - [ " << color << str << ESC_CODE_RESET << " ]" << '\n';
+}
+
+namespace Bash_Helpers {
+    //     #!/bin/bash
+
+    // # Get the architecture of the machine
+    // ARCH=$(uname -m)
+
+    // # Print the architecture
+    // echo "Architecture: $ARCH"
+
+    // # Perform actions based on the architecture
+    // case "$ARCH" in
+    //     x86_64)
+    //         echo "This is a 64-bit x86 architecture."
+    //         # Add your commands for x86_64 architecture here
+    //         ;;
+    //     aarch64)
+    //         echo "This is a 64-bit ARM architecture."
+    //         # Add your commands for ARM64 architecture here
+    //         ;;
+    //     armv7l)
+    //         echo "This is a 32-bit ARM architecture."
+    //         # Add your commands for ARM32 architecture here
+    //         ;;
+    //     *)
+    //         echo "Unknown architecture: $ARCH"
+    //         # Add your commands for other architectures here
+    //         ;;
+    // esac
+} // namespace Bash_Helpers
+
+enum getArgsMode : u8
+{
+    BUILDARGS = (1 << 0),
+    LINKARGS  = (1 << 1),
+};
+
+vector<string>
+getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
+{
+    vector<string> args;
+#if defined(__x86_64__) || defined(_M_X64)
+    printC("This is a 64-bit x86 architecture.", ESC_CODE_YELLOW);
+    if (mode & BUILDARGS)
+    {
+        args = {"-c",        "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
+                "-m64",      "-Wall", "-Werror",       "-static",        "-stdlib=libc++",        "-std=c++23",
+                file.data(), "-o",    output.data()};
+    }
+    else if (mode & LINKARGS)
+    {
+        args = {"-stdlib=libc++",
+                "-std=c++23",
+                "-s",
+                "-flto",
+                "-O3",
+                "-march=native",
+                "-o",
+                output.data(),
+                "/usr/lib/Mlib.a",
+                "-L/usr/lib",
+                "-l:libc++.a",
+                "-l:libc++abi.a",
+                "-l:libunwind.a",
+                "-l:libz.a"};
+    }
+
+
+#elif defined(__aarch64__) || defined(_M_ARM64)
+    printC("This is a 64-bit ARM architecture.", ESC_CODE_YELLOW);
+    if (mode & BUILDARGS)
+    {
+        args = {"-c",
+                "-O3",
+                "--target=aarch64-linux-gnu",
+                "-march=armv8-a",
+                "-funroll-loops",
+                "-Rpass=loop-vectorize",
+                "-flto",
+                "-m64",
+                "-Wall",
+                "-Werror",
+                "-static",
+                "-stdlib=libc++",
+                "-std=c++20",
+                file.data(),
+                "-o",
+                objName.data()};
+    }
+    else if (mode & LINKARGS)
+    {
+        args = {"-stdlib=libc++",
+                "-std=c++20",
+                "-s",
+                "-flto",
+                "-O3",
+                "--target=aarch64-linux-gnu",
+                "-march=armv8-a",
+                "-o",
+                output.data(),
+                "/usr/lib/Mlib.a",
+                "-L/usr/lib",
+                "-l:libc++.a",
+                "-l:libc++abi.a",
+                "-l:libunwind.a",
+                "-l:libz.a"};
+    }
+
+#elif defined(__arm__) || defined(_M_ARM)
+    printC("This is a 32-bit ARM architecture.", ESC_CODE_YELLOW);
+#else
+    printC("Unknown architecture.", ESC_CODE_YELLOW);
+#endif
+    return args;
+}
+
 namespace ConfigStrVecS {
     const vector<string> clang_format = {"Language: Cpp",
                                          "BasedOnStyle: LLVM",
@@ -267,26 +404,7 @@ namespace AmakeCpp {
     } // namespace Options
     using namespace Options;
     namespace Tools {
-        /// @name printC
-        /// @brief Print string with color
-        /// @param s string to print
-        /// @param color color code
-        /// @note
-        /// - color codes available:
-        ///   - ESC_CODE_RED
-        ///   - ESC_CODE_GREEN
-        ///   - ESC_CODE_YELLOW
-        ///   - ESC_CODE_BLUE
-        ///   - ESC_CODE_MAGENTA
-        ///   - ESC_CODE_CYAN
-        ///   - ESC_CODE_WHITE
-        ///   - ESC_CODE_RESET
-        /// @returns void
-        void
-        printC(const string &str, const s8 *color)
-        {
-            cout << PROJECT_NAME << " - [ " << color << str << ESC_CODE_RESET << " ]" << '\n';
-        }
+
 
         //
         //  Creates a directory
