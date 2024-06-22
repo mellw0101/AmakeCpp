@@ -736,7 +736,9 @@ namespace AmakeCpp {
                     return UNKNOWN_LIB;
                 }
             } // namespace Options
+
             using namespace Options;
+
             namespace Tools {
                 /// @name printIL ( printInstallLib )
                 void
@@ -745,7 +747,51 @@ namespace AmakeCpp {
                     printC("Installing Static Lib " + libName + " -> " + LIB_BUILD_DIR + "/" + libName, ESC_CODE_GREEN);
                 }
             } // namespace Tools
+
             using namespace Tools;
+
+            enum getLibInstalArgsMode : u8
+            {
+                CFLAGS   = (1 << 0),
+                CXXFLAGS = (1 << 1),
+                LDFLAGS  = (1 << 2)
+            };
+
+            string_view
+            getLibInstalArgs(const u8 mode)
+            {
+                string_view args;
+#if defined(__x86_64__) || defined(_M_X64)
+                if (mode & CFLAGS)
+                {
+                    args = "CFLAGS=-O3 -march=native";
+                }
+                else if (mode & CXXFLAGS)
+                {
+                    args = "CXXFLAGS-O3 -march=native";
+                }
+                else if (mode & LDFLAGS)
+                {
+                    args = "LDFLAGS=-O3 -march=native -flto";
+                }
+#elif defined(__aarch64__) || defined(_M_ARM64)
+                if (mode & CFLAGS)
+                {
+                    args = "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a";
+                }
+                else if (mode & CXXFLAGS)
+                {
+                    args = "CXXFLAGS-O3 --target=aarch64-linux-gnu -march=armv8-a";
+                }
+                else if (mode & LDFLAGS)
+                {
+                    args = "LDFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -flto";
+                }
+#elif defined(__arm__) || defined(_M_ARM)
+                return "-march=armv7-a";
+#endif
+                return args;
+            }
 
             int
             installNcursesPart(const string &libName)
@@ -862,8 +908,8 @@ namespace AmakeCpp {
                     vector<string> args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
                                            "--enable-widec",      "--enable-static", "--disable-shared"};
 
-                    vector<string> env_vars = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 -march=native",
-                                               "CXXFLAGS=-O3 -march=native", "LDFLAGS=-O3 -march=native -flto"};
+                    vector<string> env_vars = {"CC=clang", "CXX=clang++", getLibInstalArgs(CFLAGS).data(),
+                                               getLibInstalArgs(CXXFLAGS).data(), getLibInstalArgs(LDFLAGS).data()};
 
                     if (!FileSys::exists("lib/" + libName))
                     {
@@ -905,8 +951,11 @@ namespace AmakeCpp {
                 return EXIT_SUCCESS;
             }
         } // namespace Libs
+
         using namespace Libs;
-    }     // namespace Tools
+
+    } // namespace Tools
+
     using namespace Tools;
 
     /// @name Help
