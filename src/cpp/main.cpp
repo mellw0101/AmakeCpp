@@ -94,6 +94,7 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
     vector<string> args;
 #if defined(__x86_64__) || defined(_M_X64)
     printC("This is a 64-bit x86 architecture.", ESC_CODE_YELLOW);
+
     if (mode & BUILDARGS)
     {
         args = {"-c",        "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
@@ -485,35 +486,35 @@ namespace AmakeCpp {
                         continue;
                     }
 
-                    const string   objName = OBJ_DIR + fileName.substr(0, fileName.find_last_of(".")) + ".arm.o";
-                    vector<string> args;
-                    if (!arm)
-                    {
-                        args = {
-                            "-c",   "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
-                            "-m64", "-Wall", "-Werror",       "-static",        "-stdlib=libc++",        "-std=c++23",
-                            file,   "-o",    objName};
-                    }
-                    else
-                    {
-                        args = {"-c",
-                                "-O3",
-                                "--target=aarch64-linux-gnu",
-                                "-march=armv8-a",
-                                "-funroll-loops",
-                                "-Rpass=loop-vectorize",
-                                "-flto",
-                                "-m64",
-                                "-Wall",
-                                "-Werror",
-                                "-static",
-                                "-stdlib=libc++",
-                                "-std=c++20",
-                                file,
-                                "-o",
-                                objName};
-                    }
-
+                    const string         objName = OBJ_DIR + fileName.substr(0, fileName.find_last_of(".")) + ".arm.o";
+                    const vector<string> args    = getArgsBasedOnArch(BUILDARGS, objName, file);
+                    //
+                    // if (!arm)
+                    // {
+                    //     args = {
+                    //         "-c",   "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
+                    //         "-m64", "-Wall", "-Werror",       "-static",        "-stdlib=libc++", "-std=c++23", file,
+                    //         "-o",    objName};
+                    // }
+                    // else
+                    // {
+                    //     args = {"-c",
+                    //             "-O3",
+                    //             "--target=aarch64-linux-gnu",
+                    //             "-march=armv8-a",
+                    //             "-funroll-loops",
+                    //             "-Rpass=loop-vectorize",
+                    //             "-flto",
+                    //             "-m64",
+                    //             "-Wall",
+                    //             "-Werror",
+                    //             "-static",
+                    //             "-stdlib=libc++",
+                    //             "-std=c++20",
+                    //             file,
+                    //             "-o",
+                    //             objName};
+                    // }
 
                     try
                     {
@@ -554,44 +555,45 @@ namespace AmakeCpp {
             vector<string> objVec = FileSys::dirContentToStrVec(OBJ_DIR);
             const string   output = cwd + "/build/bin/" + projectName;
             printC("Linking Obj Files -> " + output, ESC_CODE_GREEN);
-            vector<string> linkArgsVec;
+            vector<string> linkArgsVec = getArgsBasedOnArch(LINKARGS, output);
 
-            if (!arm)
-            {
+            //
+            // if (!arm)
+            // {
 
-                linkArgsVec = {"-stdlib=libc++",
-                               "-std=c++23",
-                               "-s",
-                               "-flto",
-                               "-O3",
-                               "-march=native",
-                               "-o",
-                               output,
-                               "/usr/lib/Mlib.a",
-                               "-L/usr/lib",
-                               "-l:libc++.a",
-                               "-l:libc++abi.a",
-                               "-l:libunwind.a",
-                               "-l:libz.a"};
-            }
-            else
-            {
-                linkArgsVec = {"-stdlib=libc++",
-                               "-std=c++20",
-                               "-s",
-                               "-flto",
-                               "-O3",
-                               "--target=aarch64-linux-gnu",
-                               "-march=armv8-a",
-                               "-o",
-                               output,
-                               "/usr/lib/Mlib.a",
-                               "-L/usr/lib",
-                               "-l:libc++.a",
-                               "-l:libc++abi.a",
-                               "-l:libunwind.a",
-                               "-l:libz.a"};
-            }
+            //     linkArgsVec = {"-stdlib=libc++",
+            //                    "-std=c++23",
+            //                    "-s",
+            //                    "-flto",
+            //                    "-O3",
+            //                    "-march=native",
+            //                    "-o",
+            //                    output,
+            //                    "/usr/lib/Mlib.a",
+            //                    "-L/usr/lib",
+            //                    "-l:libc++.a",
+            //                    "-l:libc++abi.a",
+            //                    "-l:libunwind.a",
+            //                    "-l:libz.a"};
+            // }
+            // else
+            // {
+            //     linkArgsVec = {"-stdlib=libc++",
+            //                    "-std=c++20",
+            //                    "-s",
+            //                    "-flto",
+            //                    "-O3",
+            //                    "--target=aarch64-linux-gnu",
+            //                    "-march=armv8-a",
+            //                    "-o",
+            //                    output,
+            //                    "/usr/lib/Mlib.a",
+            //                    "-L/usr/lib",
+            //                    "-l:libc++.a",
+            //                    "-l:libc++abi.a",
+            //                    "-l:libunwind.a",
+            //                    "-l:libz.a"};
+            // }
 
 
             vector<string> libVec = FileSys::dirContentToStrVec(LIB_BUILD_DIR);
