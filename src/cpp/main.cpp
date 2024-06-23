@@ -419,9 +419,8 @@ namespace AmakeCpp {
         }
     } // namespace Options
     using namespace Options;
+
     namespace Tools {
-
-
         //
         //  Creates a directory
         //
@@ -947,9 +946,9 @@ namespace AmakeCpp {
         using namespace Libs;
 
     } // namespace Tools
-
     using namespace Tools;
 
+    ///
     /// @name Help
     /// @brief
     /// - Show help message
@@ -970,6 +969,7 @@ namespace AmakeCpp {
              << "   --install                   Install project\n";
     }
 
+    ///
     /// @name Configure
     /// @brief
     /// - Configure current directory as project
