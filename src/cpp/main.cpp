@@ -30,29 +30,29 @@ const string LIB_BUILD_DIR = BUILD_DIR + "/lib";
 
 bool arm = false;
 
-///
-/// @name printC
-/// @brief Print string with color
-/// @param s string to print
-/// @param color color code
-/// @note
-/// - color codes available:
-///   - ESC_CODE_RED
-///   - ESC_CODE_GREEN
-///   - ESC_CODE_YELLOW
-///   - ESC_CODE_BLUE
-///   - ESC_CODE_MAGENTA
-///   - ESC_CODE_CYAN
-///   - ESC_CODE_WHITE
-///   - ESC_CODE_RESET
-/// @returns void
+//
+//  Print string with color.
+//  @param s: The string to print.
+//  @param color: The color code.
+//  Color codes available:
+//  -  ESC_CODE_RED
+//  -  ESC_CODE_GREEN
+//  -  ESC_CODE_YELLOW
+//  -  ESC_CODE_BLUE
+//  -  ESC_CODE_MAGENTA
+//  -  ESC_CODE_CYAN
+//  -  ESC_CODE_WHITE
+//  -  ESC_CODE_RESET
+//  @returns void
+//
 void
 printC(const string &str, const s8 *color)
 {
     cout << PROJECT_NAME << " - [ " << color << str << ESC_CODE_RESET << " ]" << '\n';
 }
 
-namespace Bash_Helpers {
+namespace Bash_Helpers
+{
     //     #!/bin/bash
 
     // # Get the architecture of the machine
@@ -150,7 +150,6 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
                 "-l:libz.a"};
     }
 
-
 #elif defined(__aarch64__) || defined(_M_ARM64)
     printC("This is a 64-bit ARM architecture.", ESC_CODE_YELLOW);
     if (mode & BUILDARGS)
@@ -182,7 +181,8 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
     return args;
 }
 
-namespace ConfigStrVecS {
+namespace ConfigStrVecS
+{
     const vector<string> clang_format = {"Language: Cpp",
                                          "BasedOnStyle: LLVM",
                                          "AccessModifierOffset: -4",
@@ -210,7 +210,7 @@ namespace ConfigStrVecS {
                                          "  AfterControlStatement: true",
                                          "  AfterEnum: true",
                                          "  AfterFunction: true",
-                                         "  AfterNamespace: False",
+                                         "  AfterNamespace: True",
                                          "  AfterStruct: true",
                                          "  AfterUnion: true",
                                          "  AfterExternBlock: true",
@@ -250,7 +250,7 @@ namespace ConfigStrVecS {
                                          "InsertNewlineAtEOF: True",
                                          "MacroBlockBegin: ''",
                                          "MacroBlockEnd: ''",
-                                         "MaxEmptyLinesToKeep: 2",
+                                         "MaxEmptyLinesToKeep: 1",
                                          "NamespaceIndentation: All",
                                          "SpaceAfterCStyleCast: false",
                                          "SpaceAfterLogicalNot: false",
@@ -341,8 +341,10 @@ namespace ConfigStrVecS {
 } // namespace ConfigStrVecS
 using namespace ConfigStrVecS;
 
-namespace AmakeCpp {
-    namespace Options {
+namespace AmakeCpp
+{
+    namespace Options
+    {
         /// @enum Option
         /// @brief
         /// - Enum representing cli options
@@ -386,23 +388,21 @@ namespace AmakeCpp {
             return UNKNOWN_OPTION;
         }
 
-        /// @enum ConfigureOption
-        /// @brief
-        /// - Enum representing configure sub options
+        //
+        //  Enum representing configure sub options
+        //
         enum ConfigureOption
         {
             UNKNOWN_CONFIGURE_OPTION = (1 << 0),
             CLANG_FORMAT             = (1 << 1)
         };
 
-        /// @name configureOptionFromArg
-        /// @brief
-        /// - Convert string to ConfigureOption
-        /// @param arg
-        /// - string to convert
-        /// @returns ConfigureOption
-        /// @note
-        /// - ConfigureOption is an @enum
+        //
+        //  -  Convert string to ConfigureOption
+        //  @param arg: string to convert
+        //  @returns ConfigureOption
+        //  @note
+        //  - ConfigureOption is an @enum
         ConfigureOption
         configureOptionFromArg(const string &arg)
         {
@@ -419,7 +419,8 @@ namespace AmakeCpp {
     } // namespace Options
     using namespace Options;
 
-    namespace Tools {
+    namespace Tools
+    {
         //
         //  Creates a directory
         //
@@ -480,11 +481,25 @@ namespace AmakeCpp {
                                 const string size = cppSize.substr(cppSize.find_first_of(':') + 1);
                                 if (size == to_string(FileSys::fileSize(file)))
                                 {
+                                    bool alreadyInVec = false;
+                                    for (const auto &cppSize : cppSizes)
+                                    {
+                                        if (cppSize == fileName + ":" + size)
+                                        {
+                                            alreadyInVec = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!alreadyInVec)
+                                    {
+                                        cppSizesToPrint.push_back(fileName + ":" + to_string(FileSys::fileSize(file)));
+                                    }
+
                                     printC("Skipping " + file + " -> " + OBJ_DIR + "/" +
                                                fileName.substr(0, fileName.find_last_of(".")) + ".o",
                                            ESC_CODE_YELLOW);
 
-                                    cppSizesToPrint.push_back(fileName + ":" + to_string(FileSys::fileSize(file)));
                                     hasChanged = false;
                                 }
                                 else
@@ -570,49 +585,9 @@ namespace AmakeCpp {
             const string output = cwd + "/build/bin/" + projectName;
             printC("Linking Obj Files -> " + output, ESC_CODE_GREEN);
 
-            vector<string> objVec = FileSys::dirContentToStrVec(OBJ_DIR);
-            // objVec                = cleanObjVec(objVec);
-
+            vector<string> objVec      = FileSys::dirContentToStrVec(OBJ_DIR);
             vector<string> linkArgsVec = getArgsBasedOnArch(LINKARGS, output);
-            //
-            // if (!arm)
-            // {
-            //     linkArgsVec = {"-stdlib=libc++",
-            //                    "-std=c++23",
-            //                    "-s",
-            //                    "-flto",
-            //                    "-O3",
-            //                    "-march=native",
-            //                    "-o",
-            //                    output,
-            //                    "/usr/lib/Mlib.a",
-            //                    "-L/usr/lib",
-            //                    "-l:libc++.a",
-            //                    "-l:libc++abi.a",
-            //                    "-l:libunwind.a",
-            //                    "-l:libz.a"};
-            // }
-            // else
-            // {
-            //     linkArgsVec = {"-stdlib=libc++",
-            //                    "-std=c++20",
-            //                    "-s",
-            //                    "-flto",
-            //                    "-O3",
-            //                    "--target=aarch64-linux-gnu",
-            //                    "-march=armv8-a",
-            //                    "-o",
-            //                    output,
-            //                    "/usr/lib/Mlib.a",
-            //                    "-L/usr/lib",
-            //                    "-l:libc++.a",
-            //                    "-l:libc++abi.a",
-            //                    "-l:libunwind.a",
-            //                    "-l:libz.a"};
-            // }
-
-
-            vector<string> libVec = FileSys::dirContentToStrVec(LIB_BUILD_DIR);
+            vector<string> libVec      = FileSys::dirContentToStrVec(LIB_BUILD_DIR);
 
             for (const auto &obj : objVec)
             {
@@ -705,8 +680,10 @@ namespace AmakeCpp {
             }
         }
 
-        namespace Libs {
-            namespace Options {
+        namespace Libs
+        {
+            namespace Options
+            {
                 enum LibOption : u32
                 {
                     UNKNOWN_LIB     = (1 << 0),
@@ -731,7 +708,8 @@ namespace AmakeCpp {
 
             using namespace Options;
 
-            namespace Tools {
+            namespace Tools
+            {
                 /// @name printIL ( printInstallLib )
                 void
                 printIL(const string &libName)
@@ -767,7 +745,6 @@ namespace AmakeCpp {
 #endif
                 return args;
             }
-
 
             vector<string>
             getLibInstallEnvArgs()
@@ -947,11 +924,9 @@ namespace AmakeCpp {
     } // namespace Tools
     using namespace Tools;
 
-    ///
-    /// @name Help
-    /// @brief
-    /// - Show help message
-    /// @returns void
+    //
+    //  -  Show help message
+    //
     void
     Help()
     {
@@ -968,13 +943,12 @@ namespace AmakeCpp {
              << "   --install                   Install project\n";
     }
 
-    ///
-    /// @name Configure
-    /// @brief
-    /// - Configure current directory as project
-    /// @param subOptions
-    /// - Sub options for configure
-    /// @returns void
+    //
+    //  -  Configure current directory as project
+    //  @param subOptions
+    //  -  Sub options for configure
+    //  @returns void
+    //
     void
     Configure(const string &subOption = "")
     {
@@ -1003,19 +977,19 @@ namespace AmakeCpp {
         }
     }
 
-    /// @name Build
-    /// @brief
-    /// - Build project
+    //
+    //  Build project
+    //
     void
     Build()
     {
         compileCpp();
     }
 
-    /// @name Clean
-    /// @brief
-    /// - Clean project meaning remove build directory
-    /// @returns void
+    //
+    //  Clean project, meaning remove build directory.
+    //  @returns void
+    //
     void
     Clean()
     {
@@ -1061,15 +1035,14 @@ namespace AmakeCpp {
         linkBinary(args);
         if (installBin)
         {
-            if (arm)
-            {
-                FileSys::fileContentToFile(BIN_DIR + "/" + projectName, "/usr/bin/" + projectName + ".arm");
-                printC(to_string(FileSys::fileSize("/usr/bin/" + projectName + ".arm")) + " Bytes", ESC_CODE_GRAY);
-            }
-            else
+            try
             {
                 FileSys::fileContentToFile(BIN_DIR + "/" + projectName, "/usr/bin/" + projectName);
                 printC(to_string(FileSys::fileSize("/usr/bin/" + projectName)) + " Bytes", ESC_CODE_GRAY);
+            }
+            catch (const exception &e)
+            {
+                printC(e.what(), ESC_CODE_RED);
             }
         }
     }
@@ -1100,14 +1073,6 @@ s32
 main(s32 argc, s8 **argv)
 {
     const auto sArgv = Args::argvToStrVec(argc, argv);
-    for (const auto &arg : sArgv)
-    {
-        if (arg == "--arm")
-        {
-            arm = true;
-        }
-    }
-
     for (s32 i = 1; i < sArgv.size(); ++i)
     {
         Option const option = optionFromArg(sArgv[i]);
@@ -1117,14 +1082,12 @@ main(s32 argc, s8 **argv)
         }
         if (option & CONF)
         {
-
             if (i + 1 < sArgv.size())
             {
                 if (optionFromArg(sArgv[i + 1]) & UNKNOWN_OPTION)
                 {
                     Configure(sArgv[i + 1]);
-                    ++i;
-                    break;
+                    exit(EXIT_SUCCESS);
                 }
             }
             Configure();
@@ -1176,6 +1139,7 @@ main(s32 argc, s8 **argv)
         {
             printC("Error: Unknown option '" + sArgv[i] + "'. Run: " + PROJECT_NAME + " '--help' to display help msg",
                    ESC_CODE_RED);
+            exit(EXIT_FAILURE);
         }
     }
     return 0;
