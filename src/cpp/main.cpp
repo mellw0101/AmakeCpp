@@ -558,6 +558,15 @@ namespace AmakeCpp
                             printC("Failed to compile " + file, ESC_CODE_RED);
                             exit(EXIT_FAILURE);
                         }
+
+                        for (s32 i = 0; i < cppSizesToPrint.size(); ++i)
+                        {
+                            if (cppSizesToPrint[i].find(fileName) != string::npos)
+                            {
+                                Args::eraseFromVector(cppSizesToPrint, cppSizesToPrint[i]);
+                            }
+                        }
+
                         cppSizesToPrint.push_back(fileName + ":" + to_string(FileSys::fileSize(file)));
                     }
                     catch (const exception &e)
