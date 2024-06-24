@@ -147,7 +147,6 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
                 "-L/usr/lib",
                 "-l:libc++.a",
                 "-l:libc++abi.a",
-                "-l:libunwind.a",
                 "-l:libz.a"};
     }
 
