@@ -125,8 +125,6 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
 {
     vector<string> args;
 #if defined(__x86_64__) || defined(_M_X64)
-    printC("This is a 64-bit x86 architecture.", ESC_CODE_YELLOW);
-
     if (mode & BUILDARGS)
     {
         args = {"-c",        "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
@@ -151,7 +149,6 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
     }
 
 #elif defined(__aarch64__) || defined(_M_ARM64)
-    printC("This is a 64-bit ARM architecture.", ESC_CODE_YELLOW);
     if (mode & BUILDARGS)
     {
         args = {"-O3", "-stdlib=libc++", "-std=c++20", "-c", file.data(), "-o", output.data()};
@@ -174,7 +171,6 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
     }
 
 #elif defined(__arm__) || defined(_M_ARM)
-    printC("This is a 32-bit ARM architecture.", ESC_CODE_YELLOW);
 #else
     printC("Unknown architecture.", ESC_CODE_YELLOW);
 #endif
