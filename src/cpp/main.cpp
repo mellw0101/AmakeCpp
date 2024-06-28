@@ -151,7 +151,17 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
 #elif defined(__aarch64__) || defined(_M_ARM64)
     if (mode & BUILDARGS)
     {
-        args = {"-O3", "-stdlib=libc++", "-std=c++20", "-c", file.data(), "-o", output.data()};
+        args = {"-funroll-loops",
+                "-Rpass=loop-vectorize",
+                "-Wall",
+                "-Werror",
+                "-O3",
+                "-stdlib=libc++",
+                "-std=c++20",
+                "-c",
+                file.data(),
+                "-o",
+                output.data()};
     }
     else if (mode & LINKARGS)
     {
