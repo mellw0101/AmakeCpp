@@ -127,9 +127,22 @@ getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
 #if defined(__x86_64__) || defined(_M_X64)
     if (mode & BUILDARGS)
     {
-        args = {"-c",        "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
-                "-m64",      "-Wall", "-Werror",       "-static",        "-stdlib=libc++",        "-std=c++23",
-                file.data(), "-o",    output.data()};
+        args = {"-c",
+                "-O3",
+                "-march=native",
+                "-funroll-loops",
+                "-Rpass=loop-vectorize",
+                "-flto",
+                "-m64",
+                "-Wall",
+                "-Werror",
+                "-static",
+                "-stdlib=libc++",
+                "-std=c++23",
+                "-Wno-vla",
+                file.data(),
+                "-o",
+                output.data()};
     }
     else if (mode & LINKARGS)
     {
@@ -345,6 +358,7 @@ namespace ConfigStrVecS
         "-Wall", "-Werror",       "-static",        "-stdlib=libc++",
     };
 } // namespace ConfigStrVecS
+
 using namespace ConfigStrVecS;
 
 namespace AmakeCpp
@@ -423,6 +437,7 @@ namespace AmakeCpp
             return CLANG_FORMAT;
         }
     } // namespace Options
+
     using namespace Options;
 
     namespace Tools
@@ -554,16 +569,13 @@ namespace AmakeCpp
 
                     try
                     {
-                        s8 result = Sys::run_binary("/usr/bin/clang++", args);
+
+                        Sys::run_binary("/usr/bin/clang++", args);
+
                         printC(file + " -> " + objName, ESC_CODE_BLUE);
                         printC(".cpp File Size: " + to_string(FileSys::fileSize(file)) + " Bytes" +
                                    " .o File Size: " + to_string(FileSys::fileSize(objName)) + " Bytes",
                                ESC_CODE_GRAY);
-                        if (result != EXIT_SUCCESS)
-                        {
-                            printC("Failed to compile " + file, ESC_CODE_RED);
-                            exit(EXIT_FAILURE);
-                        }
 
                         for (s32 i = 0; i < cppSizesToPrint.size(); ++i)
                         {
@@ -937,6 +949,7 @@ namespace AmakeCpp
         using namespace Libs;
 
     } // namespace Tools
+
     using namespace Tools;
 
     //
@@ -1081,7 +1094,9 @@ namespace AmakeCpp
             printC("Unknown library( Or Installer Not Implemented ): " + str, ESC_CODE_RED);
         }
     }
+
 } // namespace AmakeCpp
+
 using namespace AmakeCpp;
 
 s32
