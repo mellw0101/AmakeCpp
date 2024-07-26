@@ -1,7 +1,6 @@
 #include <Mlib/Args.h>
 #include <Mlib/FileSys.h>
 #include <Mlib/Sys.h>
-
 #include <unordered_map>
 
 #define VERSION      "0.1"
@@ -30,7 +29,6 @@ const string LIB_BUILD_DIR = BUILD_DIR + "/lib";
 
 bool arm = false;
 
-//
 //  Print string with color.
 //  @param s: The string to print.
 //  @param color: The color code.
@@ -43,25 +41,21 @@ bool arm = false;
 //  -  ESC_CODE_CYAN
 //  -  ESC_CODE_WHITE
 //  -  ESC_CODE_RESET
-//  @returns void
-//
 void
-printC(const string &str, const s8 *color)
+printC(const string &str, const char *color)
 {
     cout << PROJECT_NAME << " - [ " << color << str << ESC_CODE_RESET << " ]" << '\n';
 }
 
 namespace Bash_Helpers
 {
-    //     #!/bin/bash
-
-    // # Get the architecture of the machine
-    // ARCH=$(uname -m)
-
+	// #!/bin/bash
+	// # Get the architecture of the machine
+	// ARCH=$(uname -m)
     // # Print the architecture
-    // echo "Architecture: $ARCH"
+	// echo "Architecture: $ARCH"
 
-    // # Perform actions based on the architecture
+	// # Perform actions based on the architecture
     // case "$ARCH" in
     //     x86_64)
     //         echo "This is a 64-bit x86 architecture."
@@ -76,15 +70,15 @@ namespace Bash_Helpers
     //         # Add your commands for ARM32 architecture here
     //         ;;
     //     *)
-    //         echo "Unknown architecture: $ARCH"
-    //         # Add your commands for other architectures here
-    //         ;;
+    //         	echo "Unknown architecture: $ARCH"
+    //         	# Add your commands for other architectures here
+    // 			;;
     // esac
 } // namespace Bash_Helpers
 
-enum getArgsMode : u8
+enum getArgsMode : unsigned char
 {
-    BUILDARGS = (1 << 0),
+ 	BUILDARGS = (1 << 0),
     LINKARGS  = (1 << 1),
 };
 
@@ -97,7 +91,7 @@ cleanObjVec(const vector<string> &vec)
     {
         if (str.find(".o") != string::npos)
         {
-            cleanVec.push_back(str);
+			cleanVec.push_back(str);
         }
     }
 #elif defined(__aarch64__) || defined(_M_ARM64)
@@ -121,7 +115,7 @@ cleanObjVec(const vector<string> &vec)
 }
 
 vector<string>
-getArgsBasedOnArch(const u8 mode, string_view output, string_view file = "")
+getArgsBasedOnArch(const unsigned char mode, std::string_view output, string_view file = "")
 {
     vector<string> args;
 #if defined(__x86_64__) || defined(_M_X64)
@@ -363,54 +357,43 @@ using namespace ConfigStrVecS;
 
 namespace AmakeCpp
 {
-    namespace Options
-    {
-        /// @enum Option
-        /// @brief
-        /// - Enum representing cli options
-        enum Option
+	namespace Options
+	{
+		/* Enum representing cli options */
+		enum Option
         {
-            UNKNOWN_OPTION = (1 << 0),
-            HELP           = (1 << 1),
-            CONF           = (1 << 2),
-            VER            = (1 << 3),
-            BUILD          = (1 << 4),
-            CLEAN          = (1 << 5),
-            INSTALL        = (1 << 6),
-            LIB            = (1 << 7)
-        };
+			UNKNOWN_OPTION = (1 << 0),
+			HELP           = (1 << 1),
+			CONF           = (1 << 2),
+			VER            = (1 << 3),
+			BUILD          = (1 << 4),
+			CLEAN          = (1 << 5),
+			INSTALL        = (1 << 6),
+			LIB            = (1 << 7)
+		};
 
-        /// @name optionFromArg
-        /// @brief
-        /// - Convert string to Option
-        /// @param arg
-        /// - string to convert
-        /// @returns Option
-        /// @note
-        /// - Option is an @enum
-        Option
-        optionFromArg(const string &arg)
-        {
-            const static unordered_map<string, Option> optionMap = {
-                {     "--help",    HELP},
-                {"--configure",    CONF},
-                {  "--version",     VER},
-                {    "--build",   BUILD},
-                {    "--clean",   CLEAN},
-                {  "--install", INSTALL},
-                {      "--lib",     LIB}
-            };
-            const auto it = optionMap.find(arg);
-            if (it != optionMap.end())
-            {
-                return it->second;
-            }
-            return UNKNOWN_OPTION;
+		/* Convert string to Option */
+		Option
+		optionFromArg(const string &arg)
+		{
+			const static unordered_map<string, Option> optionMap = {
+				{     "--help",    HELP},
+				{"--configure",    CONF},
+				{  "--version",     VER},
+				{    "--build",   BUILD},
+				{    "--clean",   CLEAN},
+				{  "--install", INSTALL},
+				{      "--lib",     LIB}
+			};
+			const auto it = optionMap.find(arg);
+			if (it != optionMap.end())
+			{
+			    return it->second;
+			}
+			return UNKNOWN_OPTION;
         }
 
-        //
-        //  Enum representing configure sub options
-        //
+		/* Enum representing configure sub options */
         enum ConfigureOption
         {
             UNKNOWN_CONFIGURE_OPTION = (1 << 0),
@@ -437,16 +420,12 @@ namespace AmakeCpp
             return CLANG_FORMAT;
         }
     } // namespace Options
-
     using namespace Options;
-
     namespace Tools
     {
-        //
-        //  Creates a directory
-        //
+        /* Creates a directory */
         void
-        createProjectDir(const string &path, u8 mode = FileSys::NONE)
+        createProjectDir(const std::string &path, unsigned char mode = FileSys::NONE)
         {
             try
             {
@@ -569,7 +548,6 @@ namespace AmakeCpp
 
                     try
                     {
-
                         Sys::run_binary("/usr/bin/clang++", args);
 
                         printC(file + " -> " + objName, ESC_CODE_BLUE);
@@ -577,7 +555,7 @@ namespace AmakeCpp
                                    " .o File Size: " + to_string(FileSys::fileSize(objName)) + " Bytes",
                                ESC_CODE_GRAY);
 
-                        for (s32 i = 0; i < cppSizesToPrint.size(); ++i)
+                        for (unsigned int i = 0; i < cppSizesToPrint.size(); ++i)
                         {
                             if (cppSizesToPrint[i].find(fileName) != string::npos)
                             {
@@ -952,9 +930,7 @@ namespace AmakeCpp
 
     using namespace Tools;
 
-    //
-    //  -  Show help message
-    //
+    /* Show help message. */
     void
     Help()
     {
@@ -971,12 +947,7 @@ namespace AmakeCpp
              << "   --install                   Install project\n";
     }
 
-    //
-    //  -  Configure current directory as project
-    //  @param subOptions
-    //  -  Sub options for configure
-    //  @returns void
-    //
+    /* Configure current directory as project. */
     void
     Configure(const string &subOption = "")
     {
@@ -1005,19 +976,14 @@ namespace AmakeCpp
         }
     }
 
-    //
-    //  Build project
-    //
+    /*  Build project. */
     void
     Build()
     {
         compileCpp();
     }
 
-    //
-    //  Clean project, meaning remove build directory.
-    //  @returns void
-    //
+    /* Clean project, meaning remove build directory. */
     void
     Clean()
     {
@@ -1040,10 +1006,6 @@ namespace AmakeCpp
         }
     }
 
-    /// @name Install
-    /// @brief
-    /// - Install project
-    /// @returns void
     void
     Install(const vector<string> &strVec = {})
     {
@@ -1083,7 +1045,6 @@ namespace AmakeCpp
             printC("No library specified", ESC_CODE_RED);
             return;
         }
-
         const u32 option = getLibOption(str);
         if (option & NCURSESW_STATIC)
         {
@@ -1091,21 +1052,19 @@ namespace AmakeCpp
         }
         if (option & UNKNOWN_LIB)
         {
-            printC("Unknown library( Or Installer Not Implemented ): " + str, ESC_CODE_RED);
+            printC("Unknown library ('Or Installer Not Implemented'): " + str, ESC_CODE_RED);
         }
     }
-
-} // namespace AmakeCpp
-
+}
 using namespace AmakeCpp;
 
-s32
-main(s32 argc, s8 **argv)
+int
+main(int argc, char **argv)
 {
     const auto sArgv = Args::argvToStrVec(argc, argv);
-    for (s32 i = 1; i < sArgv.size(); ++i)
+    for (int i = 1; i < sArgv.size(); ++i)
     {
-        Option const option = optionFromArg(sArgv[i]);
+        const Option option = optionFromArg(sArgv[i]);
         if (option & HELP)
         {
             Help();

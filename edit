@@ -1,0 +1,3 @@
+#!/bin/bash
+
+NanoX src/cpp/main.cpp src/cpp/Compile.cpp
