@@ -1,31 +1,12 @@
+#include "../include/prototypes.h"
 #include <Mlib/Args.h>
 #include <Mlib/FileSys.h>
 #include <Mlib/Sys.h>
+#include <string>
 #include <unordered_map>
 
 #define VERSION      "0.1"
 #define PROJECT_NAME "AmakeCpp"
-
-using namespace std;
-using namespace Mlib;
-
-const string cwd         = FileSys::currentWorkingDir();
-const string projectName = cwd.substr(cwd.find_last_of("/") + 1);
-
-const string AMAKE_CONF_DIR  = cwd + "/.amake";
-const string AMAKE_CPP_SIZES = AMAKE_CONF_DIR + "/cppSizes";
-
-const string SRC_DIR     = cwd + "/src";
-const string INCLUDE_DIR = SRC_DIR + "/include";
-const string AS_DIR      = SRC_DIR + "/as";
-const string CPP_DIR     = SRC_DIR + "/cpp";
-const string C_DIR       = SRC_DIR + "/c";
-const string LIB_SRC_DIR = SRC_DIR + "/lib";
-
-const string BUILD_DIR     = cwd + "/build";
-const string OBJ_DIR       = BUILD_DIR + "/obj";
-const string BIN_DIR       = BUILD_DIR + "/bin";
-const string LIB_BUILD_DIR = BUILD_DIR + "/lib";
 
 bool arm = false;
 
@@ -49,13 +30,13 @@ printC(const string &str, const char *color)
 
 namespace Bash_Helpers
 {
-	// #!/bin/bash
-	// # Get the architecture of the machine
-	// ARCH=$(uname -m)
+    // #!/bin/bash
+    // # Get the architecture of the machine
+    // ARCH=$(uname -m)
     // # Print the architecture
-	// echo "Architecture: $ARCH"
+    // echo "Architecture: $ARCH"
 
-	// # Perform actions based on the architecture
+    // # Perform actions based on the architecture
     // case "$ARCH" in
     //     x86_64)
     //         echo "This is a 64-bit x86 architecture."
@@ -74,11 +55,11 @@ namespace Bash_Helpers
     //         	# Add your commands for other architectures here
     // 			;;
     // esac
-} // namespace Bash_Helpers
+}
 
-enum getArgsMode : unsigned char
+enum getArgsMode : Uchar
 {
- 	BUILDARGS = (1 << 0),
+    BUILDARGS = (1 << 0),
     LINKARGS  = (1 << 1),
 };
 
@@ -91,7 +72,7 @@ cleanObjVec(const vector<string> &vec)
     {
         if (str.find(".o") != string::npos)
         {
-			cleanVec.push_back(str);
+            cleanVec.push_back(str);
         }
     }
 #elif defined(__aarch64__) || defined(_M_ARM64)
@@ -115,7 +96,7 @@ cleanObjVec(const vector<string> &vec)
 }
 
 vector<string>
-getArgsBasedOnArch(const unsigned char mode, std::string_view output, string_view file = "")
+getArgsBasedOnArch(const Uchar mode, std::string_view output, std::string_view file = "")
 {
     vector<string> args;
 #if defined(__x86_64__) || defined(_M_X64)
@@ -194,7 +175,7 @@ getArgsBasedOnArch(const unsigned char mode, std::string_view output, string_vie
     return args;
 }
 
-namespace ConfigStrVecS
+inline namespace ConfigStrVecS
 {
     const vector<string> clang_format = {"Language: Cpp",
                                          "BasedOnStyle: LLVM",
@@ -351,61 +332,56 @@ namespace ConfigStrVecS
         "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto", "-m64",
         "-Wall", "-Werror",       "-static",        "-stdlib=libc++",
     };
-} // namespace ConfigStrVecS
+}
 
-using namespace ConfigStrVecS;
-
-namespace AmakeCpp
+inline namespace AmakeCpp
 {
-	namespace Options
-	{
-		/* Enum representing cli options */
-		enum Option
+    inline namespace Options
+    {
+        /* Enum representing cli options */
+        enum Option
         {
-			UNKNOWN_OPTION = (1 << 0),
-			HELP           = (1 << 1),
-			CONF           = (1 << 2),
-			VER            = (1 << 3),
-			BUILD          = (1 << 4),
-			CLEAN          = (1 << 5),
-			INSTALL        = (1 << 6),
-			LIB            = (1 << 7)
-		};
+            UNKNOWN_OPTION = (1 << 0),
+            HELP           = (1 << 1),
+            CONF           = (1 << 2),
+            VER            = (1 << 3),
+            BUILD          = (1 << 4),
+            CLEAN          = (1 << 5),
+            INSTALL        = (1 << 6),
+            LIB            = (1 << 7),
+            TEST           = (1 << 8)
+        };
 
-		/* Convert string to Option */
-		Option
-		optionFromArg(const string &arg)
-		{
-			const static unordered_map<string, Option> optionMap = {
-				{     "--help",    HELP},
-				{"--configure",    CONF},
-				{  "--version",     VER},
-				{    "--build",   BUILD},
-				{    "--clean",   CLEAN},
-				{  "--install", INSTALL},
-				{      "--lib",     LIB}
-			};
-			const auto it = optionMap.find(arg);
-			if (it != optionMap.end())
-			{
-			    return it->second;
-			}
-			return UNKNOWN_OPTION;
+        /* Convert string to Option */
+        Option
+        optionFromArg(const string &arg)
+        {
+            const static std::unordered_map<string, Option> optionMap = {
+                {     "--help",    HELP},
+                {"--configure",    CONF},
+                {  "--version",     VER},
+                {    "--build",   BUILD},
+                {    "--clean",   CLEAN},
+                {  "--install", INSTALL},
+                {      "--lib",     LIB},
+                {     "--test",    TEST}
+            };
+            const auto it = optionMap.find(arg);
+            if (it != optionMap.end())
+            {
+                return it->second;
+            }
+            return UNKNOWN_OPTION;
         }
 
-		/* Enum representing configure sub options */
+        /* Enum representing configure sub options */
         enum ConfigureOption
         {
             UNKNOWN_CONFIGURE_OPTION = (1 << 0),
             CLANG_FORMAT             = (1 << 1)
         };
 
-        //
-        //  -  Convert string to ConfigureOption
-        //  @param arg: string to convert
-        //  @returns ConfigureOption
-        //  @note
-        //  - ConfigureOption is an @enum
+        /* Convert string to ConfigureOption */
         ConfigureOption
         configureOptionFromArg(const string &arg)
         {
@@ -419,9 +395,9 @@ namespace AmakeCpp
             }
             return CLANG_FORMAT;
         }
-    } // namespace Options
-    using namespace Options;
-    namespace Tools
+    }
+
+    inline namespace Tools
     {
         /* Creates a directory */
         void
@@ -439,7 +415,7 @@ namespace AmakeCpp
         }
 
         void
-        configAmakeDir()
+        configAmakeDir(void)
         {
             if (!FileSys::exists(AMAKE_CONF_DIR))
             {
@@ -451,26 +427,21 @@ namespace AmakeCpp
             }
         }
 
-        //
-        //  Compile ( .cpp in src/cpp -> .o in build/obj )
-        //
+        /* Compile (.cpp in src/cpp -> .o in build/obj) */
         void
-        compileCpp()
+        compileCpp(void)
         {
             configAmakeDir();
             printC("Compiling .cpp -> .o", ESC_CODE_GREEN);
             try
             {
-                auto cppSizes        = FileSys::fileContentToStrVec(AMAKE_CPP_SIZES);
-                auto cppSizesToPrint = cppSizes;
-
-                vector<string> files = FileSys::dirContentToStrVec(CPP_DIR);
-
+                auto           cppSizes        = FileSys::fileContentToStrVec(AMAKE_CPP_SIZES);
+                auto           cppSizesToPrint = cppSizes;
+                vector<string> files           = FileSys::dirContentToStrVec(CPP_DIR);
                 for (const auto &file : files)
                 {
                     const string fileName   = file.substr(file.find_last_of("/") + 1);
                     bool         hasChanged = true;
-
                     if (!cppSizes.empty())
                     {
                         for (const auto &cppSize : cppSizes)
@@ -490,22 +461,18 @@ namespace AmakeCpp
                                             break;
                                         }
                                     }
-
                                     if (!alreadyInVec)
                                     {
-                                        cppSizesToPrint.push_back(fileName + ":" + to_string(FileSys::fileSize(file)));
+                                        cppSizesToPrint.push_back(
+                                            fileName + ":" + to_string(FileSys::fileSize(file)));
                                     }
-
-                                    printC("Skipping " + file + " -> " + OBJ_DIR + "/" +
-                                               fileName.substr(0, fileName.find_last_of(".")) + ".o",
-                                           ESC_CODE_YELLOW);
-
                                     hasChanged = false;
                                 }
                                 else
                                 {
                                     printC("Recompiling " + file + " -> " + OBJ_DIR + "/" +
-                                               fileName.substr(0, fileName.find_last_of(".")) + ".o",
+                                               fileName.substr(0, fileName.find_last_of(".")) +
+                                               ".o",
                                            ESC_CODE_YELLOW);
                                 }
                             }
@@ -515,44 +482,17 @@ namespace AmakeCpp
                     {
                         continue;
                     }
-
-                    const string objName      = OBJ_DIR + "/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
+                    const string objName =
+                        OBJ_DIR + "/" + fileName.substr(0, fileName.find_last_of(".")) + ".o";
                     const vector<string> args = getArgsBasedOnArch(BUILDARGS, objName, file);
-                    //
-                    // if (!arm)
-                    // {
-                    //     args = {
-                    //         "-c",   "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto",
-                    //         "-m64", "-Wall", "-Werror",       "-static",        "-stdlib=libc++", "-std=c++23", file,
-                    //         "-o",    objName};
-                    // }
-                    // else
-                    // {
-                    //     args = {"-c",
-                    //             "-O3",
-                    //             "--target=aarch64-linux-gnu",
-                    //             "-march=armv8-a",
-                    //             "-funroll-loops",
-                    //             "-Rpass=loop-vectorize",
-                    //             "-flto",
-                    //             "-m64",
-                    //             "-Wall",
-                    //             "-Werror",
-                    //             "-static",
-                    //             "-stdlib=libc++",
-                    //             "-std=c++20",
-                    //             file,
-                    //             "-o",
-                    //             objName};
-                    // }
-
                     try
                     {
                         Sys::run_binary("/usr/bin/clang++", args);
 
                         printC(file + " -> " + objName, ESC_CODE_BLUE);
                         printC(".cpp File Size: " + to_string(FileSys::fileSize(file)) + " Bytes" +
-                                   " .o File Size: " + to_string(FileSys::fileSize(objName)) + " Bytes",
+                                   " .o File Size: " + to_string(FileSys::fileSize(objName)) +
+                                   " Bytes",
                                ESC_CODE_GRAY);
 
                         for (unsigned int i = 0; i < cppSizesToPrint.size(); ++i)
@@ -562,8 +502,8 @@ namespace AmakeCpp
                                 Args::eraseFromVector(cppSizesToPrint, cppSizesToPrint[i]);
                             }
                         }
-
-                        cppSizesToPrint.push_back(fileName + ":" + to_string(FileSys::fileSize(file)));
+                        cppSizesToPrint.push_back(fileName + ":" +
+                                                  to_string(FileSys::fileSize(file)));
                     }
                     catch (const exception &e)
                     {
@@ -581,9 +521,7 @@ namespace AmakeCpp
             }
         }
 
-        //
-        //  Link .o files in build/obj to binary in build/bin
-        //
+        /* Link .o files in build/obj to binary in build/bin */
         void
         linkBinary(const vector<string> &strVec = {})
         {
@@ -617,7 +555,7 @@ namespace AmakeCpp
         }
 
         void
-        configureProjectDirs()
+        configureProjectDirs(void)
         {
             createProjectDir(SRC_DIR);
             createProjectDir(INCLUDE_DIR);
@@ -632,37 +570,43 @@ namespace AmakeCpp
         }
 
         void
-        configureClangFormat()
+        configureClangFormat(void)
         {
             printC("Configuring Clang-Format", ESC_CODE_GREEN);
             try
             {
                 while (true)
                 {
-                    string answer = Sys::Prompt("Do you want to add standard .clang-format file? (y/n): ");
-                    if (answer == "n" || answer == "N" || answer == "no" || answer == "NO" || answer == "No")
+                    string answer =
+                        Sys::Prompt("Do you want to add standard .clang-format file? (y/n): ");
+                    if (answer == "n" || answer == "N" || answer == "no" || answer == "NO" ||
+                        answer == "No")
                     {
                         break;
                     }
-                    else if (answer == "y" || answer == "Y" || answer == "yes" || answer == "YES" || answer == "Yes")
+                    else if (answer == "y" || answer == "Y" || answer == "yes" || answer == "YES" ||
+                             answer == "Yes")
                     {
                         FileSys::writeStrVecToFile(cwd + "/.clang-format", clang_format);
                         printC("Clang-Format configured", ESC_CODE_GREEN);
                         while (true)
                         {
-                            string answer = Sys::Prompt("Do you want format on save in vscode? (y/n): ");
-                            if (answer == "n" || answer == "N" || answer == "no" || answer == "NO" || answer == "No")
+                            string answer =
+                                Sys::Prompt("Do you want format on save in vscode? (y/n): ");
+                            if (answer == "n" || answer == "N" || answer == "no" ||
+                                answer == "NO" || answer == "No")
                             {
                                 break;
                             }
-                            else if (answer == "y" || answer == "Y" || answer == "yes" || answer == "YES" ||
-                                     answer == "Yes")
+                            else if (answer == "y" || answer == "Y" || answer == "yes" ||
+                                     answer == "YES" || answer == "Yes")
                             {
                                 if (!FileSys::exists(cwd + "/.vscode"))
                                 {
                                     createProjectDir(cwd + "/.vscode");
                                 }
-                                FileSys::writeStrVecToFile(cwd + "/.vscode/settings.json", vsCodeSettings);
+                                FileSys::writeStrVecToFile(
+                                    cwd + "/.vscode/settings.json", vsCodeSettings);
                                 printC("Format on save configured", ESC_CODE_GREEN);
                                 break;
                             }
@@ -685,17 +629,17 @@ namespace AmakeCpp
             }
         }
 
-        namespace Libs
+        inline namespace Libs
         {
-            namespace Options
+            inline namespace Options
             {
-                enum LibOption : u32
+                enum LibOption : Uint
                 {
                     UNKNOWN_LIB     = (1 << 0),
                     NCURSESW_STATIC = (1 << 1)
                 };
 
-                u32
+                Uint
                 getLibOption(const string &lib)
                 {
                     const static unordered_map<string, LibOption> libOptionMap = {
@@ -709,21 +653,19 @@ namespace AmakeCpp
                     }
                     return UNKNOWN_LIB;
                 }
-            } // namespace Options
+            }
 
-            using namespace Options;
-
-            namespace Tools
+            inline namespace Tools
             {
                 /// @name printIL ( printInstallLib )
                 void
                 printIL(const string &libName)
                 {
-                    printC("Installing Static Lib " + libName + " -> " + LIB_BUILD_DIR + "/" + libName, ESC_CODE_GREEN);
+                    printC(
+                        "Installing Static Lib " + libName + " -> " + LIB_BUILD_DIR + "/" + libName,
+                        ESC_CODE_GREEN);
                 }
-            } // namespace Tools
-
-            using namespace Tools;
+            }
 
             vector<string>
             getLibInstallArgs()
@@ -733,19 +675,22 @@ namespace AmakeCpp
                 args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
                         "--enable-widec",      "--enable-static", "--disable-shared"};
 #elif defined(__aarch64__) || defined(_M_ARM64)
-                args = {"CC=clang",
-                        "CXX=clang++",
-                        "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -stdlib=libc -std=c20",
-                        "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -stdlib=libc++ -std=c++20",
-                        "LDFLAGS=-O3 -flto",
-                        "--prefix=/usr",
-                        "--with-shared",
-                        "--with-normal",
-                        "--enable-widec",
-                        "--enable-static",
-                        "--disable-shared"};
+                args = {
+                    "CC=clang",
+                    "CXX=clang++",
+                    "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -stdlib=libc -std=c20",
+                    "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a -stdlib=libc++ "
+                    "-std=c++20",
+                    "LDFLAGS=-O3 -flto",
+                    "--prefix=/usr",
+                    "--with-shared",
+                    "--with-normal",
+                    "--enable-widec",
+                    "--enable-static",
+                    "--disable-shared"};
 #elif defined(__arm__) || defined(_M_ARM)
-                args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
+                args = {"CC=clang", "CXX=clang++",
+                        "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
                         "CXXFLAGS=-O3 -march=armv8-a", "LDFLAGS=-O3 -march=armv8-a -flto"};
 #endif
                 return args;
@@ -756,12 +701,15 @@ namespace AmakeCpp
             {
                 vector<string> args;
 #if defined(__x86_64__) || defined(_M_X64)
-                args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3", "CXXFLAGS=-O3", "LDFLAGS=-O3 -flto"};
+                args = {
+                    "CC=clang", "CXX=clang++", "CFLAGS=-O3", "CXXFLAGS=-O3", "LDFLAGS=-O3 -flto"};
 #elif defined(__aarch64__) || defined(_M_ARM64)
                 args = {};
 #elif defined(__arm__) || defined(_M_ARM)
-                args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
-                        "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a", "LDFLAGS=-O3 -march=armv8-a -flto"};
+                args = {"CC=clang", "CXX=clang++",
+                        "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
+                        "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
+                        "LDFLAGS=-O3 -march=armv8-a -flto"};
 #endif
                 return args;
             }
@@ -781,8 +729,9 @@ namespace AmakeCpp
                     {
                         try
                         {
-                            Sys::run_binary("/usr/bin/wget", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz",
-                                                              "-O", LIB_SRC_DIR + "/ncurses-6.3.tar.gz"});
+                            Sys::run_binary("/usr/bin/wget",
+                                            {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz",
+                                             "-O", LIB_SRC_DIR + "/ncurses-6.3.tar.gz"});
                         }
                         catch (const exception &e)
                         {
@@ -794,8 +743,9 @@ namespace AmakeCpp
                     {
                         try
                         {
-                            Sys::run_binary("/usr/bin/axel", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz",
-                                                              "-o", LIB_SRC_DIR + "/ncurses-6.3.tar.gz"});
+                            Sys::run_binary("/usr/bin/axel",
+                                            {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz",
+                                             "-o", LIB_SRC_DIR + "/ncurses-6.3.tar.gz"});
                         }
                         catch (const exception &e)
                         {
@@ -819,7 +769,8 @@ namespace AmakeCpp
                             try
                             {
                                 Sys::run_binary(
-                                    "/usr/bin/sudo", {"/usr/bin/pacman", "-S", "--needed", "--noconfirm", "wget"});
+                                    "/usr/bin/sudo",
+                                    {"/usr/bin/pacman", "-S", "--needed", "--noconfirm", "wget"});
                             }
                             catch (const exception &e)
                             {
@@ -831,7 +782,8 @@ namespace AmakeCpp
                         {
                             try
                             {
-                                Sys::run_binary("/usr/bin/sudo", {"/usr/bin/apt", "install", "-y", "wget"});
+                                Sys::run_binary(
+                                    "/usr/bin/sudo", {"/usr/bin/apt", "install", "-y", "wget"});
                             }
                             catch (const exception &e)
                             {
@@ -847,12 +799,14 @@ namespace AmakeCpp
                     }
                     if (FileSys::exists("/usr/bin/tar"))
                     {
-                        printC("Extracting " + LIB_SRC_DIR + "/ncurses-6.3.tar.gz -> " + LIB_SRC_DIR + "/ncurses-6.3",
+                        printC("Extracting " + LIB_SRC_DIR + "/ncurses-6.3.tar.gz -> " +
+                                   LIB_SRC_DIR + "/ncurses-6.3",
                                ESC_CODE_GREEN);
                         try
                         {
                             Sys::run_binary(
-                                "/usr/bin/tar", {"-xzf", LIB_SRC_DIR + "/ncurses-6.3.tar.gz", "-C", LIB_SRC_DIR + "/"});
+                                "/usr/bin/tar", {"-xzf", LIB_SRC_DIR + "/ncurses-6.3.tar.gz", "-C",
+                                                 LIB_SRC_DIR + "/"});
                         }
                         catch (const exception &e)
                         {
@@ -902,7 +856,9 @@ namespace AmakeCpp
                 }
                 if (FileSys::exists(LIB_BUILD_DIR + "/" + libName))
                 {
-                    printC("Sizes " + to_string(FileSys::fileSize(LIB_SRC_DIR + "/ncurses-6.3/lib/" + libName)) +
+                    printC("Sizes " +
+                               to_string(
+                                   FileSys::fileSize(LIB_SRC_DIR + "/ncurses-6.3/lib/" + libName)) +
                                " -> " + to_string(FileSys::fileSize(LIB_BUILD_DIR + "/" + libName)),
                            ESC_CODE_GRAY);
                 }
@@ -922,17 +878,13 @@ namespace AmakeCpp
                 FileSys::rmdir(LIB_SRC_DIR + "/ncurses-6.3");
                 return EXIT_SUCCESS;
             }
-        } // namespace Libs
+        }
 
-        using namespace Libs;
-
-    } // namespace Tools
-
-    using namespace Tools;
+    }
 
     /* Show help message. */
     void
-    Help()
+    Help(void)
     {
         cout << "Usage: " << PROJECT_NAME << " [options]\n"
              << "Options:\n"
@@ -978,14 +930,14 @@ namespace AmakeCpp
 
     /*  Build project. */
     void
-    Build()
+    Build(void)
     {
         compileCpp();
     }
 
     /* Clean project, meaning remove build directory. */
     void
-    Clean()
+    Clean(void)
     {
         try
         {
@@ -1028,7 +980,8 @@ namespace AmakeCpp
             try
             {
                 FileSys::fileContentToFile(BIN_DIR + "/" + projectName, "/usr/bin/" + projectName);
-                printC(to_string(FileSys::fileSize("/usr/bin/" + projectName)) + " Bytes", ESC_CODE_GRAY);
+                printC(to_string(FileSys::fileSize("/usr/bin/" + projectName)) + " Bytes",
+                       ESC_CODE_GRAY);
             }
             catch (const exception &e)
             {
@@ -1056,7 +1009,6 @@ namespace AmakeCpp
         }
     }
 }
-using namespace AmakeCpp;
 
 int
 main(int argc, char **argv)
@@ -1065,6 +1017,11 @@ main(int argc, char **argv)
     for (int i = 1; i < sArgv.size(); ++i)
     {
         const Option option = optionFromArg(sArgv[i]);
+        if (option & TEST)
+        {
+            do_compile();
+            exit(0);
+        }
         if (option & HELP)
         {
             Help();
@@ -1126,7 +1083,8 @@ main(int argc, char **argv)
         }
         if (option & UNKNOWN_OPTION)
         {
-            printC("Error: Unknown option '" + sArgv[i] + "'. Run: " + PROJECT_NAME + " '--help' to display help msg",
+            printC("Error: Unknown option '" + sArgv[i] + "'. Run: " + PROJECT_NAME +
+                       " '--help' to display help msg",
                    ESC_CODE_RED);
             exit(EXIT_FAILURE);
         }

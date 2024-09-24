@@ -11,10 +11,10 @@ AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-BreakConstructorInitializers: BeforeComma
+AllowShortLoopsOnASingleLine: true
+BreakConstructorInitializers: BeforeColon 
 BreakBeforeBinaryOperators: None
-AlwaysBreakAfterDefinitionReturnType: All
+AlwaysBreakAfterDefinitionReturnType: true
 AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: true
@@ -32,7 +32,7 @@ BraceWrapping:
   AfterObjCDeclaration: false
   BeforeCatch: true
   BeforeElse: true
-  BeforeLambdaBody: true
+  BeforeLambdaBody: false
   BeforeWhile: true
   IndentBraces: false
   SplitEmptyFunction: false
@@ -40,7 +40,7 @@ BraceWrapping:
   SplitEmptyNamespace: false
 BreakBeforeBraces: Custom
 BreakBeforeTernaryOperators: true
-ColumnLimit: 120
+ColumnLimit: 100
 CompactNamespaces: false
 ContinuationIndentWidth: 4
 EmptyLineAfterAccessModifier: Never
@@ -110,3 +110,4 @@ AlignConsecutiveShortCaseStatements:
 AlignEscapedNewlines: Left
 BreakAfterAttributes: Always
 PenaltyBreakBeforeFirstCallParameter: 0
+FixNamespaceComments: false
