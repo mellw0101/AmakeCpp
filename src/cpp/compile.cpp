@@ -85,6 +85,8 @@ do_cc(void)
     free(t);
     free(td);
     printf("Total cc threads: %u\n", tsize);
+    tsize = 0;
+    tcap  = 10;
 }
 
 void
@@ -113,19 +115,23 @@ do_c(void)
     }
     for (Uint i = 0; i < tsize; ++i)
     {
+        *td[i].input = '\0';
+        *td[i].output = '\0';
         pthread_join(t[i], nullptr);
     }
     free(t);
     free(td);
     printf("Total c threads: %u\n", tsize);
+    tsize = 0;
+    tcap  = 10;
 }
 
 void
 do_compile(void)
 {
-    do_cc();
-    do_c();
-    /* init_threads();
+    /* do_c();
+    do_cc(); */
+    init_threads();
     Ulong          n;
     compile_entry *files = files_in_dir(CPP_DIR.c_str(), &n);
     for (Ulong i = 0; i < n; ++i)
@@ -152,6 +158,6 @@ do_compile(void)
     }
     free(t);
     free(td);
-    printf("Total threads: %u\n", tsize); */
+    printf("Total threads: %u\n", tsize);
 }
 /* clang-format on */

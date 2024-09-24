@@ -38,7 +38,7 @@
 
 #define ARG_MAX 256
 #define C_COMPILER  "clang"
-#define C_DEFAULT_ARGS "-m64 -stdlib=libc -funroll-loops -O3 -std=c23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla"
+#define C_DEFAULT_ARGS "-m64 -funroll-loops -O3 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla"
 #define CC_COMPILER "clang++"
 #define CC_DEFAULT_ARGS "-m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla"
 #define STATIC_STD "-static-libc++ -static-libgcc"
