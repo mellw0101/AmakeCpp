@@ -18,11 +18,12 @@ case "$ARCH" in
 x86_64)
     comp_obj main
     comp_obj utils
+    comp_obj link
     comp_obj compile
 
     /usr/bin/clang++ -stdlib=libc++ -std=c++23 -s -flto -O2 -march=native \
         /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a \
-        build/obj/main.o build/obj/utils.o build/obj/compile.o \
+        build/obj/main.o build/obj/utils.o build/obj/compile.o build/obj/link.o \
         /usr/lib/Mlib.a \
         -o build/bin/AmakeCpp
 

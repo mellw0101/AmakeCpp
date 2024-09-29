@@ -1,3 +1,4 @@
+#include <dirent.h>
 #include "../include/prototypes.h"
 
 void
@@ -124,6 +125,7 @@ files_in_dir(const char *path, Ulong *n)
         e->file_len  = len;
     }
     *n = size;
+    closedir(dir);
     return buf;
 }
 

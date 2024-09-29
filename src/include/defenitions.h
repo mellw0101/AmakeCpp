@@ -63,4 +63,10 @@ typedef struct {
     char input[PATH_MAX];
     char output[PATH_MAX];
 } thread_data_t;
+
+enum getArgsMode : Uchar
+{
+    BUILDARGS = (1 << 0),
+    LINKARGS  = (1 << 1),
+};
 /* clang-format on */

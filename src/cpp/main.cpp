@@ -1,9 +1,9 @@
-#include "../include/prototypes.h"
 #include <Mlib/Args.h>
 #include <Mlib/FileSys.h>
 #include <Mlib/Sys.h>
 #include <string>
 #include <unordered_map>
+#include "../include/prototypes.h"
 
 #define VERSION      "0.1"
 #define PROJECT_NAME "AmakeCpp"
@@ -57,12 +57,6 @@ namespace Bash_Helpers
     // esac
 }
 
-enum getArgsMode : Uchar
-{
-    BUILDARGS = (1 << 0),
-    LINKARGS  = (1 << 1),
-};
-
 vector<string>
 cleanObjVec(const vector<string> &vec)
 {
@@ -96,7 +90,7 @@ cleanObjVec(const vector<string> &vec)
 }
 
 vector<string>
-getArgsBasedOnArch(const Uchar mode, std::string_view output, std::string_view file = "")
+getArgsBasedOnArch(const Uchar mode, std::string_view output, std::string_view file)
 {
     vector<string> args;
 #if defined(__x86_64__) || defined(_M_X64)
@@ -349,7 +343,8 @@ inline namespace AmakeCpp
             CLEAN          = (1 << 5),
             INSTALL        = (1 << 6),
             LIB            = (1 << 7),
-            TEST           = (1 << 8)
+            TEST           = (1 << 8),
+            LINK           = (1 << 9)
         };
 
         /* Convert string to Option */
@@ -364,7 +359,8 @@ inline namespace AmakeCpp
                 {    "--clean",   CLEAN},
                 {  "--install", INSTALL},
                 {      "--lib",     LIB},
-                {     "--test",    TEST}
+                {     "--test",    TEST},
+                {     "--link",    LINK}
             };
             const auto it = optionMap.find(arg);
             if (it != optionMap.end())
@@ -1020,6 +1016,25 @@ main(int argc, char **argv)
         if (option & TEST)
         {
             do_compile();
+            exit(0);
+        }
+        if (option & LINK)
+        {
+            if (i + 1 < sArgv.size())
+            {
+                vector<string> args;
+                while (optionFromArg(sArgv[i + 1]) == UNKNOWN_OPTION && i + 1 < sArgv.size())
+                {
+                    ++i;
+                    args.push_back(sArgv[i]);
+                }
+                if (!args.empty())
+                {
+                    do_link(args);
+                    continue;
+                }
+            }
+            do_link();
             exit(0);
         }
         if (option & HELP)

@@ -1,6 +1,7 @@
 #include "defenitions.h"
 
 using std::string;
+using std::vector;
 using namespace Mlib;
 
 const string cwd         = FileSys::currentWorkingDir();
@@ -21,12 +22,20 @@ const string OBJ_DIR       = BUILD_DIR + "/obj";
 const string BIN_DIR       = BUILD_DIR + "/bin";
 const string LIB_BUILD_DIR = BUILD_DIR + "/lib";
 
+void           printC(const string &str, const char *color);
+vector<string> getArgsBasedOnArch(const Uchar mode, std::string_view output,
+                                  std::string_view file = "");
+
 /* 'utils.cpp' */
 void run(const char *bin, const char *const *argv, const char *const *envv) __NOT_NULL(1, 2);
 void copy_stack_nstr(char *stack_dst, const char *stack_src, Uint n) noexcept;
 void extract_name_and_ext(compile_entry *e) noexcept;
+bool dir_exists(const char *path);
 compile_entry *files_in_dir(const char *path, Ulong *n);
 void           free_files(compile_entry *files, Ulong n);
 
 /* 'compile.cpp'. */
 void do_compile(void);
+
+/* 'link.cpp' */
+void do_link(const vector<string> &strVec = {});
