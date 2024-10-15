@@ -20,14 +20,14 @@ AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: true
 BinPackParameters: true
 BraceWrapping:
-  AfterCaseLabel: true
-  AfterClass: true
+  # AfterCaseLabel: true
+  # AfterClass: true
   # AfterControlStatement: true
-  AfterEnum: true
+  # AfterEnum: true
   AfterFunction: false
-  AfterNamespace: True
-  AfterStruct: true
-  AfterUnion: true
+  # AfterNamespace: True
+  # AfterStruct: true
+  # AfterUnion: true
   AfterExternBlock: true
   AfterObjCDeclaration: false
   BeforeCatch: true

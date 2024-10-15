@@ -29,10 +29,10 @@ vector<string> getArgsBasedOnArch(const Uchar mode, std::string_view output,
 /* 'utils.cpp' */
 void run(const char *bin, const char *const *argv, const char *const *envv) __NOT_NULL(1, 2);
 void copy_stack_nstr(char *stack_dst, const char *stack_src, Uint n) noexcept;
-void extract_name_and_ext(compile_entry *e) noexcept;
+void extract_name_and_ext(DirEntry *e) noexcept;
 bool dir_exists(const char *path);
-compile_entry *files_in_dir(const char *path, Ulong *n);
-void           free_files(compile_entry *files, Ulong n);
+DirEntry *files_in_dir(const char *path, Ulong *n);
+void           free_files(DirEntry *files, Ulong n);
 
 /* 'compile.cpp'. */
 void do_compile(void);

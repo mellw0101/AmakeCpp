@@ -1,23 +1,20 @@
-#include <Mlib/def.h>
-#include <cstdio>
-#include <sys/stat.h>
 #include "../include/prototypes.h"
 
-static Uint           tsize = 0;
-static Uint           tcap  = 10;
-static thread_data_t *td    = nullptr;
-static pthread_t     *t     = nullptr;
+static Uint        tsize = 0;
+static Uint        tcap  = 10;
+static ThreadData *td    = nullptr;
+static pthread_t  *t     = nullptr;
 
 void init_threads(void) {
   t  = (pthread_t *)malloc(sizeof(pthread_t) * tcap);
-  td = (thread_data_t *)malloc(sizeof(thread_data_t) * tcap);
+  td = (ThreadData *)malloc(sizeof(ThreadData) * tcap);
 }
 
 void add_thread_data(const char *input, const char *output) {
-  (tsize == tcap) ? ((tcap *= 2), (td = (thread_data_t *)realloc(td, sizeof(thread_data_t) * tcap)),
+  (tsize == tcap) ? ((tcap *= 2), (td = (ThreadData *)realloc(td, sizeof(ThreadData) * tcap)),
                      (t = (pthread_t *)realloc(t, sizeof(pthread_t) * tcap)))
                   : 0;
-  thread_data_t *data    = &td[tsize];
+  ThreadData *data    = &td[tsize];
   Uint in_len  = strlen(input);
   Uint out_len = strlen(output);
   copy_stack_nstr(data->input, input, in_len);
@@ -28,7 +25,7 @@ void add_thread_data(const char *input, const char *output) {
 }
 
 static void *thread_cc_work(void *arg) {
-  thread_data_t *data = (thread_data_t *)arg;
+  ThreadData *data = (ThreadData *)arg;
   char           cmd[PATH_MAX];
   snprintf(cmd, PATH_MAX, CC_COMPILER " -c %s " CC_DEFAULT_ARGS " -I%s -o %s", data->input, INCLUDE_DIR.c_str(),
            data->output);
@@ -38,7 +35,7 @@ static void *thread_cc_work(void *arg) {
 }
 
 static void *thread_c_work(void *arg) {
-  thread_data_t *data = (thread_data_t *)arg;
+  ThreadData *data = (ThreadData *)arg;
   char           cmd[PATH_MAX];
   snprintf(
       cmd, PATH_MAX, C_COMPILER " -c %s " C_DEFAULT_ARGS " -I%s -o %s", data->input, INCLUDE_DIR.c_str(), data->output);
@@ -50,9 +47,9 @@ static void *thread_c_work(void *arg) {
 void do_c(void) {
   init_threads();
   Ulong          n;
-  compile_entry *files = files_in_dir(C_DIR.c_str(), &n);
+  DirEntry *files = files_in_dir(C_DIR.c_str(), &n);
   for (Ulong i = 0; i < n; ++i) {
-    compile_entry *e = &files[i];
+    DirEntry *e = &files[i];
     if (e->type == 8) {
       extract_name_and_ext(e);
       char in[PATH_MAX];
@@ -76,9 +73,9 @@ void do_c(void) {
 void do_compile(void) {
   init_threads();
   Ulong          n;
-  compile_entry *files = files_in_dir(CPP_DIR.c_str(), &n);
+  DirEntry *files = files_in_dir(CPP_DIR.c_str(), &n);
   for (Ulong i = 0; i < n; ++i) {
-    compile_entry *e = &files[i];
+    DirEntry *e = &files[i];
     /* File. */
     if (e->type == 8) {
       extract_name_and_ext(e);
@@ -94,9 +91,9 @@ void do_compile(void) {
         continue;
       }
       Ulong          sn;
-      compile_entry *sub_files = files_in_dir(string(CPP_DIR + "/" + e->file).c_str(), &sn);
+      DirEntry *sub_files = files_in_dir(string(CPP_DIR + "/" + e->file).c_str(), &sn);
       for (Ulong si = 0; si < sn; ++si) {
-        compile_entry *se = &sub_files[si];
+        DirEntry *se = &sub_files[si];
         if (se->type == 8) {
           printf("file: %s\n", se->file);
           extract_name_and_ext(se);
