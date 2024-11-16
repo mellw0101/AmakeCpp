@@ -155,156 +155,156 @@ vector<string> getArgsBasedOnArch(const Uchar mode, string_view output, string_v
 }
 
 inline namespace ConfigStrVecS {
-  const vector<string> clang_format = {"Language: Cpp",
-                                       "BasedOnStyle: LLVM",
-                                       "AccessModifierOffset: -4",
-                                       "AlignConsecutiveAssignments: true",
-                                       "AlignConsecutiveDeclarations: true",
-                                       "AlignOperands: AlignAfterOperator",
-                                       "AlignTrailingComments:",
-                                       "  Kind: Always",
-                                       "  OverEmptyLines: 2",
-                                       "AllowShortBlocksOnASingleLine: Empty",
-                                       "AllowShortCaseLabelsOnASingleLine: false",
-                                       "AllowShortFunctionsOnASingleLine: None",
-                                       "AllowShortIfStatementsOnASingleLine: false",
-                                       "AllowShortLoopsOnASingleLine: false",
-                                       "BreakConstructorInitializers: BeforeComma",
-                                       "BreakBeforeBinaryOperators: None",
-                                       "AlwaysBreakAfterDefinitionReturnType: All",
-                                       "AlwaysBreakAfterReturnType: None",
-                                       "AlwaysBreakTemplateDeclarations: Yes",
-                                       "BinPackArguments: true",
-                                       "BinPackParameters: true",
-                                       "BraceWrapping:",
-                                       "  AfterCaseLabel: true",
-                                       "  AfterClass: true",
-                                       "  AfterControlStatement: true",
-                                       "  AfterEnum: true",
-                                       "  AfterFunction: true",
-                                       "  AfterNamespace: True",
-                                       "  AfterStruct: true",
-                                       "  AfterUnion: true",
-                                       "  AfterExternBlock: true",
-                                       "  AfterObjCDeclaration: false",
-                                       "  BeforeCatch: true",
-                                       "  BeforeElse: true",
-                                       "  BeforeLambdaBody: true",
-                                       "  BeforeWhile: true",
-                                       "  IndentBraces: false",
-                                       "  SplitEmptyFunction: false",
-                                       "  SplitEmptyRecord: false",
-                                       "  SplitEmptyNamespace: false",
-                                       "BreakBeforeBraces: Custom",
-                                       "BreakBeforeTernaryOperators: true",
-                                       "ColumnLimit: 120",
-                                       "CompactNamespaces: false",
-                                       "ContinuationIndentWidth: 4",
-                                       "EmptyLineAfterAccessModifier: Never",
-                                       "EmptyLineBeforeAccessModifier: LogicalBlock",
-                                       "IncludeBlocks: Preserve",
-                                       "IncludeCategories:",
-                                       "  - Regex: '^<.*'",
-                                       "    Priority: 1",
-                                       "  - Regex: '^\".*'",
-                                       "    Priority: 2",
-                                       "  - Regex: '.*'",
-                                       "    Priority: 3",
-                                       "IncludeIsMainRegex: '([-_](test|unittest))?$'",
-                                       "IndentCaseBlocks: false",
-                                       "IndentCaseLabels: true",
-                                       "IndentGotoLabels: true",
-                                       "IndentPPDirectives: AfterHash",
-                                       "IndentRequiresClause: True",
-                                       "IndentWidth: 4",
-                                       "IndentWrappedFunctionNames: false",
-                                       "InsertBraces: True",
-                                       "InsertNewlineAtEOF: True",
-                                       "MacroBlockBegin: ''",
-                                       "MacroBlockEnd: ''",
-                                       "MaxEmptyLinesToKeep: 1",
-                                       "NamespaceIndentation: All",
-                                       "SpaceAfterCStyleCast: false",
-                                       "SpaceAfterLogicalNot: false",
-                                       "SpaceAfterTemplateKeyword: true",
-                                       "SpaceBeforeAssignmentOperators: True",
-                                       "SpaceBeforeCaseColon: true",
-                                       "SpaceBeforeCpp11BracedList: True",
-                                       "SpaceBeforeInheritanceColon: true",
-                                       "SpaceBeforeParens: ControlStatements",
-                                       "SpaceBeforeRangeBasedForLoopColon: true",
-                                       "SpaceBeforeSquareBrackets: false",
-                                       "SpaceInEmptyParentheses: false",
-                                       "SpacesBeforeTrailingComments: 1",
-                                       "SpacesInAngles: false",
-                                       "SpacesInContainerLiterals: true",
-                                       "SpacesInConditionalStatement: False",
-                                       "BracedInitializerIndentWidth: 4",
-                                       "SpacesInCStyleCastParentheses: false",
-                                       "SpacesInParentheses: false",
-                                       "SpacesInSquareBrackets: false",
-                                       "TabWidth: 4",
-                                       "UseTab: Never",
-                                       "PointerAlignment: Right",
-                                       "Standard: Latest",
-                                       "AlignAfterOpenBracket: Align",
-                                       "AlignArrayOfStructures: Right",
-                                       "AllowAllParametersOfDeclarationOnNextLine: false",
-                                       "AllowAllArgumentsOnNextLine: false",
-                                       "AllowShortLambdasOnASingleLine: None",
-                                       "LambdaBodyIndentation: Signature",
-                                       "AlignConsecutiveMacros:",
-                                       "  Enabled: true",
-                                       "  AcrossEmptyLines: true",
-                                       "  AcrossComments: true",
-                                       "  AlignCompound: true",
-                                       "  PadOperators: true",
-                                       "AlignConsecutiveShortCaseStatements:",
-                                       "  Enabled: true",
-                                       "  AcrossEmptyLines: true",
-                                       "  AcrossComments: true",
-                                       "  AlignCaseColons: true",
-                                       "AlignEscapedNewlines: Left",
-                                       "BreakAfterAttributes: Always",
-                                       "PenaltyBreakBeforeFirstCallParameter: 0"};
+  /* clang-format off */
+  const vector<string> clang_format = {
+    "Language: Cpp",
+    "BasedOnStyle: LLVM",
+    "AccessModifierOffset: -4",
+    "AlignConsecutiveAssignments: true",
+    "AlignConsecutiveDeclarations: true",
+    "AlignOperands: AlignAfterOperator",
+    "AlignTrailingComments:",
+    "  Kind: Always",
+    "  OverEmptyLines: 2",
+    "AllowShortBlocksOnASingleLine: Empty",
+    "AllowShortCaseLabelsOnASingleLine: false",
+    "AllowShortFunctionsOnASingleLine: None",
+    "AllowShortIfStatementsOnASingleLine: false",
+    "AllowShortLoopsOnASingleLine: false",
+    "BreakConstructorInitializers: BeforeComma",
+    "BreakBeforeBinaryOperators: None",
+    "AlwaysBreakAfterDefinitionReturnType: All",
+    "AlwaysBreakAfterReturnType: None",
+    "AlwaysBreakTemplateDeclarations: Yes",
+    "BinPackArguments: true",
+    "BinPackParameters: true",
+    "BraceWrapping:",
+    "  AfterCaseLabel: true",
+    "  AfterClass: true",
+    "  AfterControlStatement: true",
+    "  AfterEnum: true",
+    "  AfterFunction: true",
+    "  AfterNamespace: True",
+    "  AfterStruct: true",
+    "  AfterUnion: true",
+    "  AfterExternBlock: true",
+    "  AfterObjCDeclaration: false",
+    "  BeforeCatch: true",
+    "  BeforeElse: true",
+    "  BeforeLambdaBody: true",
+    "  BeforeWhile: true",
+    "  IndentBraces: false",
+    "  SplitEmptyFunction: false",
+    "  SplitEmptyRecord: false",
+    "  SplitEmptyNamespace: false",
+    "BreakBeforeBraces: Custom",
+    "BreakBeforeTernaryOperators: true",
+    "ColumnLimit: 120",
+    "CompactNamespaces: false",
+    "ContinuationIndentWidth: 4",
+    "EmptyLineAfterAccessModifier: Never",
+    "EmptyLineBeforeAccessModifier: LogicalBlock",
+    "IncludeBlocks: Preserve",
+    "IncludeCategories:",
+    "  - Regex: '^<.*'",
+    "    Priority: 1",
+    "  - Regex: '^\".*'",
+    "    Priority: 2",
+    "  - Regex: '.*'",
+    "    Priority: 3",
+    "IncludeIsMainRegex: '([-_](test|unittest))?$'",
+    "IndentCaseBlocks: false",
+    "IndentCaseLabels: true",
+    "IndentGotoLabels: true",
+    "IndentPPDirectives: AfterHash",
+    "IndentRequiresClause: True",
+    "IndentWidth: 4",
+    "IndentWrappedFunctionNames: false",
+    "InsertBraces: True",
+    "InsertNewlineAtEOF: True",
+    "MacroBlockBegin: ''",
+    "MacroBlockEnd: ''",
+    "MaxEmptyLinesToKeep: 1",
+    "NamespaceIndentation: All",
+    "SpaceAfterCStyleCast: false",
+    "SpaceAfterLogicalNot: false",
+    "SpaceAfterTemplateKeyword: true",
+    "SpaceBeforeAssignmentOperators: True",
+    "SpaceBeforeCaseColon: true",
+    "SpaceBeforeCpp11BracedList: True",
+    "SpaceBeforeInheritanceColon: true",
+    "SpaceBeforeParens: ControlStatements",
+    "SpaceBeforeRangeBasedForLoopColon: true",
+    "SpaceBeforeSquareBrackets: false",
+    "SpaceInEmptyParentheses: false",
+    "SpacesBeforeTrailingComments: 1",
+    "SpacesInAngles: false",
+    "SpacesInContainerLiterals: true",
+    "SpacesInConditionalStatement: False",
+    "BracedInitializerIndentWidth: 4",
+    "SpacesInCStyleCastParentheses: false",
+    "SpacesInParentheses: false",
+    "SpacesInSquareBrackets: false",
+    "TabWidth: 4",
+    "UseTab: Never",
+    "PointerAlignment: Right",
+    "Standard: Latest",
+    "AlignAfterOpenBracket: Align",
+    "AlignArrayOfStructures: Right",
+    "AllowAllParametersOfDeclarationOnNextLine: false",
+    "AllowAllArgumentsOnNextLine: false",
+    "AllowShortLambdasOnASingleLine: None",
+    "LambdaBodyIndentation: Signature",
+    "AlignConsecutiveMacros:",
+    "  Enabled: true",
+    "  AcrossEmptyLines: true",
+    "  AcrossComments: true",
+    "  AlignCompound: true",
+    "  PadOperators: true",
+    "AlignConsecutiveShortCaseStatements:",
+    "  Enabled: true",
+    "  AcrossEmptyLines: true",
+    "  AcrossComments: true",
+    "  AlignCaseColons: true",
+    "AlignEscapedNewlines: Left",
+    "BreakAfterAttributes: Always",
+    "PenaltyBreakBeforeFirstCallParameter: 0"
+  };
 
   const vector<string> vsCodeSettings = {
-      "{",
-      "    \"editor.formatOnSave\": true,",
-      "    \"editor.defaultFormatter\": \"xaver.clang-format\",",
-      "    \"clang-format.executable\": \"/usr/bin/clang-format\",",
-      "    \"clang-format.style\": \"file\",",
-      "    \"editor.foldingHighlight\": false,",
-      "    \"C_Cpp.intelliSenseEngine\": \"disabled\",",
-      "    \"breadcrumbs.showTypeParameters\": false,",
-      "    \"editor.suggest.showTypeParameters\": false,",
-      "    \"clangd.arguments\": [",
-      "        \"--header-insertion=never\",",
-      "        \"--header-insertion-decorators\"",
-      "    ],",
-      "    \"clangd.enableCodeCompletion\": true,",
-      "    \"editor.semanticHighlighting.enabled\": true,",
-      "    \"editor.inlayHints.enabled\": \"offUnlessPressed\",",
-      "    \"accessibility.signals.noInlayHints\": {",
-      "        \"sound\": \"off\",",
-      "        \"announcement\": \"off\"",
-      "    },",
-      "    \"clangd.path\": \"/usr/bin/clangd\",",
-      "    \"editor.folding\": true,",
-      "    \"editor.foldingImportsByDefault\": true,",
-      "    \"editor.unfoldOnClickAfterEndOfLine\": false,",
-      "    \"[cpp]\": {",
-      "        \"editor.foldingStrategy\": \"auto\",",
-      "        \"editor.showFoldingControls\": \"always\"",
-      "    },",
-      "    \"editor.foldingStrategy\": \"auto\",",
-      "    \"editor.showFoldingControls\": \"always\",",
-      "    \"editor.defaultFoldingRangeProvider\": \"llvm-vs-code-extensions.vscode-clangd\",",
-      "}"};
-  // ConstructorInitializerIndentWidth: 4
-  // DerivePointerAlignment: false
-  // IndentExternBlock: AfterExternBlock
-  // IndentFunctionDeclarationAfterType: true
+    "{",
+    "    \"editor.formatOnSave\": true,",
+    "    \"editor.defaultFormatter\": \"xaver.clang-format\",",
+    "    \"clang-format.executable\": \"/usr/bin/clang-format\",",
+    "    \"clang-format.style\": \"file\",",
+    "    \"editor.foldingHighlight\": false,",
+    "    \"C_Cpp.intelliSenseEngine\": \"disabled\",",
+    "    \"breadcrumbs.showTypeParameters\": false,",
+    "    \"editor.suggest.showTypeParameters\": false,",
+    "    \"clangd.arguments\": [",
+    "        \"--header-insertion=never\",",
+    "        \"--header-insertion-decorators\"",
+    "    ],",
+    "    \"clangd.enableCodeCompletion\": true,",
+    "    \"editor.semanticHighlighting.enabled\": true,",
+    "    \"editor.inlayHints.enabled\": \"offUnlessPressed\",",
+    "    \"accessibility.signals.noInlayHints\": {",
+    "        \"sound\": \"off\",",
+    "        \"announcement\": \"off\"",
+    "    },",
+    "    \"clangd.path\": \"/usr/bin/clangd\",",
+    "    \"editor.folding\": true,",
+    "    \"editor.foldingImportsByDefault\": true,",
+    "    \"editor.unfoldOnClickAfterEndOfLine\": false,",
+    "    \"[cpp]\": {",
+    "        \"editor.foldingStrategy\": \"auto\",",
+    "        \"editor.showFoldingControls\": \"always\"",
+    "    },",
+    "    \"editor.foldingStrategy\": \"auto\",",
+    "    \"editor.showFoldingControls\": \"always\",",
+    "    \"editor.defaultFoldingRangeProvider\": \"llvm-vs-code-extensions.vscode-clangd\",",
+    "}"
+  };
 
   const static vector<string> compileArgs {
       "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto", "-m64",
@@ -331,15 +331,15 @@ inline namespace AmakeCpp {
     /* Convert string to Option */
     Option optionFromArg(const string &arg) {
       const static std::unordered_map<string, Option> optionMap = {
-          {     "--help",    HELP},
-          {"--configure",    CONF},
-          {  "--version",     VER},
-          {    "--build",   BUILD},
-          {    "--clean",   CLEAN},
-          {  "--install", INSTALL},
-          {      "--lib",     LIB},
-          {     "--test",    TEST},
-          {     "--link",    LINK}
+        {     "--help",    HELP},
+        {"--configure",    CONF},
+        {  "--version",     VER},
+        {    "--build",   BUILD},
+        {    "--clean",   CLEAN},
+        {  "--install", INSTALL},
+        {      "--lib",     LIB},
+        {     "--test",    TEST},
+        {     "--link",    LINK}
       };
       const auto it = optionMap.find(arg);
       if (it != optionMap.end()) {
@@ -366,7 +366,7 @@ inline namespace AmakeCpp {
 
   inline namespace Tools {
     /* Creates a directory */
-    void createProjectDir(const string &path, unsigned char mode = FileSys::NONE) {
+    void create_project_dir(const string &path, unsigned char mode = FileSys::NONE) {
       try {
         printC("Creating Dir -> " + path, ESC_CODE_GREEN);
         FileSys::mkdir(path, mode);
@@ -376,9 +376,9 @@ inline namespace AmakeCpp {
       }
     }
 
-    void configAmakeDir(void) {
+    void config_Amake_dir(void) {
       if (!FileSys::exists(AMAKE_CONF_DIR)) {
-        createProjectDir(AMAKE_CONF_DIR, FileSys::NO_THROW);
+        create_project_dir(AMAKE_CONF_DIR, FileSys::NO_THROW);
       }
       if (!FileSys::exists(AMAKE_CPP_SIZES)) {
         FileSys::touch(AMAKE_CPP_SIZES);
@@ -386,8 +386,8 @@ inline namespace AmakeCpp {
     }
 
     /* Compile (.cpp in src/cpp -> .o in build/obj) */
-    void compileCpp(void) {
-      configAmakeDir();
+    void compile_cpp(void) {
+      config_Amake_dir();
       printC("Compiling .cpp -> .o", ESC_CODE_GREEN);
       try {
         auto           cppSizes        = FileSys::fileContentToStrVec(AMAKE_CPP_SIZES);
@@ -457,7 +457,7 @@ inline namespace AmakeCpp {
     }
 
     /* Link .o files in build/obj to binary in build/bin */
-    void linkBinary(const vector<string> &strVec = {}) {
+    void link_binary(const vector<string> &strVec = {}) {
       const string output = cwd + "/build/bin/" + projectName;
       printC("Linking Obj Files -> " + output, ESC_CODE_GREEN);
       vector<string> objVec      = FileSys::dirContentToStrVec(OBJ_DIR);
@@ -480,20 +480,20 @@ inline namespace AmakeCpp {
       }
     }
 
-    void configureProjectDirs(void) {
-      createProjectDir(SRC_DIR);
-      createProjectDir(INCLUDE_DIR);
-      createProjectDir(AS_DIR);
-      createProjectDir(CPP_DIR);
-      createProjectDir(C_DIR);
-      createProjectDir(LIB_SRC_DIR);
-      createProjectDir(BUILD_DIR);
-      createProjectDir(OBJ_DIR);
-      createProjectDir(BIN_DIR);
-      createProjectDir(LIB_BUILD_DIR);
+    void configure_project_dirs(void) {
+      create_project_dir(SRC_DIR);
+      create_project_dir(INCLUDE_DIR);
+      create_project_dir(AS_DIR);
+      create_project_dir(CPP_DIR);
+      create_project_dir(C_DIR);
+      create_project_dir(LIB_SRC_DIR);
+      create_project_dir(BUILD_DIR);
+      create_project_dir(OBJ_DIR);
+      create_project_dir(BIN_DIR);
+      create_project_dir(LIB_BUILD_DIR);
     }
 
-    void configureClangFormat(void) {
+    void configure_clang_format(void) {
       printC("Configuring Clang-Format", ESC_CODE_GREEN);
       try {
         while (true) {
@@ -511,7 +511,7 @@ inline namespace AmakeCpp {
               }
               else if (answer == "y" || answer == "Y" || answer == "yes" || answer == "YES" || answer == "Yes") {
                 if (!FileSys::exists(cwd + "/.vscode")) {
-                  createProjectDir(cwd + "/.vscode");
+                  create_project_dir(cwd + "/.vscode");
                 }
                 FileSys::writeStrVecToFile(cwd + "/.vscode/settings.json", vsCodeSettings);
                 printC("Format on save configured", ESC_CODE_GREEN);
@@ -537,7 +537,7 @@ inline namespace AmakeCpp {
       inline namespace Options {
         enum LibOption : Uint { UNKNOWN_LIB = (1 << 0), NCURSESW_STATIC = (1 << 1) };
 
-        Uint getLibOption(const string &lib) {
+        Uint get_lib_option(const string &lib) {
           const static unordered_map<string, LibOption> libOptionMap = {
               {"ncursesw-static", NCURSESW_STATIC},
               {             "ss", NCURSESW_STATIC}
@@ -551,7 +551,7 @@ inline namespace AmakeCpp {
       }
 
       inline namespace Tools {
-        /// @name printIL ( printInstallLib )
+        /** @name printIL ( printInstallLib ). */
         void printIL(const string &libName) {
           printC("Installing Static Lib " + libName + " -> " + LIB_BUILD_DIR + "/" + libName, ESC_CODE_GREEN);
         }
@@ -717,7 +717,6 @@ inline namespace AmakeCpp {
         return EXIT_SUCCESS;
       }
     }
-
   }
 
   /* Show help message. */
@@ -738,13 +737,13 @@ inline namespace AmakeCpp {
   /* Configure current directory as project. */
   void Configure(const string &subOption = "") {
     if (subOption.empty()) {
-      configureProjectDirs();
+      configure_project_dirs();
     }
     else {
       const ConfigureOption option = configureOptionFromArg(subOption);
       if (option & CLANG_FORMAT) {
         try {
-          configureClangFormat();
+          configure_clang_format();
         }
         catch (exception const &e) {
           printC(e.what(), ESC_CODE_RED);
@@ -756,9 +755,9 @@ inline namespace AmakeCpp {
     }
   }
 
-  /*  Build project. */
+  /* Build project. */
   void Build(void) {
-    compileCpp();
+    compile_cpp();
   }
 
   /* Clean project, meaning remove build directory. */
@@ -786,7 +785,7 @@ inline namespace AmakeCpp {
         args.push_back(arg);
       }
     }
-    linkBinary(args);
+    link_binary(args);
     if (installBin) {
       try {
         FileSys::fileContentToFile(BIN_DIR + "/" + projectName, "/usr/bin/" + projectName);
@@ -803,7 +802,7 @@ inline namespace AmakeCpp {
       printC("No library specified", ESC_CODE_RED);
       return;
     }
-    const u32 option = getLibOption(str);
+    const u32 option = get_lib_option(str);
     if (option & NCURSESW_STATIC) {
       install_ncursesw_static();
     }

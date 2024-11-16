@@ -1,3 +1,4 @@
+/* clang-format off */
 #include "defenitions.h"
 
 using std::string;
@@ -23,8 +24,7 @@ const string BIN_DIR       = BUILD_DIR + "/bin";
 const string LIB_BUILD_DIR = BUILD_DIR + "/lib";
 
 void           printC(const string &str, const char *color);
-vector<string> getArgsBasedOnArch(const Uchar mode, std::string_view output,
-                                  std::string_view file = "");
+vector<string> getArgsBasedOnArch(const Uchar mode, std::string_view output, std::string_view file = "");
 
 /* 'utils.cpp' */
 void run(const char *bin, const char *const *argv, const char *const *envv) __NOT_NULL(1, 2);

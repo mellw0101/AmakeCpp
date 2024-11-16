@@ -1,8 +1,6 @@
 #include <Mlib/Sys.h>
 #include "../include/prototypes.h"
 
-using std::vector;
-
 /* Link .o files in build/obj to binary in build/bin */
 void link_binary(const vector<string> &obj_vec, const vector<string> &strVec = {}) {
   const string output = cwd + "/build/bin/" + projectName;

@@ -64,11 +64,7 @@ void extract_name_and_ext(DirEntry *e) noexcept {
 }
 
 bool dir_exists(const char *path) {
-  struct stat st;
-  if (access(path, R_OK) != 0) {
-    return false;
-  }
-  if (S_ISDIR(st.st_mode)) {
+  if (fs::exists(path) && fs::is_directory(path)) {
     return true;
   }
   return false;
