@@ -51,13 +51,17 @@ void extract_name_and_ext(DirEntry *e) noexcept {
   for (Uint i = e->file_len; i > 0; --i) {
     if (e->file[i] == '.') {
       e->ext_len = e->file_len - i;
-      for (Uint ext = 0; ext < (e->file_len - i); ++ext) {
+      Uint ext = 0;
+      for (; ext < (e->file_len - i); ++ext) {
         e->ext[ext] = e->file[ext + i];
       }
+      e->ext[ext] = '\0';
       e->name_len = i;
-      for (Uint name = 0; name < i; ++name) {
+      Uint name = 0;
+      for (; name < i; ++name) {
         e->name[name] = e->file[name];
       }
+      e->name[name] = '\0';
       break;
     }
   }
