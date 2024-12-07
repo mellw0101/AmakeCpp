@@ -1,3 +1,4 @@
 /build/*
+/build/obj/
 /build/obj/*.o
 /build/bin/*
