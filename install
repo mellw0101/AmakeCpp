@@ -1,46 +1,47 @@
 #!/bin/bash
 
-comp_obj() {
-    clang++ -stdlib=libc++ -std=c++23 -c -O2 -march=native -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static src/cpp/$1.cpp -o build/obj/$1.o
-    echo "$1"
-}
-
-# AmakeCpp --build --install /usr/lib/Mlib.a
-
-# Get the architecture of the machine
+# Get the architecture of the machine.
 ARCH=$(uname -m)
 
-# Print the architecture
-echo "Architecture: $ARCH"
+comp_obj() {
+  case $ARCH in
+  x86_64)
+    clang++ -stdlib=libc++ -std=c++23 -c -O2 -march=native -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static src/cpp/$1.cpp -o build/obj/$1.o
+    ;;
+  aarch64)
+    clang++ -stdlib=libc++ -std=c++23 -c -O2 -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static src/cpp/$1.cpp -o build/obj/$1.o
+    ;;
+  *)
+    ;;
+  esac
+  echo "$1"
+}
 
-# Perform actions based on the architecture
-case "$ARCH" in
-x86_64)
-    comp_obj main
-    comp_obj utils
-    comp_obj link
-    comp_obj compile
+link_obj() {
+  case $ARCH in
+  x86_64)
+    /usr/bin/clang++ -stdlib=libc++ -std=c++23 -flto -s -O2 -march=native \
+    /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a \
+    build/obj/main.o build/obj/utils.o build/obj/compile.o build/obj/link.o \
+    /usr/lib/Mlib.a \
+    -o build/bin/AmakeCpp
+    ;;
+  aarch64)
+    /usr/bin/clang++ -stdlib=libc++ -std=c++23 -flto -s -O2 \
+    /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a \
+    build/obj/main.o build/obj/utils.o build/obj/compile.o build/obj/link.o \
+    /usr/lib/Mlib.a \
+    -o build/bin/AmakeCpp
+    ;;
+  esac
+  sudo cp build/bin/AmakeCpp /usr/bin/AmakeCpp
+}
 
-    /usr/bin/clang++ -stdlib=libc++ -std=c++23 -s -flto -O2 -march=native \
-        /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a \
-        build/obj/main.o build/obj/utils.o build/obj/compile.o build/obj/link.o \
-        /usr/lib/Mlib.a \
-        -o build/bin/AmakeCpp
+# Compile all sub parts.
+comp_obj main
+comp_obj utils
+comp_obj link
+comp_obj compile
 
-    sudo cp build/bin/AmakeCpp /usr/bin/AmakeCpp
-    ;;
-aarch64)
-    echo "This is a 64-bit ARM architecture."
-    clang++ -stdlib=libc++ -std=c++20 -c -O2 --target=aarch64-linux-gnu -march=armv8-a -funroll-loops -Rpass=loop-vectorize -flto -m64 -Wall -Werror -static src/cpp/main.cpp -o build/obj/main.arm.o
-    clang++ -stdlib=libc++ -std=c++20 -s -flto -O2 --target=aarch64-linux-gnu -march=armv8-a build/obj/main.arm.o /usr/lib/Mlib.a -o build/bin/AmakeCpp-arm -v
-    sudo cp build/bin/AmakeCpp-arm /usr/bin/AmakeCpp
-    ;;
-armv7l)
-    echo "This is a 32-bit ARM architecture."
-    # Add your commands for ARM32 architecture here
-    ;;
-*)
-    echo "Unknown architecture: $ARCH"
-    # Add your commands for other architectures here
-    ;;
-esac
+# Link and install obj.
+link_obj

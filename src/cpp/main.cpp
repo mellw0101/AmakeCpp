@@ -305,8 +305,8 @@ inline namespace ConfigStrVecS {
   };
 
   const static vector<string> compileArgs {
-      "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto", "-m64",
-      "-Wall", "-Werror",       "-static",        "-stdlib=libc++",
+    "-O3",   "-march=native", "-funroll-loops", "-Rpass=loop-vectorize", "-flto", "-m64",
+    "-Wall", "-Werror",       "-static",        "-stdlib=libc++",
   };
 }
 
@@ -800,7 +800,7 @@ inline namespace AmakeCpp {
       printC("No library specified", ESC_CODE_RED);
       return;
     }
-    const u32 option = get_lib_option(str);
+    const Uint option = get_lib_option(str);
     if (option & NCURSESW_STATIC) {
       install_ncursesw_static();
     }
