@@ -2,3 +2,4 @@
 /build/obj/
 /build/obj/*.o
 /build/bin/*
+/module-cache
