@@ -327,7 +327,7 @@ inline namespace AmakeCpp {
     };
 
     /* Convert string to Option */
-    Option optionFromArg(const string &arg) {
+		Option optionFromArg(const string &arg) {
       const static std::unordered_map<string, Option> optionMap = {
         {     "--help",    HELP},
         {"--configure",    CONF},
@@ -586,15 +586,15 @@ inline namespace AmakeCpp {
 
       int install_ncursesw_part(const string &libName) {
         printIL(libName);
-        if (FileSys::exists(LIB_SRC_DIR + "/ncurses-6.3")) {
-          printC("Folder lib/ncurses-6.3 Already Exists", ESC_CODE_YELLOW);
+        if (FileSys::exists(LIB_SRC_DIR + "/ncurses-6.5")) {
+          printC("Folder lib/ncurses-6.5 Already Exists", ESC_CODE_YELLOW);
         }
         else {
-          printC("Downloading ncurses-6.3.tar.gz", ESC_CODE_GREEN);
+          printC("Downloading ncurses-6.5.tar.gz", ESC_CODE_GREEN);
           if (FileSys::exists("/usr/bin/wget")) {
             try {
-              Sys::run_binary("/usr/bin/wget", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz", "-O",
-                                                LIB_SRC_DIR + "/ncurses-6.3.tar.gz"});
+              Sys::run_binary("/usr/bin/wget", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz", "-O",
+                                                LIB_SRC_DIR + "/ncurses-6.5.tar.gz"});
             }
             catch (const exception &e) {
               printC(e.what(), ESC_CODE_RED);
@@ -603,18 +603,18 @@ inline namespace AmakeCpp {
           }
           else if (FileSys::exists("/usr/bin/axel")) {
             try {
-              Sys::run_binary("/usr/bin/axel", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz", "-o",
-                                                LIB_SRC_DIR + "/ncurses-6.3.tar.gz"});
+              Sys::run_binary("/usr/bin/axel", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz", "-o",
+                                                LIB_SRC_DIR + "/ncurses-6.5.tar.gz"});
             }
             catch (const exception &e) {
               printC(e.what(), ESC_CODE_RED);
               return 1;
             }
-            if (FileSys::exists(LIB_SRC_DIR + "/ncurses-6.3.tar.gz")) {
-              printC("Successfully Downloaded ncurses-6.3.tar.gz", ESC_CODE_GREEN);
+            if (FileSys::exists(LIB_SRC_DIR + "/ncurses-6.5.tar.gz")) {
+              printC("Successfully Downloaded ncurses-6.5.tar.gz", ESC_CODE_GREEN);
             }
             else {
-              printC("Failed to download ncurses-6.3.tar.gz", ESC_CODE_RED);
+              printC("Failed to download ncurses-6.5.tar.gz", ESC_CODE_RED);
               return 1;
             }
           }
@@ -644,20 +644,20 @@ inline namespace AmakeCpp {
           }
           if (FileSys::exists("/usr/bin/tar")) {
             printC(
-                "Extracting " + LIB_SRC_DIR + "/ncurses-6.3.tar.gz -> " + LIB_SRC_DIR + "/ncurses-6.3", ESC_CODE_GREEN);
+                "Extracting " + LIB_SRC_DIR + "/ncurses-6.5.tar.gz -> " + LIB_SRC_DIR + "/ncurses-6.5", ESC_CODE_GREEN);
             try {
-              Sys::run_binary("/usr/bin/tar", {"-xzf", LIB_SRC_DIR + "/ncurses-6.3.tar.gz", "-C", LIB_SRC_DIR + "/"});
+              Sys::run_binary("/usr/bin/tar", {"-xzf", LIB_SRC_DIR + "/ncurses-6.5.tar.gz", "-C", LIB_SRC_DIR + "/"});
             }
             catch (const exception &e) {
               printC(e.what(), ESC_CODE_RED);
               return 1;
             }
-            if (!FileSys::exists(LIB_SRC_DIR + "/ncurses-6.3")) {
-              printC("Failed to extract ncurses-6.3.tar.gz", ESC_CODE_RED);
+            if (!FileSys::exists(LIB_SRC_DIR + "/ncurses-6.5")) {
+              printC("Failed to extract ncurses-6.5.tar.gz", ESC_CODE_RED);
               return 1;
             }
-            printC("Successfully Extracted ncurses-6.3.tar.gz", ESC_CODE_GREEN);
-            FileSys::rmFile(LIB_SRC_DIR + "/ncurses-6.3.tar.gz");
+            printC("Successfully Extracted ncurses-6.5.tar.gz", ESC_CODE_GREEN);
+            FileSys::rmFile(LIB_SRC_DIR + "/ncurses-6.5.tar.gz");
           }
           else {
             printC("tar Not found", ESC_CODE_RED);
@@ -665,7 +665,7 @@ inline namespace AmakeCpp {
           }
         }
         try {
-          FileSys::cd(LIB_SRC_DIR + "/ncurses-6.3");
+          FileSys::cd(LIB_SRC_DIR + "/ncurses-6.5");
           string binary_path = "./configure";
 
           vector<string> args = getLibInstallArgs();
@@ -679,7 +679,7 @@ inline namespace AmakeCpp {
           if (FileSys::exists(LIB_BUILD_DIR + "/" + libName)) {
             FileSys::rmFile(LIB_BUILD_DIR + "/" + libName);
           }
-          FileSys::fileContentToFile(LIB_SRC_DIR + "/ncurses-6.3/lib/" + libName, LIB_BUILD_DIR + "/" + libName);
+          FileSys::fileContentToFile(LIB_SRC_DIR + "/ncurses-6.5/lib/" + libName, LIB_BUILD_DIR + "/" + libName);
           FileSys::cd(cwd);
         }
         catch (const exception &e) {
@@ -687,7 +687,7 @@ inline namespace AmakeCpp {
           return 1;
         }
         if (FileSys::exists(LIB_BUILD_DIR + "/" + libName)) {
-          printC("Sizes " + to_string(FileSys::fileSize(LIB_SRC_DIR + "/ncurses-6.3/lib/" + libName)) + " -> " +
+          printC("Sizes " + to_string(FileSys::fileSize(LIB_SRC_DIR + "/ncurses-6.5/lib/" + libName)) + " -> " +
                      to_string(FileSys::fileSize(LIB_BUILD_DIR + "/" + libName)),
                  ESC_CODE_GRAY);
         }
@@ -700,9 +700,9 @@ inline namespace AmakeCpp {
         install_ncursesw_part("libformw.a");
         install_ncursesw_part("libmenuw.a");
         install_ncursesw_part("libpanelw.a");
-        FileSys::cd(LIB_SRC_DIR + "/ncurses-6.3");
+        FileSys::cd(LIB_SRC_DIR + "/ncurses-6.5");
         Sys::run_binary("sudo", {"make", "install"});
-        FileSys::rmdir(LIB_SRC_DIR + "/ncurses-6.3");
+        FileSys::rmdir(LIB_SRC_DIR + "/ncurses-6.5");
         return EXIT_SUCCESS;
       }
     }
