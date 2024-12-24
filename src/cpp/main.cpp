@@ -27,31 +27,31 @@ void printC(const string &str, const char *color) {
 }
 
 namespace Bash_Helpers {
-  // #!/bin/bash
-  // # Get the architecture of the machine
-  // ARCH=$(uname -m)
-  // # Print the architecture
-  // echo "Architecture: $ARCH"
+  /* #!/bin/bash
+  # Get the architecture of the machine
+  ARCH=$(uname -m)
+  # Print the architecture
+  echo "Architecture: $ARCH"
 
-  // # Perform actions based on the architecture
-  // case "$ARCH" in
-  //     x86_64)
-  //         echo "This is a 64-bit x86 architecture."
-  //         # Add your commands for x86_64 architecture here
-  //         ;;
-  //     aarch64)
-  //         echo "This is a 64-bit ARM architecture."
-  //         # Add your commands for ARM64 architecture here
-  //         ;;
-  //     armv7l)
-  //         echo "This is a 32-bit ARM architecture."
-  //         # Add your commands for ARM32 architecture here
-  //         ;;
-  //     *)
-  //         	echo "Unknown architecture: $ARCH"
-  //         	# Add your commands for other architectures here
-  // 			;;
-  // esac
+  # Perform actions based on the architecture
+  case "$ARCH" in
+      x86_64)
+          echo "This is a 64-bit x86 architecture."
+          # Add your commands for x86_64 architecture here
+          ;;
+      aarch64)
+          echo "This is a 64-bit ARM architecture."
+          # Add your commands for ARM64 architecture here
+          ;;
+      armv7l)
+          echo "This is a 32-bit ARM architecture."
+          # Add your commands for ARM32 architecture here
+          ;;
+      *)
+          	echo "Unknown architecture: $ARCH"
+          	# Add your commands for other architectures here
+  			;;
+  esac */
 }
 
 vector<string> cleanObjVec(const vector<string> &vec) {
@@ -352,7 +352,7 @@ inline namespace AmakeCpp {
     /* Convert string to ConfigureOption */
     ConfigureOption configureOptionFromArg(const string &arg) {
       const static unordered_map<string, ConfigureOption> configureOptionMap = {
-          {"--clang-format", CLANG_FORMAT}
+        {"--clang-format", CLANG_FORMAT}
       };
       const auto it = configureOptionMap.find(arg);
       if (it != configureOptionMap.end()) {
