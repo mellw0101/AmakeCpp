@@ -1,0 +1,37 @@
+[
+  {
+    "directory": "/home/mellw/Projects/AmakeCpp",
+    "command": "/usr/bin/clang++ -m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx -I/home/mellw/Projects/AmakeCpp/src/include/ -c /home/mellw/Projects/AmakeCpp/src/cpp/link.cpp",
+    "file": "/home/mellw/Projects/AmakeCpp/src/cpp/link.cpp"
+  }
+,  {
+    "directory": "/home/mellw/Projects/AmakeCpp",
+    "command": "/usr/bin/clang++ -m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx -I/home/mellw/Projects/AmakeCpp/src/include/ -c /home/mellw/Projects/AmakeCpp/src/cpp/main.cpp",
+    "file": "/home/mellw/Projects/AmakeCpp/src/cpp/main.cpp"
+  }
+,  {
+    "directory": "/home/mellw/Projects/AmakeCpp",
+    "command": "/usr/bin/clang++ -m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx -I/home/mellw/Projects/AmakeCpp/src/include/ -c /home/mellw/Projects/AmakeCpp/src/cpp/utils.cpp",
+    "file": "/home/mellw/Projects/AmakeCpp/src/cpp/utils.cpp"
+  }
+,  {
+    "directory": "/home/mellw/Projects/AmakeCpp",
+    "command": "/usr/bin/clang++ -m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx -I/home/mellw/Projects/AmakeCpp/src/include/ -c /home/mellw/Projects/AmakeCpp/src/cpp/compile.cpp",
+    "file": "/home/mellw/Projects/AmakeCpp/src/cpp/compile.cpp"
+  }
+,  {
+    "directory": "/home/mellw/Projects/AmakeCpp",
+    "command": "/usr/bin/clang++ -m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx -I/home/mellw/Projects/AmakeCpp/src/include/ -c /home/mellw/Projects/AmakeCpp/src/cpp/global.cpp",
+    "file": "/home/mellw/Projects/AmakeCpp/src/cpp/global.cpp"
+  }
+,  {
+    "directory": "/home/mellw/Projects/AmakeCpp",
+    "command": "/usr/bin/clang++ -m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx -I/home/mellw/Projects/AmakeCpp/src/include/ -c /home/mellw/Projects/AmakeCpp/src/include/defenitions.h",
+    "file": "/home/mellw/Projects/AmakeCpp/src/include/defenitions.h"
+  }
+,  {
+    "directory": "/home/mellw/Projects/AmakeCpp",
+    "command": "/usr/bin/clang++ -m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx -I/home/mellw/Projects/AmakeCpp/src/include/ -c /home/mellw/Projects/AmakeCpp/src/include/prototypes.h",
+    "file": "/home/mellw/Projects/AmakeCpp/src/include/prototypes.h"
+  }
+]

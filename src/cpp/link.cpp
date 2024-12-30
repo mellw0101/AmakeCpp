@@ -18,6 +18,12 @@ void link_binary(const vector<string> &obj_vec, const vector<string> &strVec = {
   for (const string &lib : libVec) {
     linkArgsVec.push_back(lib);
   }
+  if (dir_exists(string(LIB_SRC_DIR + "/bin").c_str())) {
+    vector<string> lib_bins = FileSys::dirContentToStrVec(LIB_SRC_DIR + "/bin");
+    for (const string &lib : lib_bins) {
+      linkArgsVec.push_back(lib);
+    }
+  }
   try {
     Sys::run_binary("/usr/bin/clang++", linkArgsVec);
   }

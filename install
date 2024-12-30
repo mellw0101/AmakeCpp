@@ -22,7 +22,7 @@ link_obj() {
   x86_64)
     /usr/bin/clang++ -stdlib=libc++ -std=c++23 -flto -s -O2 -march=native \
     /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a \
-    build/obj/main.o build/obj/utils.o build/obj/compile.o build/obj/link.o \
+    build/obj/main.o build/obj/utils.o build/obj/compile.o build/obj/link.o build/obj/global.o \
     /usr/lib/Mlib.a \
     -o build/bin/AmakeCpp
     ;;
@@ -42,6 +42,7 @@ comp_obj main
 comp_obj utils
 comp_obj link
 comp_obj compile
+comp_obj global
 
 # Link and install obj.
 link_obj

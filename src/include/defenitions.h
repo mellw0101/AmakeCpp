@@ -1,4 +1,5 @@
 #include <Mlib/FileSys.h>
+#include <Mlib/Vector.h>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
@@ -14,6 +15,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <dirent.h>
 
 /* clang-format off */
 #ifdef Ulong
@@ -51,6 +53,22 @@
   #define CC_DEFAULT_ARGS "-m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -Rpass=loop-vectorize -flto -Wno-vla"
 #endif
 #define STATIC_STD "-static-libc++ -static-libgcc"
+
+#define ARRAY_SIZE(array) (sizeof(__VA_ARGS__) / sizeof(__VA_ARGS__[0]))
+#define ARGV(...) (const char *[]) { __VA_ARGS__ ,NULL }
+#define PARENT_ENV ARGV("__parent_env")
+#define FIND_EXEC(name) "find:" name
+
+// [](void) noexcept -> const char ** { \
+//   const char *array[ARRAY_SIZE(__VA_ARGS__) + 1]; \
+//   Uint i = 0; \
+//   for (; i < ARRAY_SIZE(array); ++i) {\
+//     array[i] == __VA_ARGS__[i]; \
+//   } \
+//   array[i] = NULL; \
+//   return array; \
+// }()
+
 
 #define fs std::filesystem
 using std::vector;

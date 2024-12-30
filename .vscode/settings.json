@@ -8,7 +8,7 @@
         "--completion-style=detailed",
         "--debug-origin=0",
         "--fallback-style=LLVM",
-        "--function-arg-placeholders=1",
+        "--function-arg-placeholders=0",
         "--header-insertion=never",
         "--header-insertion-decorators=1",
         "--import-insertions=0",

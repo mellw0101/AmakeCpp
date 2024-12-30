@@ -1,5 +1,6 @@
 #include <Mlib/Args.h>
 #include <Mlib/Sys.h>
+#include <Mlib/Socket.h>
 #include <string>
 #include <unordered_map>
 #include "../include/prototypes.h"
@@ -26,6 +27,15 @@ void printC(const string &str, const char *color) {
   cout << PROJECT_NAME << " - [ " << color << str << ESC_CODE_RESET << " ]" << '\n';
 }
 
+void print_msg(const char *color, const char *format, ...) {
+  va_list args;
+  va_start(args, format);
+  printf("%s - [ %s", PROJECT_NAME, color);
+  vprintf(format, args);
+  printf("%s ]\n", ESC_CODE_RESET);
+  va_end(args);
+}
+
 namespace Bash_Helpers {
   /* #!/bin/bash
   # Get the architecture of the machine
@@ -48,9 +58,9 @@ namespace Bash_Helpers {
           # Add your commands for ARM32 architecture here
           ;;
       *)
-          	echo "Unknown architecture: $ARCH"
-          	# Add your commands for other architectures here
-  			;;
+            echo "Unknown architecture: $ARCH"
+            # Add your commands for other architectures here
+            ;;
   esac */
 }
 
@@ -80,75 +90,73 @@ vector<string> cleanObjVec(const vector<string> &vec) {
 
 vector<string> getArgsBasedOnArch(const Uchar mode, string_view output, string_view file) {
   vector<string> args;
+  if (mode & BUILDARGS) {
+    args = {
 #if defined(__x86_64__) || defined(_M_X64)
-  if (mode & BUILDARGS) {
-    args = {"-c",
-            "-O3",
-            "-march=native",
-            "-funroll-loops",
-            "-Rpass=loop-vectorize",
-            "-flto",
-            "-m64",
-            "-Wall",
-            "-Werror",
-            "-static",
-            "-stdlib=libc++",
-            "-std=c++23",
-            "-Wno-vla",
-            file.data(),
-            "-o",
-            output.data()};
-  }
-  else if (mode & LINKARGS) {
-    args = {"-stdlib=libc++",
-            "-std=c++23",
-            "-s",
-            "-flto",
-            "-O3",
-            "-march=native",
-            "-o",
-            output.data(),
-            "/usr/lib/Mlib.a",
-            "-L/usr/lib",
-            "-l:libc++.a",
-            "-l:libc++abi.a",
-            "-l:libz.a"};
-  }
-
+        "-c",
+        "-O3",
+        "-march=native",
+        "-funroll-loops",
+        "-Rpass=loop-vectorize",
+        "-flto",
+        "-m64",
+        "-Wall",
+        "-Werror",
+        "-static",
+        "-stdlib=libc++",
+        "-std=c++23",
+        "-Wno-vla",
+        file.data(),
+        "-o",
+        output.data()
 #elif defined(__aarch64__) || defined(_M_ARM64)
-  if (mode & BUILDARGS) {
-    args = {"-funroll-loops",
-            "-Rpass=loop-vectorize",
-            "-Wall",
-            "-Werror",
-            "-O3",
-            "-stdlib=libc++",
-            "-std=c++20",
-            "-c",
-            file.data(),
-            "-o",
-            output.data()};
+        "-funroll-loops",
+        "-Rpass=loop-vectorize",
+        "-Wall",
+        "-Werror",
+        "-O3",
+        "-stdlib=libc++",
+        "-std=c++20",
+        "-c",
+        file.data(),
+        "-o",
+        output.data()
+#endif
+    };
   }
   else if (mode & LINKARGS) {
-    args = {"-stdlib=libc++",
-            "-std=c++20",
-            "-s",
-            "-flto",
-            "-O3",
-            "-march=armv8-a",
-            "-o",
-            output.data(),
-            "/usr/lib/Mlib.a",
-            "-L/usr/lib",
-            "-l:libc++.a",
-            "-l:libc++abi.a",
-            "-l:libz.a"};
-  }
-
-#elif defined(__arm__) || defined(_M_ARM)
-#else
-  printC("Unknown architecture.", ESC_CODE_YELLOW);
+    args = {
+#if defined(__x86_64__) || defined(_M_X64)
+        "-stdlib=libc++",
+        "-std=c++23",
+        "-s",
+        "-flto",
+        "-O3",
+        "-march=native",
+        "-o",
+        output.data(),
+        "/usr/lib/Mlib.a",
+        "-L/usr/lib",
+        "-l:libc++.a",
+        "-l:libc++abi.a",
+        "-l:libz.a"
+#elif defined(__aarch64__) || defined(_M_ARM64)
+        "-stdlib=libc++",
+        "-std=c++20",
+        "-s",
+        "-flto",
+        "-O3",
+        "-march=armv8-a",
+        "-o",
+        output.data(),
+        "/usr/lib/Mlib.a",
+        "-L/usr/lib",
+        "-l:libc++.a",
+        "-l:libc++abi.a",
+        "-l:libz.a"
 #endif
+    };
+  }
   return args;
 }
 
@@ -316,7 +324,7 @@ inline namespace AmakeCpp {
     enum Option {
       UNKNOWN_OPTION = (1 << 0),
       HELP           = (1 << 1),
-      CONF           = (1 << 2),
+      CONFIG           = (1 << 2),
       VER            = (1 << 3),
       BUILD          = (1 << 4),
       CLEAN          = (1 << 5),
@@ -330,7 +338,7 @@ inline namespace AmakeCpp {
 		Option optionFromArg(const string &arg) {
       const static std::unordered_map<string, Option> optionMap = {
         {     "--help",    HELP},
-        {"--configure",    CONF},
+        {"--configure",    CONFIG},
         {  "--version",     VER},
         {    "--build",   BUILD},
         {    "--clean",   CLEAN},
@@ -364,20 +372,22 @@ inline namespace AmakeCpp {
 
   inline namespace Tools {
     /* Creates a directory */
-    void create_project_dir(const string &path, unsigned char mode = FileSys::NONE) {
-      try {
-        printC("Creating Dir -> " + path, ESC_CODE_GREEN);
-        FileSys::mkdir(path, mode);
+    void create_project_dir(const char *relativepath) {
+      char *fullpath = concatenate_path(get_pwd(), relativepath);
+      if (!dir_exists(fullpath)) {
+        print_msg(ESC_CODE_GREEN, "Creating Dir -> %s", fullpath);
+        if (make_directory(fullpath) == -1) {
+          perror("make_directory");
+        }
       }
-      catch (exception const &e) {
-        printC(e.what(), ESC_CODE_RED);
-      }
+      free(fullpath);
     }
 
     void config_Amake_dir(void) {
-      if (!FileSys::exists(AMAKE_CONF_DIR)) {
-        create_project_dir(AMAKE_CONF_DIR, FileSys::NO_THROW);
-      }
+      create_project_dir(".amake");
+      // if (!FileSys::exists(AMAKE_CONF_DIR)) {
+      //   create_project_dir(AMAKE_CONF_DIR, FileSys::NO_THROW);
+      // }
       if (!FileSys::exists(AMAKE_CPP_SIZES)) {
         FileSys::touch(AMAKE_CPP_SIZES);
       }
@@ -479,16 +489,16 @@ inline namespace AmakeCpp {
     }
 
     void configure_project_dirs(void) {
-      create_project_dir(SRC_DIR);
-      create_project_dir(INCLUDE_DIR);
-      create_project_dir(AS_DIR);
-      create_project_dir(CPP_DIR);
-      create_project_dir(C_DIR);
-      create_project_dir(LIB_SRC_DIR);
-      create_project_dir(BUILD_DIR);
-      create_project_dir(OBJ_DIR);
-      create_project_dir(BIN_DIR);
-      create_project_dir(LIB_BUILD_DIR);
+      create_project_dir("src");
+      create_project_dir("src/include");
+      create_project_dir("src/as");
+      create_project_dir("src/cpp");
+      create_project_dir("src/c");
+      create_project_dir("src/lib");
+      create_project_dir("build");
+      create_project_dir("build/obj");
+      create_project_dir("build/bin");
+      create_project_dir("build/lib");
     }
 
     void configure_clang_format(void) {
@@ -508,15 +518,13 @@ inline namespace AmakeCpp {
                 break;
               }
               else if (answer == "y" || answer == "Y" || answer == "yes" || answer == "YES" || answer == "Yes") {
-                if (!FileSys::exists(cwd + "/.vscode")) {
-                  create_project_dir(cwd + "/.vscode");
-                }
+                create_project_dir("/.vscode");
                 FileSys::writeStrVecToFile(cwd + "/.vscode/settings.json", vsCodeSettings);
                 printC("Format on save configured", ESC_CODE_GREEN);
                 break;
               }
               else {
-                printC("Invalid answer, must be (Y/n)", ESC_CODE_RED);
+                print_msg(ESC_CODE_RED, "Invalid answer, must be (Y/n)");
               }
             }
             break;
@@ -532,79 +540,46 @@ inline namespace AmakeCpp {
     }
 
     inline namespace Libs {
-      inline namespace Options {
-        enum LibOption : Uint { UNKNOWN_LIB = (1 << 0), NCURSESW_STATIC = (1 << 1) };
-
-        Uint get_lib_option(const string &lib) {
-          const static unordered_map<string, LibOption> libOptionMap = {
-              {"ncursesw-static", NCURSESW_STATIC},
-              {             "ss", NCURSESW_STATIC}
-          };
-          const auto it = libOptionMap.find(lib);
-          if (it != libOptionMap.end()) {
-            return it->second;
-          }
-          return UNKNOWN_LIB;
-        }
-      }
-
-      inline namespace Tools {
-        /** @name printIL ( printInstallLib ). */
-        void printIL(const string &libName) {
-          printC("Installing Static Lib " + libName + " -> " + LIB_BUILD_DIR + "/" + libName, ESC_CODE_GREEN);
-        }
-      }
-
       vector<string> getLibInstallArgs(void) {
-        vector<string> args;
-#if defined(__x86_64__) || defined(_M_X64)
-        args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
-                "--enable-widec", "--enable-ext-colors", "--enable-static", "--disable-shared"};
-#elif defined(__aarch64__) || defined(_M_ARM64)
-        args = {"--prefix=/usr/local", "--with-shared",   "--with-normal",
-                "--enable-widec", "--enable-ext-colors", "--enable-static", "--disable-shared"};
-#elif defined(__arm__) || defined(_M_ARM)
-        args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
-                "CXXFLAGS=-O3 -march=armv8-a", "LDFLAGS=-O3 -march=armv8-a -flto"};
-#endif
-        return args;
+        return {
+        #if defined(__x86_64__) || defined(_M_X64)
+          "--prefix=/usr/local", "--with-shared",   "--with-normal", "--enable-widec", "--enable-ext-colors", "--enable-static", "--disable-shared"
+        #elif defined(__aarch64__) || defined(_M_ARM64)
+          "--prefix=/usr/local", "--with-shared",   "--with-normal", "--enable-widec", "--enable-ext-colors", "--enable-static", "--disable-shared"
+        #endif
+        };
       }
 
       vector<string> getLibInstallEnvArgs(void) {
-        vector<string> args;
-#if defined(__x86_64__) || defined(_M_X64)
-        args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 -march=native", "CXXFLAGS=-O3 -march=native", "LDFLAGS=-O3 -flto"};
-#elif defined(__aarch64__) || defined(_M_ARM64)
-        args = {/* "CC=clang", "CXX=clang++", "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
-                "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a", "LDFLAGS=-O3 -march=armv8-a -flto" */};
-#elif defined(__arm__) || defined(_M_ARM)
-        args = {"CC=clang", "CXX=clang++", "CFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a",
-                "CXXFLAGS=-O3 --target=aarch64-linux-gnu -march=armv8-a", "LDFLAGS=-O3 -march=armv8-a -flto"};
-#endif
-        return args;
+        return {
+        #if defined(__x86_64__) || defined(_M_X64)
+          "CC=clang", "CXX=clang++", "CFLAGS=-O3 -march=native", "CXXFLAGS=-O3 -march=native", "LDFLAGS=-O3 -flto"
+        #elif defined(__aarch64__) || defined(_M_ARM64)
+        #endif
+        };
       }
 
       int install_ncursesw_part(const string &libName) {
-        printIL(libName);
+        print_msg(ESC_CODE_GREEN, "Installing Lib %s -> %s/build/lib/%s", libName.c_str(), get_pwd(), libName.c_str());
         if (FileSys::exists(LIB_SRC_DIR + "/ncurses-6.5")) {
-          printC("Folder lib/ncurses-6.5 Already Exists", ESC_CODE_YELLOW);
+          print_msg(ESC_CODE_YELLOW, "Folder lib/ncurses-6.5 Already Exists");
         }
         else {
-          printC("Downloading ncurses-6.5.tar.gz", ESC_CODE_GREEN);
-          if (FileSys::exists("/usr/bin/wget")) {
+          print_msg(ESC_CODE_YELLOW, "Downloading ncurses-6.5.tar.gz");
+          char *fullpath;
+          if (exec_exists("wget", &fullpath)) {
             try {
-              Sys::run_binary("/usr/bin/wget", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz", "-O",
-                                                LIB_SRC_DIR + "/ncurses-6.5.tar.gz"});
+              Sys::run_binary(fullpath, {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz", "-O", LIB_SRC_DIR + "/ncurses-6.5.tar.gz"});
             }
             catch (const exception &e) {
               printC(e.what(), ESC_CODE_RED);
               return 1;
             }
+            free(fullpath);
           }
           else if (FileSys::exists("/usr/bin/axel")) {
             try {
-              Sys::run_binary("/usr/bin/axel", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz", "-o",
-                                                LIB_SRC_DIR + "/ncurses-6.5.tar.gz"});
+              Sys::run_binary("/usr/bin/axel", {"https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz", "-o", LIB_SRC_DIR + "/ncurses-6.5.tar.gz"});
             }
             catch (const exception &e) {
               printC(e.what(), ESC_CODE_RED);
@@ -694,7 +669,7 @@ inline namespace AmakeCpp {
         return EXIT_SUCCESS;
       }
 
-      int install_ncursesw_static() {
+      int install_ncursesw_static(void) {
         install_ncursesw_part("libncurses++w.a");
         install_ncursesw_part("libncursesw.a");
         install_ncursesw_part("libformw.a");
@@ -704,6 +679,121 @@ inline namespace AmakeCpp {
         Sys::run_binary("sudo", {"make", "install"});
         FileSys::rmdir(LIB_SRC_DIR + "/ncurses-6.5");
         return EXIT_SUCCESS;
+      }
+
+      int download_glfw_lib(void) {
+        int ret = 0;
+        create_project_dir("src");
+        create_project_dir("src/lib");
+        create_project_dir("src/lib/glfw");
+        char *glfwdir = concatenate_path(get_lib_src_dir(), "glfw");
+        char *output_file = concatenate_path(glfwdir, "source.zip");
+        char *bin_path;
+        if (exec_exists("wget", &bin_path) || exec_exists("axel", &bin_path)) {
+          launch_bin(bin_path, ARGV(bin_path, "https://github.com/glfw/glfw/releases/download/3.4/glfw-3.4.zip", "-O", output_file), ARGV(NULL));
+          sync();
+          extract_zip(output_file, glfwdir);
+        }
+        else {
+          print_msg(ESC_CODE_RED, "Could not find wget or axel to download source.");
+          ret = -1;
+        }
+        free(glfwdir);
+        free(output_file);
+        free(bin_path);
+        return ret;
+      }
+
+      int install_glfw_lib(void) {
+        int ret = 0;
+        char *was_pwd = copy_of(get_pwd());
+        char *glfw_dir = concatenate_path(get_lib_src_dir(), "glfw/glfw-3.4");
+        chdir(glfw_dir);
+        char *build_dir = concatenate_path(glfw_dir, "build");
+        make_directory(build_dir);
+        chdir(build_dir);
+        char *bin;
+        if (exec_exists("cmake", &bin)) {
+          launch_bin(bin, ARGV(bin, "-DBUILD_SHARED_LIBS=OFF", "-DCMAKE_MAKE_PROGRAM=make", "-DCMAKE_C_COMPILER=clang", ".."), PARENT_ENV);
+          launch_bin(bin, ARGV(bin, "--build", ".", "--parallel", "16"), PARENT_ENV);
+          char *lib_path = concatenate_path(glfw_dir, "build/src/libglfw3.a");
+          char *lib_bin_path = concatenate_path(get_lib_src_dir(), "bin");
+          make_directory(lib_bin_path);
+          launch_bin("/bin/cp", ARGV("/bin/cp", lib_path, lib_bin_path), PARENT_ENV);
+          free(lib_path);
+          free(lib_bin_path);
+          char *include_path = concatenate_path(get_lib_src_dir(), "include");
+          make_directory(include_path);
+          char *lib_include_path = concatenate_path(get_lib_src_dir(), "glfw/glfw-3.4/include/GLFW/");
+          launch_bin("/bin/cp", ARGV("/bin/cp", "-r", lib_include_path, include_path), PARENT_ENV);
+          free(include_path);
+          free(lib_include_path);
+        }
+        else {
+          print_msg(ESC_CODE_RED, "Please install cmake.");
+          ret = -1;
+        }
+        free(glfw_dir);
+        free(build_dir);
+        free(pwd);
+        pwd = was_pwd;
+        chdir(pwd);
+        return ret;
+      }
+
+      int download_glew_lib(void) {
+        int ret = 0;
+        create_project_dir("src");
+        create_project_dir("src/lib");
+        create_project_dir("src/lib/glew");
+        char *glewdir = concatenate_path(get_lib_src_dir(), "glew");
+        char *output_file = concatenate_path(glewdir, "source.zip");
+        char *bin_path;
+        if (exec_exists("wget", &bin_path) || exec_exists("axel", &bin_path)) {
+          launch_bin(bin_path, ARGV(bin_path, "https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0.zip", "-O", output_file), ARGV(NULL));
+          sync();
+          extract_zip(output_file, glewdir);
+        }
+        else {
+          print_msg(ESC_CODE_RED, "Could not find wget or axel to download source.");
+          ret = -1;
+        }
+        free(glewdir);
+        free(output_file);
+        free(bin_path);
+        return ret;
+      }
+      
+      int install_glew_lib(void) {
+        int ret = 0;
+        char *was_pwd = copy_of(get_pwd());
+        char *glew_dir = concatenate_path(get_lib_src_dir(), "glew/glew-2.2.0");
+        chdir(glew_dir);
+        char *bin;
+        if (exec_exists("make", &bin)) {
+          launch_bin(bin, ARGV(bin, "-j36"), PARENT_ENV);
+          char *lib_path = concatenate_path(glew_dir, "lib/libGLEW.a");
+          char *lib_bin_path = concatenate_path(get_lib_src_dir(), "bin");
+          make_directory(lib_bin_path);
+          launch_bin("/bin/cp", ARGV("/bin/cp", lib_path, lib_bin_path), PARENT_ENV);
+          free(lib_path);
+          free(lib_bin_path);
+          char *include_path = concatenate_path(get_lib_src_dir(), "include");
+          make_directory(include_path);
+          char *lib_include_path = concatenate_path(glew_dir, "include/GL");
+          launch_bin("/bin/cp", ARGV("/bin/cp", "-r", lib_include_path, include_path), PARENT_ENV);
+          free(include_path);
+          free(lib_include_path);
+        }
+        else {
+          print_msg(ESC_CODE_RED, "Please install cmake.");
+          ret = -1;
+        }
+        free(glew_dir);
+        free(pwd);
+        pwd = was_pwd;
+        chdir(pwd);
+        return ret;
       }
     }
   }
@@ -786,17 +876,24 @@ inline namespace AmakeCpp {
     }
   }
 
-  void Lib(const string &str = "") {
-    if (str.empty()) {
-      printC("No library specified", ESC_CODE_RED);
-      return;
-    }
-    const Uint option = get_lib_option(str);
-    if (option & NCURSESW_STATIC) {
+  void Lib(const char *name) {
+    if (strcmp(name, "ncursesw-static") == 0) {
       install_ncursesw_static();
     }
-    if (option & UNKNOWN_LIB) {
-      printC("Unknown library ('Or Installer Not Implemented'): " + str, ESC_CODE_RED);
+    else if (strcmp(name, "glfw-static") == 0) {
+      if (download_glfw_lib() == -1) {
+        return;
+      }
+      install_glfw_lib();
+    }
+    else if (strcmp(name, "glew-static") == 0) {
+      if (download_glew_lib() == -1) {
+        return;
+      }
+      install_glew_lib();
+    }
+    else {
+      print_msg(ESC_CODE_RED, "Unknown library ('Or Installer Not Implemented'): %s", name);
     }
   }
 }
@@ -838,7 +935,7 @@ int main(int argc, char **argv) {
     if (option & HELP) {
       Help();
     }
-    if (option & CONF) {
+    if (option & CONFIG) {
       if (i + 1 < sArgv.size()) {
         if (optionFromArg(sArgv[i + 1]) & UNKNOWN_OPTION) {
           Configure(sArgv[i + 1]);
@@ -873,12 +970,12 @@ int main(int argc, char **argv) {
     if (option & LIB) {
       if (i + 1 < sArgv.size()) {
         if (optionFromArg(sArgv[i + 1]) & UNKNOWN_OPTION) {
-          Lib(sArgv[i + 1]);
+          Lib(sArgv[i + 1].c_str());
           ++i;
           continue;
         }
       }
-      Lib();
+      Lib("");
     }
     if (option & UNKNOWN_OPTION) {
       printC("Error: Unknown option '" + sArgv[i] + "'. Run: " + PROJECT_NAME + " '--help' to display help msg",
