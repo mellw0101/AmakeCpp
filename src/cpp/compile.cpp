@@ -116,11 +116,37 @@ void do_c(void) {
     DirEntry *e = &files[i];
     if (e->type == 8) {
       extract_name_and_ext(e);
-      char in[PATH_MAX];
-      char out[PATH_MAX];
-      snprintf(in, PATH_MAX, "%s/%s%s", C_DIR.c_str(), e->name, e->ext);
-      snprintf(out, PATH_MAX, "%s/%s%s", OBJ_DIR.c_str(), e->name, ".o");
-      add_thread_data(in, out);
+      if (strcmp(e->ext, ".c") == 0) {
+        char in[PATH_MAX];
+        char out[PATH_MAX];
+        snprintf(in, PATH_MAX, "%s/%s%s", C_DIR.c_str(), e->name, e->ext);
+        snprintf(out, PATH_MAX, "%s/%s%s", OBJ_DIR.c_str(), e->name, ".o");
+        add_thread_data(in, out);
+      }
+    }
+    else if (e->type == 4) {
+      if (strcmp(e->file, ".") == 0 || strcmp(e->file, "..") == 0) {
+        continue;
+      }
+      Ulong          sn;
+      DirEntry *sub_files = files_in_dir(string(C_DIR + "/" + e->file).c_str(), &sn);
+      for (Ulong si = 0; si < sn; ++si) {
+        DirEntry *se = &sub_files[si];
+        if (se->type == 8) {
+          extract_name_and_ext(se);
+          if (strcmp(se->ext, ".c") == 0) {
+            printf("file: %s\n", se->file);
+            char input[PATH_MAX];
+            char output[PATH_MAX];
+            snprintf(input, PATH_MAX, "%s/%s/%s%s", C_DIR.c_str(), e->file, se->name, se->ext);
+            snprintf(output, PATH_MAX, "%s/%s/%s%s", OBJ_DIR.c_str(), e->file, se->name, ".o");
+            if (!dir_exists(string(OBJ_DIR + "/" + e->file).c_str())) {
+              mkdir(string(OBJ_DIR + "/" + e->file).c_str(), 0777);
+            }
+            add_thread_data(input, output);
+          }
+        }
+      }
     }
   }
   free(files);

@@ -1,5 +1,6 @@
 #include <dirent.h>
 #include "../include/prototypes.h"
+#include <Mlib/Debug.h>
 
 void run(const char *bin, const char *const *argv, const char *const *envv) {
   int pid, status;
@@ -379,4 +380,240 @@ void extract_zip(const char *path, const char *output_path) {
     launch_bin(bin, ARGV(bin, "-o", path, "-d", output_path), ARGV(NULL));
   }
   free(bin);
+}
+
+/* Free the memory of the given array, which should contain len elements. */
+void free_chararray(char **array, Ulong len) {
+  if (!array) {
+    return;
+  }
+  while (len > 0) {
+    free(array[--len]);
+  }
+  free(array);
+}
+
+/* Append an array onto 'array'.  Free 'append' but not any elements in it after call. */
+void append_chararray(char ***array, Ulong *len, char **append, Ulong append_len) {
+  Ulong new_len = ((*len) + append_len);
+  *array = (char **)arealloc(*array, (sizeof(char *) * (new_len + 1)));
+  for (Ulong i = 0; i < append_len; ++i) {
+    (*array)[(*len) + i] = append[i];
+  }
+  *len = new_len;
+  (*array)[*len] = NULL;
+}
+
+/* Retrieve files and dirs from path.  Returns -1 apon failure to open directory. */
+int entries_in_dir(const char *path, char ***files, Ulong *nfiles, char ***dirs, Ulong *ndirs) {
+  /* Open the target directory. */
+  dirent *directory_entry = NULL;
+  DIR *target_directory = opendir(path);
+  /* Return early apon failure to open directory. */
+  if (!target_directory) {
+    logE("Failed to open dir: %s.\n");
+    return -1;
+  }
+  /* Define our buffers, one for file entries and one for dirs. */
+  char **file_buf  = NULL, **dir_buf  = NULL;
+  Ulong  file_size = 0,      dir_size = 0;
+  Ulong  file_cap  = 40,     dir_cap  = 40;
+  /* Malloc our buffers. */
+  file_buf = (char **)amalloc(sizeof(char *) * file_cap);
+  dir_buf  = (char **)amalloc(sizeof(char *) * dir_cap);
+  /* Fetch all entries in the target directory. */
+  while ((directory_entry = readdir(target_directory))) {
+    switch (directory_entry->d_type) {
+      case DT_DIR: /* Directory entry. */ {
+        /* Skip directory traversers. */
+        if (strcmp(directory_entry->d_name, "..") == 0 || strcmp(directory_entry->d_name, ".") == 0) {
+          continue;
+        }
+        ENSURE_CHARARRAY_CAPACITY(dir_buf, dir_cap, dir_size);
+        dir_buf[dir_size++] = measured_copy(directory_entry->d_name, (_D_ALLOC_NAMLEN(directory_entry) - 1));
+        break;
+      }
+      case DT_REG: /* Regular file entry. */ {
+        ENSURE_CHARARRAY_CAPACITY(file_buf, file_cap, file_size);
+        file_buf[file_size++] = measured_copy(directory_entry->d_name, (_D_ALLOC_NAMLEN(directory_entry) - 1));
+        break;
+      }
+    }
+  }
+  /* Trim data buffer`s to the size of data. */
+  file_buf = (char **)arealloc(file_buf, (sizeof(char *) * (file_size + 1)));
+  dir_buf  = (char **)arealloc(dir_buf,  (sizeof(char *) * (dir_size  + 1)));
+  /* NULL-terminate buffer`s to ensure NULL-safe operation`s. */
+  file_buf[file_size] = NULL;
+  dir_buf[dir_size]   = NULL;
+  closedir(target_directory);
+  /* Assign the data buffers. */
+  *files  = file_buf;
+  *nfiles = file_size;
+  *dirs  = dir_buf;
+  *ndirs = dir_size;
+  return 0;
+}
+
+/* Recursivly get all files and dirs from a starting path. */
+int recursive_entries_in_dir(const char *path, char ***files, Ulong *nfiles, char ***dirs, Ulong *ndirs) {
+  char **local_files, **local_dirs;
+  Ulong  local_nfiles,  local_ndirs;
+  if (entries_in_dir(path, &local_files, &local_nfiles, &local_dirs, &local_ndirs) == -1) {
+    return -1;
+  }
+  append_chararray(files, nfiles, local_files, local_nfiles);
+  append_chararray(dirs,  ndirs,  local_dirs,  local_ndirs);
+  for (Ulong i = 0; i < local_ndirs; ++i) {
+    char *subdir = concatenate_path(path, local_dirs[i]);
+    recursive_entries_in_dir(subdir, files, nfiles, dirs, ndirs);
+    free(subdir);
+  }
+  free(local_files);
+  free(local_dirs);
+  return 0;
+}
+
+/* Helper to correctly get all entries in a starting path. */
+int get_all_entries_in_dir(const char *path, char ***files, Ulong *nfiles, char ***dirs, Ulong *ndirs) {
+  /* Init the arrays. */
+  char **local_files  = (char **)amalloc(sizeof(char *));
+  char **local_dirs   = (char **)amalloc(sizeof(char *));
+  Ulong  local_nfiles = 0;
+  Ulong  local_ndirs  = 0;
+  if (recursive_entries_in_dir(path, &local_files, &local_nfiles, &local_dirs, &local_ndirs) == -1) {
+    free_chararray(local_files, local_nfiles);
+    free_chararray(local_dirs, local_ndirs);
+    *files  = NULL;
+    *dirs   = NULL;
+    *nfiles = 0;
+    *ndirs  = 0;
+    return -1;
+  }
+  *files  = local_files;
+  *dirs   = local_dirs;
+  *nfiles = local_nfiles;
+  *ndirs  = local_ndirs;
+  return 0;
+}
+
+bool lock_fd(int fd, short type) {
+  if (fd < 0) {
+    return FALSE;
+  }
+  flock lock {
+    type,
+    SEEK_SET,
+    0,
+    0,
+    getpid()
+  };
+  if (fcntl(fd, F_SETLKW, &lock) == -1) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+bool unlock_fd(int fd) {
+  if (fd < 0) {
+    return FALSE;
+  }
+  flock lock {
+    F_UNLCK,
+    SEEK_SET,
+    0,
+    0,
+    getpid()
+  };
+  if (fcntl(fd, F_SETLK, &lock) == -1) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+static const char *config_check_type_str(config_check_type type) {
+  static thread_local char buffer[256];
+  switch (type) {
+    case CONFIG_HAVE___THREAD: {
+      copy_stack_nstr(buffer, S__LEN("__thread") + 1);
+      break;
+    }
+    default: {
+      buffer[0] = '\0';
+      break;
+    }
+  }
+  return buffer;
+}
+
+/* Just testing for now, this will eventualy become the config function where it trys to compile for a specific thing
+ * to see if it is available to the current system, and if it is define a `HAVE_THING` in config.h, or when not availiable,
+ * comment it out in the config.h, so its clear it was checked. */
+void check_config_part(config_check_type type) {
+  static thread_local char tmpfile[256];
+  static thread_local char outfile[256];
+  thread_local const char *data = NULL;
+  thread_local Ulong datalen = 0, filelen = 0;
+  thread_local int fd, ret;
+  switch (type) {
+    case CONFIG_HAVE___THREAD: {
+      data =
+        "#if defined(__GNUC__)\n"
+        "void check__thread(void) {\n"
+        "  static __thread int x;\n"
+        "  x = 0;\n"
+        "}\n"
+        "#else\n"
+        "# error \"No __thread support\"\n"
+        "#endif\n"
+        "\n"
+        "int main(void) {\n"
+        "  check__thread();\n"
+        "}\n"
+      ;
+      datalen = (sizeof(
+        "#if defined(__GNUC__)\n"
+        "void check__thread(void) {\n"
+        "  static __thread int x;\n"
+        "  x = 0;\n"
+        "}\n"
+        "#else\n"
+        "# error \"No __thread support\"\n"
+        "#endif\n"
+        "\n"
+        "int main(void) {\n"
+        "  check__thread();\n"
+        "}\n"
+        ) - 1
+      );
+      break;
+    }
+    default: {
+      return;
+    }
+  }
+  copy_stack_nstr(tmpfile, S__LEN("/tmp/Amake_check_"));
+  copy_stack_nstr((tmpfile + (sizeof("/tmp/Amake_check_") - 1)), config_check_type_str(type), strlen(config_check_type_str(type)) + 1);
+  filelen = strlen(tmpfile);
+  copy_stack_nstr(outfile, tmpfile, filelen);
+  copy_stack_nstr((tmpfile + filelen), S__LEN(".c") + 1);
+  logI("tmpfile: %s", tmpfile);
+  logI("outfile: %s", outfile);
+  fd = open("/tmp/Amake_check___thread.c", (O_WRONLY | O_CREAT), 0755);
+  if (fd < 0) {
+    logE("Failed to create tmp file to test '%s'", config_check_type_str(type));
+    return;
+  }
+  lock_fd(fd, F_WRLCK);
+  write(fd, data, datalen);
+  unlock_fd(fd);
+  close(fd);
+  ret = launch_bin("/usr/bin/cc", ARGV("/usr/bin/cc", "-o", outfile, tmpfile), PARENT_ENV);
+  if (ret != 0) {
+    logE("Failed.");
+    unlink(tmpfile);
+    return;
+  }
+  unlink(tmpfile);
+  unlink(outfile);
 }

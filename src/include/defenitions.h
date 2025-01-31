@@ -69,6 +69,15 @@
 //   return array; \
 // }()
 
+#define ENSURE_CHARARRAY_CAPACITY(array, cap, size) \
+  do {\
+    if (size == cap) {\
+      cap *= 2;\
+      array = (char **)arealloc(array, (sizeof(char *) * cap)); \
+    } \
+  } while(0)
+
+#define S__LEN(str) str, (sizeof(str) - 1)
 
 #define fs std::filesystem
 using std::vector;
@@ -97,3 +106,8 @@ enum getArgsMode : Uchar {
   BUILDARGS = (1 << 0),
   LINKARGS  = (1 << 1),
 };
+
+typedef enum {
+  CONFIG_HAVE___THREAD
+  #define CONFIG_HAVE___THREAD CONFIG_HAVE___THREAD
+} config_check_type;

@@ -27,7 +27,7 @@ void printC(const string &str, const char *color) {
   cout << PROJECT_NAME << " - [ " << color << str << ESC_CODE_RESET << " ]" << '\n';
 }
 
-void print_msg(const char *color, const char *format, ...) {
+static void print_msg(const char *color, const char *format, ...) {
   va_list args;
   va_start(args, format);
   printf("%s - [ %s", PROJECT_NAME, color);
@@ -64,7 +64,7 @@ namespace Bash_Helpers {
   esac */
 }
 
-vector<string> cleanObjVec(const vector<string> &vec) {
+_UNUSED static vector<string> cleanObjVec(const vector<string> &vec) {
   vector<string> cleanVec;
 #if defined(__x86_64__) || defined(_M_X64)
   for (const string &str : vec) {
@@ -331,21 +331,23 @@ inline namespace AmakeCpp {
       INSTALL        = (1 << 6),
       LIB            = (1 << 7),
       TEST           = (1 << 8),
-      LINK           = (1 << 9)
+      LINK           = (1 << 9),
+      CONFIG_CHECK   = (1 << 10)
     };
 
     /* Convert string to Option */
 		Option optionFromArg(const string &arg) {
       const static std::unordered_map<string, Option> optionMap = {
-        {     "--help",    HELP},
-        {"--configure",    CONFIG},
-        {  "--version",     VER},
-        {    "--build",   BUILD},
-        {    "--clean",   CLEAN},
-        {  "--install", INSTALL},
-        {      "--lib",     LIB},
-        {     "--test",    TEST},
-        {     "--link",    LINK}
+        {     "--help",         HELP},
+        {"--configure",       CONFIG},
+        {  "--version",          VER},
+        {    "--build",        BUILD},
+        {    "--clean",        CLEAN},
+        {  "--install",      INSTALL},
+        {      "--lib",          LIB},
+        {     "--test",         TEST},
+        {     "--link",         LINK},
+        {    "--check", CONFIG_CHECK}
       };
       const auto it = optionMap.find(arg);
       if (it != optionMap.end()) {
@@ -358,7 +360,7 @@ inline namespace AmakeCpp {
     enum ConfigureOption { UNKNOWN_CONFIGURE_OPTION = (1 << 0), CLANG_FORMAT = (1 << 1) };
 
     /* Convert string to ConfigureOption */
-    ConfigureOption configureOptionFromArg(const string &arg) {
+    static ConfigureOption configureOptionFromArg(const string &arg) {
       const static unordered_map<string, ConfigureOption> configureOptionMap = {
         {"--clang-format", CLANG_FORMAT}
       };
@@ -372,7 +374,7 @@ inline namespace AmakeCpp {
 
   inline namespace Tools {
     /* Creates a directory */
-    void create_project_dir(const char *relativepath) {
+    static void create_project_dir(const char *relativepath) {
       char *fullpath = concatenate_path(get_pwd(), relativepath);
       if (!dir_exists(fullpath)) {
         print_msg(ESC_CODE_GREEN, "Creating Dir -> %s", fullpath);
@@ -383,7 +385,7 @@ inline namespace AmakeCpp {
       free(fullpath);
     }
 
-    void config_Amake_dir(void) {
+    static void config_Amake_dir(void) {
       create_project_dir(".amake");
       // if (!FileSys::exists(AMAKE_CONF_DIR)) {
       //   create_project_dir(AMAKE_CONF_DIR, FileSys::NO_THROW);
@@ -394,7 +396,7 @@ inline namespace AmakeCpp {
     }
 
     /* Compile (.cpp in src/cpp -> .o in build/obj) */
-    void compile_cpp(void) {
+    static void compile_cpp(void) {
       config_Amake_dir();
       printC("Compiling .cpp -> .o", ESC_CODE_GREEN);
       try {
@@ -465,7 +467,7 @@ inline namespace AmakeCpp {
     }
 
     /* Link .o files in build/obj to binary in build/bin */
-    void link_binary(const vector<string> &strVec = {}) {
+    static void link_binary(const vector<string> &strVec = {}) {
       const string output = cwd + "/build/bin/" + projectName;
       printC("Linking Obj Files -> " + output, ESC_CODE_GREEN);
       vector<string> objVec      = FileSys::dirContentToStrVec(OBJ_DIR);
@@ -488,7 +490,7 @@ inline namespace AmakeCpp {
       }
     }
 
-    void configure_project_dirs(void) {
+    static void configure_project_dirs(void) {
       create_project_dir("src");
       create_project_dir("src/include");
       create_project_dir("src/as");
@@ -501,7 +503,7 @@ inline namespace AmakeCpp {
       create_project_dir("build/lib");
     }
 
-    void configure_clang_format(void) {
+    static void configure_clang_format(void) {
       printC("Configuring Clang-Format", ESC_CODE_GREEN);
       try {
         while (true) {
@@ -540,7 +542,7 @@ inline namespace AmakeCpp {
     }
 
     inline namespace Libs {
-      vector<string> getLibInstallArgs(void) {
+      static vector<string> getLibInstallArgs(void) {
         return {
         #if defined(__x86_64__) || defined(_M_X64)
           "--prefix=/usr/local", "--with-shared",   "--with-normal", "--enable-widec", "--enable-ext-colors", "--enable-static", "--disable-shared"
@@ -550,7 +552,7 @@ inline namespace AmakeCpp {
         };
       }
 
-      vector<string> getLibInstallEnvArgs(void) {
+      static vector<string> getLibInstallEnvArgs(void) {
         return {
         #if defined(__x86_64__) || defined(_M_X64)
           "CC=clang", "CXX=clang++", "CFLAGS=-O3 -march=native", "CXXFLAGS=-O3 -march=native", "LDFLAGS=-O3 -flto"
@@ -559,7 +561,7 @@ inline namespace AmakeCpp {
         };
       }
 
-      int install_ncursesw_part(const string &libName) {
+      static int install_ncursesw_part(const string &libName) {
         print_msg(ESC_CODE_GREEN, "Installing Lib %s -> %s/build/lib/%s", libName.c_str(), get_pwd(), libName.c_str());
         if (FileSys::exists(LIB_SRC_DIR + "/ncurses-6.5")) {
           print_msg(ESC_CODE_YELLOW, "Folder lib/ncurses-6.5 Already Exists");
@@ -669,7 +671,7 @@ inline namespace AmakeCpp {
         return EXIT_SUCCESS;
       }
 
-      int install_ncursesw_static(void) {
+      static int install_ncursesw_static(void) {
         install_ncursesw_part("libncurses++w.a");
         install_ncursesw_part("libncursesw.a");
         install_ncursesw_part("libformw.a");
@@ -681,7 +683,7 @@ inline namespace AmakeCpp {
         return EXIT_SUCCESS;
       }
 
-      int download_glfw_lib(void) {
+      static int download_glfw_lib(void) {
         int ret = 0;
         create_project_dir("src");
         create_project_dir("src/lib");
@@ -704,7 +706,7 @@ inline namespace AmakeCpp {
         return ret;
       }
 
-      int install_glfw_lib(void) {
+      static int install_glfw_lib(void) {
         int ret = 0;
         char *was_pwd = copy_of(get_pwd());
         char *glfw_dir = concatenate_path(get_lib_src_dir(), "glfw/glfw-3.4");
@@ -741,7 +743,7 @@ inline namespace AmakeCpp {
         return ret;
       }
 
-      int download_glew_lib(void) {
+      static int download_glew_lib(void) {
         int ret = 0;
         create_project_dir("src");
         create_project_dir("src/lib");
@@ -764,7 +766,7 @@ inline namespace AmakeCpp {
         return ret;
       }
       
-      int install_glew_lib(void) {
+      static int install_glew_lib(void) {
         int ret = 0;
         char *was_pwd = copy_of(get_pwd());
         char *glew_dir = concatenate_path(get_lib_src_dir(), "glew/glew-2.2.0");
@@ -799,7 +801,7 @@ inline namespace AmakeCpp {
   }
 
   /* Show help message. */
-  void Help(void) {
+  static void Help(void) {
     cout << "Usage: " << PROJECT_NAME << " [options]\n"
          << "Options:\n"
          << "   --help                      Show this help message\n"
@@ -814,7 +816,7 @@ inline namespace AmakeCpp {
   }
 
   /* Configure current directory as project. */
-  void Configure(const string &subOption = "") {
+  static void Configure(const string &subOption = "") {
     if (subOption.empty()) {
       configure_project_dirs();
     }
@@ -835,12 +837,12 @@ inline namespace AmakeCpp {
   }
 
   /* Build project. */
-  void Build(void) {
+  static void Build(void) {
     compile_cpp();
   }
 
   /* Clean project, meaning remove build directory. */
-  void Clean(void) {
+  static void Clean(void) {
     printC("Cleaning project", ESC_CODE_GREEN);
     if (fs::exists(BUILD_DIR) && fs::is_directory(BUILD_DIR)) {
       fs::remove_all(BUILD_DIR);
@@ -853,7 +855,7 @@ inline namespace AmakeCpp {
     }
   }
 
-  void Install(const vector<string> &strVec = {}) {
+  static void Install(const vector<string> &strVec = {}) {
     vector<string> args;
     bool           installBin = false;
     for (const string &arg : strVec) {
@@ -876,7 +878,7 @@ inline namespace AmakeCpp {
     }
   }
 
-  void Lib(const char *name) {
+  static void Lib(const char *name) {
     if (strcmp(name, "ncursesw-static") == 0) {
       install_ncursesw_static();
     }
@@ -900,7 +902,7 @@ inline namespace AmakeCpp {
 
 int main(int argc, char **argv) {
   const auto sArgv = Args::argvToStrVec(argc, argv);
-  for (int i = 1; i < sArgv.size(); ++i) {
+  for (Ulong i = 1; i < sArgv.size(); ++i) {
     const Option option = optionFromArg(sArgv[i]);
     if (option & TEST) {
       if (i + 1 < sArgv.size()) {
@@ -976,6 +978,10 @@ int main(int argc, char **argv) {
         }
       }
       Lib("");
+    }
+    if (option & CONFIG_CHECK) {
+      check_config_part(CONFIG_HAVE___THREAD);
+      exit(0);
     }
     if (option & UNKNOWN_OPTION) {
       printC("Error: Unknown option '" + sArgv[i] + "'. Run: " + PROJECT_NAME + " '--help' to display help msg",

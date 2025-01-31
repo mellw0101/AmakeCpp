@@ -51,6 +51,7 @@ int       launch_bin(const char *binary, const char *const argv[], const char *c
 int       launch_bin(const char *binary, MVector<const char *> argv, MVector<const char *> envp);
 void      extract_tar_gz(const char *path, const char *output_path);
 void      extract_zip(const char *path, const char *output_path);
+void      check_config_part(config_check_type type);
 
 /* 'compile.cpp'. */
 void do_compile(void);
