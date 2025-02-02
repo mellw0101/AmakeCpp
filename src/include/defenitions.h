@@ -17,6 +17,9 @@
 #include <unistd.h>
 #include <dirent.h>
 
+/* Amake */
+#include "cproto.h"
+
 /* clang-format off */
 #ifdef Ulong
 #    undef Ulong

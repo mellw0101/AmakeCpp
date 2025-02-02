@@ -1,5 +1,6 @@
-#include <dirent.h>
 #include "../include/prototypes.h"
+
+#include <dirent.h>
 #include <Mlib/Debug.h>
 
 void run(const char *bin, const char *const *argv, const char *const *envv) {
@@ -180,6 +181,7 @@ char *measured_copy(const char *string, Ulong count) {
 }
 
 char *copy_of(const char *string) {
+  ASSERT(string);
   return measured_copy(string, strlen(string));
 }
 
@@ -498,9 +500,7 @@ int get_all_entries_in_dir(const char *path, char ***files, Ulong *nfiles, char 
 }
 
 bool lock_fd(int fd, short type) {
-  if (fd < 0) {
-    return FALSE;
-  }
+  ALWAYS_ASSERT(fd >= 0);
   flock lock {
     type,
     SEEK_SET,
@@ -515,9 +515,7 @@ bool lock_fd(int fd, short type) {
 }
 
 bool unlock_fd(int fd) {
-  if (fd < 0) {
-    return FALSE;
-  }
+  ALWAYS_ASSERT(fd >= 0);
   flock lock {
     F_UNLCK,
     SEEK_SET,

@@ -3,6 +3,67 @@
 # Get the architecture of the machine.
 ARCH=$(uname -m)
 
+BASE_FLAGS="\
+  -static -O2 -g -Wall -Wextra -march=native
+"
+
+STRICT_FLAGS="\
+ -static -O2 -g -flto=auto -fno-fat-lto-objects\
+ -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute\
+ -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always\
+ -march=native -Rpass=loop-vectorize -mavx -Wno-vla\
+"
+# -Wall
+
+C_FLAGS="-std=gnu99 $STRICT_FLAGS"
+CXX_FLAGS="-stdlib=libc++ -std=c++23 $STRICT_FLAGS"
+
+# region process_files
+#
+#   Usage: process_files <DIRECTORY> <FUNCTION>
+#
+#   DIRECTORY:
+#     The directory to iterate over every file and subfile in.
+#
+#   FUNCTION:
+#     The function that will be called on every file and subfile.
+#     Note that the signature of 
+#
+# endregion
+process_files() {
+  local DIR="$1"
+  local FN=$2
+  while IFS= read -r -d '' FILE; do
+    $FN "$FILE"
+  done < <(find "$DIR" -type f -print0)
+}
+
+# region append_to_var
+# 
+#   Helper function to append to a named varialble.
+# 
+#   Usage: append_to_var <OUTPUT_VARIABLE> <STRING_TO_APPEND>
+# 
+# endregion
+append_to_var() {
+  local -n OUT_VAR=$1  # Refrence to the output variable.
+  local FILE=$2
+  OUT_VAR+="$FILE "
+}
+
+# region collect_files
+# 
+#   Function to collect files into provided variable.
+# 
+# endregion
+collect_files() {
+  local -n RESULT=$1                            # Refrence to output variable.
+  local DIR=$2
+  RESULT=""                                     # Clear output variable.
+  process_files "$DIR" "append_to_var RESULT"
+  RESULT="${RESULT% }"                          # Remove trailing spaces.
+}
+
 comp_obj() {
   case $ARCH in
   x86_64)
@@ -20,11 +81,17 @@ comp_obj() {
 link_obj() {
   case $ARCH in
   x86_64)
-    /usr/bin/clang++ -stdlib=libc++ -std=c++23 -flto -s -O2 -march=native \
-    /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a \
-    build/obj/main.o build/obj/utils.o build/obj/compile.o build/obj/link.o build/obj/global.o \
-    /usr/lib/Mlib.a \
-    -o build/bin/AmakeCpp
+    OBJ_FILES=""
+    collect_files OBJ_FILES "$PWD"/build/obj
+    echo "$OBJ_FILES"
+    /usr/bin/clang++ $CXX_FLAGS $OBJ_FILES /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a /usr/lib/Mlib.a -o "$PWD"/build/bin/AmakeCpp
+
+    # exit 0
+    # /usr/bin/clang++ -stdlib=libc++ -std=c++23 -flto -s -O2 -march=native \
+    # /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a \
+    # build/obj/main.o build/obj/utils.o build/obj/compile.o build/obj/link.o build/obj/global.o \
+    # /usr/lib/Mlib.a \
+    # -o build/bin/AmakeCpp
     ;;
   aarch64)
     /usr/bin/clang++ -stdlib=libc++ -std=c++23 -flto -s -O2 \
@@ -34,15 +101,66 @@ link_obj() {
     -o build/bin/AmakeCpp
     ;;
   esac
-  sudo cp build/bin/AmakeCpp /usr/bin/AmakeCpp
+  # If we sucessfully linked the binary, copy it.
+  if [ -f "$PWD"/build/bin/AmakeCpp ]; then
+    sudo cp build/bin/AmakeCpp /usr/bin/AmakeCpp
+  fi
 }
 
+print_file() {
+  local FILE="$1"
+  printf "%s\n" $FILE
+}
+
+# Check if a binary exists, else prompt to install it.
+binexists() {
+  local BINARY="$1"
+  if [ ! -f /usr/bin/"$BINARY" ]; then
+    while true; do
+      printf "Binary '%s': Is not installed.  " "$BINARY"
+      read -p 'Install it?: ' a
+      case $a in
+        n|N)
+          break ;;
+        y|Y)
+          DO_INSTALL="1"
+          break ;;
+        *)
+          ;;
+      esac
+    done
+    if [[ -z "${DO_INSTALL+x}" ]]; then
+      exit 1
+    else
+      if [ -f /usr/bin/pacman ]; then
+        /usr/bin/pacman -S --noconfirm --needed "$BINARY"
+      fi
+    fi
+  fi
+}
+
+# Compile a single c file into a .o object file.
+cfilecomp() {
+  local FILE=$(basename "$1")
+  binexists clang
+  clang $C_FLAGS -I$PWD/src/include/ -o $PWD/build/obj/$FILE.o -c $PWD/src/c/$FILE
+}
+
+# Compile a single cplusplus file into a .o object file.
+cxxfilecomp() {
+  local FILE=$(basename "$1")
+  clang++ $CXX_FLAGS -I"$PWD"/src/include -o "$PWD"/build/obj/"$FILE".o -c "$PWD"/src/cpp/"$FILE"
+}
+
+process_files "$PWD/src/c" cfilecomp
+process_files "$PWD/src/cpp" cxxfilecomp
+
 # Compile all sub parts.
-comp_obj main
-comp_obj utils
-comp_obj link
-comp_obj compile
-comp_obj global
+# comp_obj main
+# comp_obj utils
+# comp_obj link
+# comp_obj compile
+# comp_obj global
 
 # Link and install obj.
 link_obj
