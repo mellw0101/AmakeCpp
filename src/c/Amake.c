@@ -49,10 +49,27 @@ void Amake_do_compile(void) {
 
 /* Create the `.amake` direcory and its subdirs Amake needs. */
 void Amake_make_data_dirs(void) {
-  if (!dir_exists(getamakedir())) {
-    amkdir(getamakedir());
+  if (!dir_exists(get_amakedir())) {
+    amkdir(get_amakedir());
   }
-  if (!dir_exists(getamakecompdir())) {
-    amkdir(getamakecompdir());
+  if (!dir_exists(get_amakecompdir())) {
+    amkdir(get_amakecompdir());
+  }
+}
+
+/* Do a simple clean, delete all object files, resulting in the need for recompalation off all source files. */
+void Amake_do_shallow_clean(void) {
+  /* If the output directory does not exist, just return. */
+  if (!dir_exists(get_outdir())) {
+    return;
+  }
+  directory_t dir;
+  directory_entry_t *entry;
+  directory_data_init(&dir);
+  ALWAYS_ASSERT(directory_get_recurse(get_outdir(), &dir) != -1);
+  for (Ulong i = 0; i < dir.len; ++i) {
+    entry = dir.entries[i];
+    ALWAYS_ASSERT(file_exists(entry->path));
+    ALWAYS_ASSERT(unlink(entry->path) != -1);
   }
 }

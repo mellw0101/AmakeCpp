@@ -48,7 +48,7 @@ char *getpwd(void) {
 }
 
 /* Get the path to the src dir Amake uses.  Should be freed using `freesrcdir()` only. */
-char *getsrcdir(void) {
+char *get_srcdir(void) {
   mutex_lock(&srcdir_mutex);
   if (!srcdir) {
     srcdir = concatpath(getpwd(), "/src");
@@ -58,27 +58,27 @@ char *getsrcdir(void) {
 }
 
 /* Get the path to the `c` source dir Amake uses.  Should be freed using `freecdir()` only. */
-char *getcdir(void) {
+char *get_cdir(void) {
   mutex_lock(&cdir_mutex);
   if (!cdir) {
-    cdir = concatpath(getsrcdir(), "/c");
+    cdir = concatpath(get_srcdir(), "/c");
   }
   mutex_unlock(&cdir_mutex);
   return cdir;
 }
 
 /* Get the path to the `cpp` source dir Amake uses.  Should be freed using `freecppdir()` only. */
-char *getcppdir(void) {
+char *get_cppdir(void) {
   mutex_lock(&cppdir_mutex);
   if (!cppdir) {
-    cppdir = concatpath(getsrcdir(), "/cpp");
+    cppdir = concatpath(get_srcdir(), "/cpp");
   }
   mutex_unlock(&cppdir_mutex);
   return cppdir;
 }
 
 /* Get the path to the `build` directory Amake uses.  Should be freed using `freebuilddir()` only. */
-char *getbuilddir(void) {
+char *get_builddir(void) {
   mutex_lock(&builddir_mutex);
   if (!builddir) {
     builddir = concatpath(getpwd(), "/build");
@@ -88,17 +88,17 @@ char *getbuilddir(void) {
 }
 
 /* Get the path to the `output` directory Amake uses.  Should be freed using `freeoutdir()` only. */
-char *getoutdir(void) {
+char *get_outdir(void) {
   mutex_lock(&outdir_mutex);
   if (!outdir) {
-    outdir = concatpath(getbuilddir(), "/obj");
+    outdir = concatpath(get_builddir(), "/obj");
   }
   mutex_unlock(&outdir_mutex);
   return outdir;
 }
 
 /* Get the configuration directory amake uses. */
-char *getamakedir(void) {
+char *get_amakedir(void) {
   mutex_lock(&amakedir_mutex);
   if (!amakedir) {
     amakedir = concatpath(getpwd(), "/.amake");
@@ -108,17 +108,17 @@ char *getamakedir(void) {
 }
 
 /* Get the directory Amake uses to store data on files that have been compiled so we know if compalation is required. */
-char *getamakecompdir(void) {
+char *get_amakecompdir(void) {
   mutex_lock(&amakecompdir_mutex);
   if (!amakecompdir) {
-    amakecompdir = concatpath(getamakedir(), "/compile_data");
+    amakecompdir = concatpath(get_amakedir(), "/compile_data");
   }
   mutex_unlock(&amakecompdir_mutex);
   return amakecompdir;
 }
 
 /* Frees the `pwd` ptr and sets it to `NULL`. */
-void freepwd(void) {
+void free_pwd(void) {
   if (envpwd) {
     free(envpwd);
     envpwd = NULL;
@@ -126,7 +126,7 @@ void freepwd(void) {
 }
 
 /* Frees the `srcdir` ptr and sets it to `NULL`. */
-void freesrcdir(void) {
+void free_srcdir(void) {
   if (srcdir) {
     free(srcdir);
     srcdir = NULL;
@@ -134,7 +134,7 @@ void freesrcdir(void) {
 }
 
 /* Frees the `cdir` ptr and sets it to `NULL`. */
-void freecdir(void) {
+void free_cdir(void) {
   if (cdir) {
     free(cdir);
     cdir = NULL;
@@ -142,7 +142,7 @@ void freecdir(void) {
 }
 
 /* Frees the `cppdir` ptr and sets it to `NULL`. */
-void freecppdir(void) {
+void free_cppdir(void) {
   if (cppdir) {
     free(cppdir);
     cppdir = NULL;
@@ -150,7 +150,7 @@ void freecppdir(void) {
 }
 
 /* Frees the `builddir` ptr and sets it to `NULL`. */
-void freebuilddir(void) {
+void free_builddir(void) {
   if (builddir) {
     free(builddir);
     builddir = NULL;
@@ -158,7 +158,7 @@ void freebuilddir(void) {
 }
 
 /* Frees the `outdir` ptr and sets it to `NULL`. */
-void freeoutdir(void) {
+void free_outdir(void) {
   if (outdir) {
     free(outdir);
     outdir = NULL;
@@ -166,7 +166,7 @@ void freeoutdir(void) {
 }
 
 /* Frees the `amakedir` ptr and sets it to `NULL`. */
-void freeamakedir(void) {
+void free_amakedir(void) {
   if (amakedir) {
     free(amakedir);
     amakedir = NULL;
@@ -174,11 +174,23 @@ void freeamakedir(void) {
 }
 
 /* Frees the `compile data directory` that Amake uses to compile only what is needed. */
-void freeamakecompdir(void) {
+void free_amakecompdir(void) {
   if (amakecompdir) {
     free(amakecompdir);
     amakecompdir = NULL;
   }
+}
+
+/* Free all dir ptr's that `Amake` uses. */
+void free_dirptrs(void) {
+  free_pwd();
+  free_srcdir();
+  free_cdir();
+  free_cppdir();
+  free_builddir();
+  free_outdir();
+  free_amakedir();
+  free_amakecompdir();
 }
 
 /* Return `TRUE` when path exists and is a directory and when we have access to the directory. */

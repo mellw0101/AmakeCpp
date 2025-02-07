@@ -3,3 +3,4 @@
 /build/obj/*.o
 /build/bin/*
 /module-cache
+/.amake/*

@@ -69,7 +69,7 @@ static void compile_data_get(compile_data_t *const output, const char *const __r
       /* Create the compile_data_entry_t structure. */
       compdata = compile_data_entry_make();
       /* Populate the fields. */
-      compdata->outpath  = fmtstr("%s/%s.o", getoutdir(), entry->name);
+      compdata->outpath  = fmtstr("%s/%s.o", get_outdir(), entry->name);
       compdata->srcpath  = copy_of(entry->path);
       compdata->compiler = copy_of(compiler);
       compdata->flags    = copy_of(flags);
@@ -93,7 +93,7 @@ void compile_data_getc(compile_data_t *const output) {
   ASSERT(output);
   ASSERT(output->data);
   ASSERT(output->cap);
-  compile_data_get(output, getcdir(), "c", DEFAULT_C_COMPILER, C_DEFAULT_ARGS);
+  compile_data_get(output, get_cdir(), "c", DEFAULT_C_COMPILER, C_DEFAULT_ARGS);
 }
 
 /* Get the compile data for all files in the `c` source dir. */
@@ -101,7 +101,7 @@ void compile_data_getcpp(compile_data_t *const output) {
   ASSERT(output);
   ASSERT(output->data);
   ASSERT(output->cap);
-  compile_data_get(output, getcppdir(), "cpp", DEFAULT_CPP_COMPILER, CC_DEFAULT_ARGS);
+  compile_data_get(output, get_cppdir(), "cpp", DEFAULT_CPP_COMPILER, CC_DEFAULT_ARGS);
 }
 
 /* Write compile entry data to `amakefile`. */
@@ -201,7 +201,7 @@ void *compile_data_task(void *arg) {
   char *execout;
   bool  existed;
   /* Make the path to the compile data for this file. */
-  amakefile = fmtstr("%s/%s.amake", getamakecompdir(), data->direntry->name);
+  amakefile = fmtstr("%s/%s.amake", get_amakecompdir(), data->direntry->name);
   /* Check if the file already exists. */
   existed = file_exists(amakefile);
   /* If the compile data file does not exist. */

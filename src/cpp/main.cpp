@@ -376,7 +376,7 @@ inline namespace AmakeCpp {
   inline namespace Tools {
     /* Creates a directory */
     static void create_project_dir(const char *relativepath) {
-      char *fullpath = concatenate_path(get_pwd(), relativepath);
+      char *fullpath = concatenate_path(getpwd(), relativepath);
       if (!dir_exists(fullpath)) {
         print_msg(ESC_CODE_GREEN, "Creating Dir -> %s", fullpath);
         if (make_directory(fullpath) == -1) {
@@ -563,7 +563,7 @@ inline namespace AmakeCpp {
       }
 
       static int install_ncursesw_part(const string &libName) {
-        print_msg(ESC_CODE_GREEN, "Installing Lib %s -> %s/build/lib/%s", libName.c_str(), get_pwd(), libName.c_str());
+        print_msg(ESC_CODE_GREEN, "Installing Lib %s -> %s/build/lib/%s", libName.c_str(), getpwd(), libName.c_str());
         if (FileSys::exists(LIB_SRC_DIR + "/ncurses-6.5")) {
           print_msg(ESC_CODE_YELLOW, "Folder lib/ncurses-6.5 Already Exists");
         }
@@ -709,7 +709,7 @@ inline namespace AmakeCpp {
 
       static int install_glfw_lib(void) {
         int ret = 0;
-        char *was_pwd = copy_of(get_pwd());
+        char *was_pwd = copy_of(getpwd());
         char *glfw_dir = concatenate_path(get_lib_src_dir(), "glfw/glfw-3.4");
         chdir(glfw_dir);
         char *build_dir = concatenate_path(glfw_dir, "build");
@@ -769,7 +769,7 @@ inline namespace AmakeCpp {
       
       static int install_glew_lib(void) {
         int ret = 0;
-        char *was_pwd = copy_of(get_pwd());
+        char *was_pwd = copy_of(getpwd());
         char *glew_dir = concatenate_path(get_lib_src_dir(), "glew/glew-2.2.0");
         chdir(glew_dir);
         char *bin;
@@ -902,23 +902,24 @@ inline namespace AmakeCpp {
 }
 
 int main(int argc, char **argv) {
-  print_args(argc, argv);
+  test_args(argc, argv);
   const auto sArgv = Args::argvToStrVec(argc, argv);
   for (Ulong i = 1; i < sArgv.size(); ++i) {
     const Option option = optionFromArg(sArgv[i]);
     if (option & TEST) {
-      if (i + 1 < sArgv.size()) {
-        vector<string> args;
-        while (optionFromArg(sArgv[i + 1]) == UNKNOWN_OPTION && i + 1 < sArgv.size()) {
-          ++i;
-          args.push_back(sArgv[i]);
-        }
-        if (!args.empty()) {
-          do_link(args);
-          continue;
-        }
-      }
-      do_compile();
+      // if (i + 1 < sArgv.size()) {
+      //   vector<string> args;
+      //   while (optionFromArg(sArgv[i + 1]) == UNKNOWN_OPTION && i + 1 < sArgv.size()) {
+      //     ++i;
+      //     args.push_back(sArgv[i]);
+      //   }
+      //   if (!args.empty()) {
+      //     do_link(args);
+      //     continue;
+      //   }
+      // }
+      // do_compile();
+      Amake_do_compile();
       exit(0);
     }
     if (option & LINK) {

@@ -57,7 +57,6 @@
 #endif
 #define STATIC_STD "-static-libc++ -static-libgcc"
 
-#define ARRAY_SIZE(array) (sizeof(__VA_ARGS__) / sizeof(__VA_ARGS__[0]))
 #define ARGV(...) (const char *[]) { __VA_ARGS__ ,NULL }
 #define PARENT_ENV ARGV("__parent_env")
 #define FIND_EXEC(name) "find:" name

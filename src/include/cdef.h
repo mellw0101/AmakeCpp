@@ -79,7 +79,8 @@
 
 #define DO_WHILE(...)  do {__VA_ARGS__} while (0)
 
-#define ASSIGN_IF_VALID(ptr, value)  DO_WHILE( ((ptr) ? (*(ptr) = value) : ((int)0)); )
+#define ASSIGN_IF_VALID(ptr, value)            DO_WHILE( ((ptr) ? (*(ptr) = value) : ((int)0)); )
+#define ASSIGN_IF_VALID_ELSE_FREE(ptr, value)  DO_WHILE( ((ptr) ? (void)(*(ptr) = value) : (free(value))); )
 
 #define DEFAULT_C_COMPILER    "/usr/bin/clang"
 #define DEFAULT_CPP_COMPILER  "/usr/bin/clang++"
@@ -133,6 +134,29 @@
 
 #define ARRAY_SIZE(array)  (sizeof(array) / sizeof(array[0]))
 
+typedef enum {
+  AMAKE_HELP,
+  #define AMAKE_HELP  AMAKE_HELP
+  AMAKE_CONFIGURE,
+  #define AMAKE_CONFIGURE  AMAKE_CONFIGURE
+  AMAKE_VERSION,
+  #define AMAKE_VERSION  AMAKE_VERSION
+  AMAKE_BUILD,
+  #define AMAKE_BUILD  AMAKE_BUILD
+  AMAKE_CLEAN,
+  #define AMAKE_CLEAN  AMAKE_CLEAN
+  AMAKE_INSTALL,
+  #define AMAKE_INSTALL  AMAKE_INSTALL
+  AMAKE_LIB,
+  #define AMAKE_LIB  AMAKE_LIB
+  AMAKE_TEST,
+  #define AMAKE_TEST  AMAKE_TEST
+  AMAKE_LINK,
+  #define AMAKE_LINK  AMAKE_LINK
+  AMAKE_CHECK,
+  #define AMAKE_CHECK  AMAKE_CHECK
+} cmdopt_type_t;
+
 /* Some structures. */
 typedef struct {
   Uchar type;         /* The type of entry this is.  Uses `dirent->d_type`. */
@@ -163,3 +187,5 @@ typedef struct {
   Ulong cap;
   Ulong len;
 } compile_data_t;
+
+

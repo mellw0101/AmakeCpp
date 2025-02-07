@@ -80,6 +80,27 @@ char *fmtstr(const char *const __restrict format, ...) {
   return ret;
 }
 
+/* Insert 'src' into `dst` and return `dst`. */
+char *strins(char *const dst, char *const src, Ulong at) {
+  return NULL;
+}
+
+/* Append `src` to the end of `dst`. */
+char *astrcat(char *__restrict dst, const char *const __restrict src) {
+  ASSERT(dst);
+  ASSERT(src);
+  /* Get the length of both dst and src. */
+  Ulong dstlen = strlen(dst);
+  Ulong srclen = strlen(src);
+  /* Reallocate dst to fit all of the text plus a NULL-TERMINATOR. */
+  dst = arealloc(dst, (dstlen + srclen + 1));
+  /* Append src to dst, and NULL-TERMINATE dst. */
+  memcpy((dst + dstlen), src, srclen);
+  dst[dstlen + srclen] = '\0';
+  /* Then return dst. */
+  return dst;
+}
+
 /* Concatate a path, taking into account trailing and leading '/' for a proper path. */
 char *concatpath(const char *const __restrict s1, const char *const __restrict s2) {
   Ulong s1len = strlen(s1);
@@ -140,12 +161,9 @@ int fork_bin(const char *const __restrict path, char *const argv[], char *const 
     /* NULL-TERMINATE the data read, and close the parent read fd. */
     readret[total_bytes_read] = '\0';
     close(fdpipe[0]);
-    /* If output ptr is not null, then assign the output from the child to it. */
-    ASSIGN_IF_VALID(output, readret);
-    /* If output ptr is non-valid.  Free the read data. */
-    if (!output) {
-      free(readret);
-    }
+    /* If output ptr is not null, then assign the output from
+     * the child to it.  Otherwise, we free the read data. */
+    ASSIGN_IF_VALID_ELSE_FREE(output, readret);
     ALWAYS_ASSERT(waitpid(pid, &status, 0) != -1);
     if (WIFEXITED(status)) {
       statusret = WEXITSTATUS(status);
