@@ -35,7 +35,6 @@ char *concatpath(const char *const __restrict s1, const char *const __restrict s
 char *free_and_assign(char *const dst, char *const src);
 int   fork_bin(const char *const __restrict path, char *const argv[], char *const envp[], char **const output) __THROW _NONNULL(1, 2, 3);
 void  free_chararray(char **const array, Ulong len);
-int   entries_in_dir(const char *path, char ***files, Ulong *nfiles, char ***dirs, Ulong *ndirs);
 void  stdout_printf(const char *format, ...) _PRINTFLIKE(1, 2);
 void  construct_argv(char ***arguments, const char *command);
 bool  parse_num(const char *string, long *result);

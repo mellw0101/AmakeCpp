@@ -1,3 +1,4 @@
 [2025-02-02 20:05:16]: Improved the installer so that we can compile this in the same manner as AmakeCpp compiles a project, but just using bash code so that this can be compiled without itself.
 [2025-02-07 02:56:24]: Moved some parts to pure c code, as well as improved the compiling stage by adding checks to if files needs to be recompiled
 [2025-02-07 02:56:46]: Moved some parts to pure c code, as well as improved the compiling stage by adding checks to if files needs to be recompiled
+[2025-02-07 13:56:38]: Started work on cmd arguments handleing in pure c

@@ -65,7 +65,17 @@ static int count_args(int argc, char **argv, int *iter) {
     }
   }
   return count;
-} 
+}
+
+/* Return a string of `count` args in `argv` after `*iter`. */
+static char *get_args_string(int argc, char **argv, int *iter, int count) {
+  char *ret = copy_of("");
+  for (int i = (*iter + 1); i < (*iter + 1 + count); ++i) {
+    ret = astrcat(ret, argv[i]);
+    ret = astrcat(ret, " ");
+  }
+  return ret;
+}
 
 void test_args(int argc, char **argv) {
   int opt   = -1;
@@ -84,7 +94,9 @@ void test_args(int argc, char **argv) {
           break;
         }
       }
-      printf("Found cmd opt: %s: argno: %d\n", argv[i], count_args(argc, argv, &i));
+      char *args = get_args_string(argc, argv, &i, argno);
+      printf("Found cmd opt: %s: argno: %d: args: %s\n", argv[i], argno, args);
+      free(args);
     }
   }
 }

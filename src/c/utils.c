@@ -189,65 +189,6 @@ void free_chararray(char **const array, Ulong len) {
   free(array);
 }
 
-/* Retrieve files and dirs from path.  Returns -1 apon failure to open directory. */
-int entries_in_dir(const char *path, char ***files, Ulong *nfiles, char ***dirs, Ulong *ndirs) {
-  ASSERT(path);
-  ASSERT(files);
-  ASSERT(nfiles);
-  ASSERT(dirs);
-  ASSERT(ndirs);
-  /* Make sure path exists and is a directory. */
-  if (!dir_exists(path)) {
-    return -1;
-  }
-  /* Open the target directory. */
-  struct dirent *directory_entry = NULL;
-  DIR *target_directory = opendir(path);
-  /* Terminate apon failure to open directory. */
-  ALWAYS_ASSERT(target_directory);
-  /* Define our buffers, one for file entries and one for dirs. */
-  char **file_buf  = NULL, **dir_buf  = NULL;
-  Ulong  file_size = 0,      dir_size = 0;
-  Ulong  file_cap  = 40,     dir_cap  = 40;
-  /* Malloc our buffers. */
-  file_buf = (char **)amalloc(sizeof(char *) * file_cap);
-  dir_buf  = (char **)amalloc(sizeof(char *) * dir_cap);
-  /* Fetch all entries in the target directory. */
-  while ((directory_entry = readdir(target_directory))) {
-    switch (directory_entry->d_type) {
-      /* Directory entry. */
-      case DT_DIR: {
-        /* Skip directory traversers. */
-        if (strcmp(directory_entry->d_name, "..") == 0 || strcmp(directory_entry->d_name, ".") == 0) {
-          continue;
-        }
-        ENSURE_PTR_ARRAY_SIZE(dir_buf, dir_cap, dir_size);
-        dir_buf[dir_size++] = measured_copy(directory_entry->d_name, (_D_ALLOC_NAMLEN(directory_entry) - 1));
-        break;
-      }
-      /* Regular file entry. */
-      case DT_REG: {
-        ENSURE_PTR_ARRAY_SIZE(file_buf, file_cap, file_size);
-        file_buf[file_size++] = measured_copy(directory_entry->d_name, (_D_ALLOC_NAMLEN(directory_entry) - 1));
-        break;
-      }
-    }
-  }
-  /* Trim data buffer`s to the size of data. */
-  file_buf = (char **)arealloc(file_buf, (sizeof(char *) * (file_size + 1)));
-  dir_buf  = (char **)arealloc(dir_buf,  (sizeof(char *) * (dir_size  + 1)));
-  /* NULL-terminate buffer`s to ensure NULL-safe operation`s. */
-  file_buf[file_size] = NULL;
-  dir_buf[dir_size]   = NULL;
-  closedir(target_directory);
-  /* Assign the data buffers. */
-  *files  = file_buf;
-  *nfiles = file_size;
-  *dirs  = dir_buf;
-  *ndirs = dir_size;
-  return 0;
-}
-
 /* Print something to stdout, in a thread safe manner. */
 void stdout_printf(const char *format, ...) {
   ASSERT(format);

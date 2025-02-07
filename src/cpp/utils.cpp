@@ -360,48 +360,6 @@ void append_chararray(char ***array, Ulong *len, char **append, Ulong append_len
   (*array)[*len] = NULL;
 }
 
-/* Recursivly get all files and dirs from a starting path. */
-int recursive_entries_in_dir(const char *path, char ***files, Ulong *nfiles, char ***dirs, Ulong *ndirs) {
-  char **local_files, **local_dirs;
-  Ulong  local_nfiles,  local_ndirs;
-  if (entries_in_dir(path, &local_files, &local_nfiles, &local_dirs, &local_ndirs) == -1) {
-    return -1;
-  }
-  append_chararray(files, nfiles, local_files, local_nfiles);
-  append_chararray(dirs,  ndirs,  local_dirs,  local_ndirs);
-  for (Ulong i = 0; i < local_ndirs; ++i) {
-    char *subdir = concatenate_path(path, local_dirs[i]);
-    recursive_entries_in_dir(subdir, files, nfiles, dirs, ndirs);
-    free(subdir);
-  }
-  free(local_files);
-  free(local_dirs);
-  return 0;
-}
-
-/* Helper to correctly get all entries in a starting path. */
-int get_all_entries_in_dir(const char *path, char ***files, Ulong *nfiles, char ***dirs, Ulong *ndirs) {
-  /* Init the arrays. */
-  char **local_files  = (char **)amalloc(sizeof(char *));
-  char **local_dirs   = (char **)amalloc(sizeof(char *));
-  Ulong  local_nfiles = 0;
-  Ulong  local_ndirs  = 0;
-  if (recursive_entries_in_dir(path, &local_files, &local_nfiles, &local_dirs, &local_ndirs) == -1) {
-    free_chararray(local_files, local_nfiles);
-    free_chararray(local_dirs, local_ndirs);
-    *files  = NULL;
-    *dirs   = NULL;
-    *nfiles = 0;
-    *ndirs  = 0;
-    return -1;
-  }
-  *files  = local_files;
-  *dirs   = local_dirs;
-  *nfiles = local_nfiles;
-  *ndirs  = local_ndirs;
-  return 0;
-}
-
 static const char *config_check_type_str(config_check_type type) {
   static thread_local char buffer[256];
   switch (type) {
