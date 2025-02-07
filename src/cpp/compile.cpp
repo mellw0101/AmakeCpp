@@ -6,12 +6,12 @@ static Uint        tcap  = 10;
 static ThreadData *td    = nullptr;
 static pthread_t  *t     = nullptr;
 
-void init_threads(void) {
+static void init_threads(void) {
   t  = (pthread_t *)malloc(sizeof(pthread_t) * tcap);
   td = (ThreadData *)malloc(sizeof(ThreadData) * tcap);
 }
 
-void add_thread_data(const char *input, const char *output) {
+static void add_thread_data(const char *input, const char *output) {
   (tsize == tcap)
     ? ((tcap *= 2), (td = (ThreadData *)realloc(td, sizeof(ThreadData) * tcap)),
       (t = (pthread_t *)realloc(t, sizeof(pthread_t) * tcap)))
@@ -53,7 +53,7 @@ static void *thread_asm_work(void *arg) {
   return nullptr;
 }
 
-void do_asm(void) {
+static void do_asm(void) {
   init_threads();
   Ulong          n;
   DirEntry *files = files_in_dir(AS_DIR.c_str(), &n);
@@ -108,9 +108,9 @@ void do_asm(void) {
   tsize = 0;
 }
 
-void do_c(void) {
+static void do_c(void) {
   init_threads();
-  Ulong          n;
+  Ulong n;
   DirEntry *files = files_in_dir(C_DIR.c_str(), &n);
   for (Ulong i = 0; i < n; ++i) {
     DirEntry *e = &files[i];

@@ -80,8 +80,6 @@
     } \
   } while(0)
 
-#define S__LEN(str) str, (sizeof(str) - 1)
-
 #define fs std::filesystem
 using std::vector;
 

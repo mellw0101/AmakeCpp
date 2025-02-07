@@ -69,11 +69,6 @@ void extract_name_and_ext(DirEntry *e) noexcept {
   }
 }
 
-bool dir_exists(const char *path) {
-  struct stat st;
-  return (stat(path, &st) != -1 && S_ISDIR(st.st_mode));
-}
-
 /* Return a malloc`ed 'char **' with malloc`ed 'char *' strings containing all paths in the env var 'PATH'.  Return`s NULL on failure. */
 char **get_env_paths(Ulong *npaths) {
   /* Get the PATH env var. */
@@ -153,36 +148,6 @@ DirEntry *files_in_dir(const char *path, Ulong *n) {
 
 void free_files(DirEntry *files, Ulong n) {
   free(files);
-}
-
-void *amalloc(Ulong howmush) {
-  void *ptr = malloc(howmush);
-  if (!ptr) {
-    fprintf(stderr, "AmakeCpp is out of memory\n");
-    exit(1);
-  }
-  return ptr;
-}
-
-void *arealloc(void *ptr, Ulong howmush) {
-  ptr = realloc(ptr, howmush);
-  if (!ptr) {
-    fprintf(stderr, "AmakeCpp is out of memory\n");
-    exit(1);
-  }
-  return ptr;
-}
-
-char *measured_copy(const char *string, Ulong count) {
-  char *ret = (char *)amalloc(count + 1);
-  memcpy(ret, string, count);
-  ret[count] = '\0';
-  return ret;
-}
-
-char *copy_of(const char *string) {
-  ASSERT(string);
-  return measured_copy(string, strlen(string));
 }
 
 char *get_pwd(void) {
@@ -384,17 +349,6 @@ void extract_zip(const char *path, const char *output_path) {
   free(bin);
 }
 
-/* Free the memory of the given array, which should contain len elements. */
-void free_chararray(char **array, Ulong len) {
-  if (!array) {
-    return;
-  }
-  while (len > 0) {
-    free(array[--len]);
-  }
-  free(array);
-}
-
 /* Append an array onto 'array'.  Free 'append' but not any elements in it after call. */
 void append_chararray(char ***array, Ulong *len, char **append, Ulong append_len) {
   Ulong new_len = ((*len) + append_len);
@@ -404,57 +358,6 @@ void append_chararray(char ***array, Ulong *len, char **append, Ulong append_len
   }
   *len = new_len;
   (*array)[*len] = NULL;
-}
-
-/* Retrieve files and dirs from path.  Returns -1 apon failure to open directory. */
-int entries_in_dir(const char *path, char ***files, Ulong *nfiles, char ***dirs, Ulong *ndirs) {
-  /* Open the target directory. */
-  dirent *directory_entry = NULL;
-  DIR *target_directory = opendir(path);
-  /* Return early apon failure to open directory. */
-  if (!target_directory) {
-    logE("Failed to open dir: %s.\n");
-    return -1;
-  }
-  /* Define our buffers, one for file entries and one for dirs. */
-  char **file_buf  = NULL, **dir_buf  = NULL;
-  Ulong  file_size = 0,      dir_size = 0;
-  Ulong  file_cap  = 40,     dir_cap  = 40;
-  /* Malloc our buffers. */
-  file_buf = (char **)amalloc(sizeof(char *) * file_cap);
-  dir_buf  = (char **)amalloc(sizeof(char *) * dir_cap);
-  /* Fetch all entries in the target directory. */
-  while ((directory_entry = readdir(target_directory))) {
-    switch (directory_entry->d_type) {
-      case DT_DIR: /* Directory entry. */ {
-        /* Skip directory traversers. */
-        if (strcmp(directory_entry->d_name, "..") == 0 || strcmp(directory_entry->d_name, ".") == 0) {
-          continue;
-        }
-        ENSURE_CHARARRAY_CAPACITY(dir_buf, dir_cap, dir_size);
-        dir_buf[dir_size++] = measured_copy(directory_entry->d_name, (_D_ALLOC_NAMLEN(directory_entry) - 1));
-        break;
-      }
-      case DT_REG: /* Regular file entry. */ {
-        ENSURE_CHARARRAY_CAPACITY(file_buf, file_cap, file_size);
-        file_buf[file_size++] = measured_copy(directory_entry->d_name, (_D_ALLOC_NAMLEN(directory_entry) - 1));
-        break;
-      }
-    }
-  }
-  /* Trim data buffer`s to the size of data. */
-  file_buf = (char **)arealloc(file_buf, (sizeof(char *) * (file_size + 1)));
-  dir_buf  = (char **)arealloc(dir_buf,  (sizeof(char *) * (dir_size  + 1)));
-  /* NULL-terminate buffer`s to ensure NULL-safe operation`s. */
-  file_buf[file_size] = NULL;
-  dir_buf[dir_size]   = NULL;
-  closedir(target_directory);
-  /* Assign the data buffers. */
-  *files  = file_buf;
-  *nfiles = file_size;
-  *dirs  = dir_buf;
-  *ndirs = dir_size;
-  return 0;
 }
 
 /* Recursivly get all files and dirs from a starting path. */
@@ -497,36 +400,6 @@ int get_all_entries_in_dir(const char *path, char ***files, Ulong *nfiles, char 
   *nfiles = local_nfiles;
   *ndirs  = local_ndirs;
   return 0;
-}
-
-bool lock_fd(int fd, short type) {
-  ALWAYS_ASSERT(fd >= 0);
-  flock lock {
-    type,
-    SEEK_SET,
-    0,
-    0,
-    getpid()
-  };
-  if (fcntl(fd, F_SETLKW, &lock) == -1) {
-    return FALSE;
-  }
-  return TRUE;
-}
-
-bool unlock_fd(int fd) {
-  ALWAYS_ASSERT(fd >= 0);
-  flock lock {
-    F_UNLCK,
-    SEEK_SET,
-    0,
-    0,
-    getpid()
-  };
-  if (fcntl(fd, F_SETLK, &lock) == -1) {
-    return FALSE;
-  }
-  return TRUE;
 }
 
 static const char *config_check_type_str(config_check_type type) {

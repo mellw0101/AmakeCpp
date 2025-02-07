@@ -34,14 +34,9 @@ vector<string> getArgsBasedOnArch(const Uchar mode, std::string_view output, std
 void      run(const char *bin, const char *const *argv, const char *const *envv) __NOT_NULL(1, 2);
 void      copy_stack_nstr(char *stack_dst, const char *stack_src, Uint n) noexcept;
 void      extract_name_and_ext(DirEntry *e) noexcept;
-bool      dir_exists(const char *path);
 bool      exec_exists(const char *name, char **fullpath_ret);
 DirEntry *files_in_dir(const char *path, Ulong *n);
 void      free_files(DirEntry *files, Ulong n);
-void     *amalloc(Ulong howmush);
-void     *arealloc(void *ptr, Ulong howmush);
-char     *measured_copy(const char *string, Ulong count);
-char     *copy_of(const char *string);
 char     *get_pwd(void);
 char     *get_src_dir(void);
 char     *get_lib_src_dir(void);

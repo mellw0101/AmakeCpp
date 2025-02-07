@@ -1,4 +1,5 @@
 #include <Mlib/Args.h>
+#include <Mlib/Debug.h>
 #include <Mlib/Sys.h>
 #include <Mlib/Socket.h>
 #include <string>
@@ -324,7 +325,7 @@ inline namespace AmakeCpp {
     enum Option {
       UNKNOWN_OPTION = (1 << 0),
       HELP           = (1 << 1),
-      CONFIG           = (1 << 2),
+      CONFIG         = (1 << 2),
       VER            = (1 << 3),
       BUILD          = (1 << 4),
       CLEAN          = (1 << 5),
@@ -336,7 +337,7 @@ inline namespace AmakeCpp {
     };
 
     /* Convert string to Option */
-		Option optionFromArg(const string &arg) {
+		static Option optionFromArg(const string &arg) {
       const static std::unordered_map<string, Option> optionMap = {
         {     "--help",         HELP},
         {"--configure",       CONFIG},
@@ -901,6 +902,7 @@ inline namespace AmakeCpp {
 }
 
 int main(int argc, char **argv) {
+  print_args(argc, argv);
   const auto sArgv = Args::argvToStrVec(argc, argv);
   for (Ulong i = 1; i < sArgv.size(); ++i) {
     const Option option = optionFromArg(sArgv[i]);
@@ -980,7 +982,9 @@ int main(int argc, char **argv) {
       Lib("");
     }
     if (option & CONFIG_CHECK) {
+      Amake_make_data_dirs();
       check_config_part(CONFIG_HAVE___THREAD);
+      Amake_do_compile();
       exit(0);
     }
     if (option & UNKNOWN_OPTION) {
