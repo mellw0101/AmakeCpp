@@ -25,6 +25,9 @@ void Amake_do_compile(void) {
   long    cores    = sysconf(_SC_NPROCESSORS_ONLN);
   Ulong   threadno = 0;
   thread *threads;
+  /* Check if .amake dir for this project exists.  If not, create it. */
+  Amake_make_data_dirs();
+  /* Get all the entries we need to check if compalation is needed for. */
   compile_data_t data;
   compile_data_data_init(&data);
   compile_data_getc(&data);

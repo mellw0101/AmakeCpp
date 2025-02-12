@@ -105,22 +105,22 @@ void compile_data_getcpp(compile_data_t *const output) {
 }
 
 /* Write compile entry data to `amakefile`. */
-static void write_compile_data(const char *amakefile, compile_data_entry_t *const data) {
+static void write_compile_data(const char *amakefile, compile_data_entry_t *const entry) {
   ASSERT(amakefile);
-  ASSERT(data);
+  ASSERT(entry);
   char *wrdata;
-  int fd;
-  /* Open the path as a writing fd, creating it if it does not exist. */
+  int   fd;
+  /* Open the path as a write only fd, creating it if it does not exist. */
   ALWAYS_ASSERT((fd = open(amakefile, (O_WRONLY | O_CREAT), 0755)) != -1);
   wrdata = fmtstr(
     "mtime:%ld\n"
     "size:%ld\n"
     "outpath:%s\n"
     "srcpath:%s\n",
-    data->direntry->stat->st_mtime,
-    data->direntry->stat->st_size,
-    data->outpath,
-    data->srcpath
+    entry->direntry->stat->st_mtime,
+    entry->direntry->stat->st_size,
+    entry->outpath,
+    entry->srcpath
   );
   /* Write the data to the file. */
   lock_fd(fd, F_WRLCK);
@@ -133,11 +133,12 @@ static void write_compile_data(const char *amakefile, compile_data_entry_t *cons
 /* Read compile entry data. */
 static char *read_compile_data(const char *amakefile) {
   ASSERT(amakefile);
-  int fd;
-  char buffer[4096];
+  int   fd;
+  char  buffer[4096];
   char *ret = amalloc(1);
-  long bytes_read, total_read = 0;
-  ALWAYS_ASSERT((fd = open(amakefile, O_RDWR)) != -1);
+  long  bytes_read, total_read = 0;
+  /* Open the fd in read only mode. */
+  ALWAYS_ASSERT((fd = open(amakefile, O_RDONLY)) != -1);
   /* Read the .amake compile data file in 4096 byte chunks. */
   while ((bytes_read = read(fd, buffer, sizeof(buffer))) > 0) {
     ret = arealloc(ret, (total_read + bytes_read + 1));
@@ -153,18 +154,18 @@ static char *read_compile_data(const char *amakefile) {
 static void check_compile_data(const char *amakefile, compile_data_entry_t *const entry) {
   ASSERT(amakefile);
   ASSERT(entry);
-  char *read_data;
+  char  *read_data;
   char **lines;
-  /* Fetched data. */
-  char *outpath;
-  long mtime;
+  char  *outpath = NULL;
+  long   mtime;
   read_data = read_compile_data(amakefile);
   lines = split_string(read_data, '\n');
   for (char **line = lines; *line; ++line) {
-    /* Last modification time. */
+    /* Get last modification time. */
     if (strncmp(*line, S__LEN("mtime:")) == 0) {
       ALWAYS_ASSERT(parse_num((*line) + strlen("mtime:"), &mtime));
     }
+    /* Get output path. */
     else if (strncmp(*line, S__LEN("outpath:")) == 0) {
       outpath = copy_of((*line) + strlen("outpath:"));
     }
@@ -178,12 +179,15 @@ static void check_compile_data(const char *amakefile, compile_data_entry_t *cons
   if (!file_exists(outpath)) {
     entry->compile_needed = TRUE;
   }
+  /* Also if the modify time is diffrent from the one on file, we recompile. */
   else if (entry->direntry->stat->st_mtime != mtime) {
     entry->compile_needed = TRUE;
   }
+  /* Otherwise, this entry does not need recompalation. */
   else {
     entry->compile_needed = FALSE;
   }
+  free(outpath);
 }
 
 /* Simple compile command using system, for now. */

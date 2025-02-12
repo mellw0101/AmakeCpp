@@ -26,19 +26,12 @@ const char *tail(const char *const path);
 const char *ext(const char *const path);
 void *amalloc(Ulong howmush) __THROW _RETURNS_NONNULL;
 void *arealloc(void *ptr, Ulong howmush) __THROW _RETURNS_NONNULL _NONNULL(1);
-char *measured_copy(const char *const __restrict string, Ulong count) __THROW _RETURNS_NONNULL _NONNULL(1);
-char *copy_of(const char *const __restrict string) __THROW _RETURNS_NONNULL _NONNULL(1);
-char *fmtstr(const char *const __restrict format, ...) __THROW _RETURNS_NONNULL _NONNULL(1) _PRINTFLIKE(1, 2);
-char *strins(char *const dst, char *const src, Ulong at);
-char *astrcat(char *__restrict dst, const char *const __restrict src);
-char *concatpath(const char *const __restrict s1, const char *const __restrict s2) __THROW _RETURNS_NONNULL _NONNULL(1, 2);
-char *free_and_assign(char *const dst, char *const src);
+void *free_and_assign(void *const dst, void *const src);
 int   fork_bin(const char *const __restrict path, char *const argv[], char *const envp[], char **const output) __THROW _NONNULL(1, 2, 3);
 void  free_chararray(char **const array, Ulong len);
 void  stdout_printf(const char *format, ...) _PRINTFLIKE(1, 2);
 void  construct_argv(char ***arguments, const char *command);
 bool  parse_num(const char *string, long *result);
-char **split_string(const char *const string, const char delim);
 void free_nullterm_carray(char **array);
 
 /* dirs.c */
@@ -88,5 +81,18 @@ pthread_t *get_nthreads(Ulong howmeny);
 /* args.c */
 bool is_cmdopt(const char *arg, int *opt);
 void test_args(int argc, char **argv);
+
+/* signal.c */
+void install_SIGINT_handler(void (*handler)(int));
+void restore_SIGINT_handler(void);
+
+/* astring.c */
+char  *measured_copy(const char *const __restrict string, Ulong count) __THROW _RETURNS_NONNULL _NONNULL(1);
+char  *copy_of(const char *const __restrict string) __THROW _RETURNS_NONNULL _NONNULL(1);
+char **split_string(const char *const string, const char delim);
+char  *fmtstr(const char *const __restrict format, ...) __THROW _RETURNS_NONNULL _NONNULL(1) _PRINTFLIKE(1, 2);
+char  *concatpath(const char *const __restrict s1, const char *const __restrict s2) __THROW _RETURNS_NONNULL _NONNULL(1, 2);
+char  *astrcat(char *__restrict dst, const char *const __restrict src) __THROW _RETURNS_NONNULL _NONNULL(1, 2);
+char  *astrinj(char *__restrict dst, const char *const __restrict src, Ulong idx) __THROW _RETURNS_NONNULL _NONNULL(1, 2);
 
 _END_C_LINKAGE

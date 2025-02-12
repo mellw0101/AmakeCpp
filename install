@@ -15,7 +15,7 @@ STRICT_FLAGS="\
 "
 # -Wall
 
-C_FLAGS="-std=gnu99 $STRICT_FLAGS"
+C_FLAGS="-std=gnu99$STRICT_FLAGS"
 CXX_FLAGS="-stdlib=libc++ -std=c++23 $STRICT_FLAGS"
 
 # region process_files
@@ -83,8 +83,8 @@ link_obj() {
   x86_64)
     OBJ_FILES=""
     collect_files OBJ_FILES "$PWD"/build/obj
-    echo "$OBJ_FILES"
-    /usr/bin/clang++ $CXX_FLAGS $OBJ_FILES /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a /usr/lib/Mlib.a -o "$PWD"/build/bin/AmakeCpp
+    echo "/usr/bin/clang++ $CXX_FLAGS $OBJ_FILES /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a /usr/lib/Mlib.a -o "$PWD"/build/bin/AmakeCpp"
+    /usr/bin/clang++ $CXX_FLAGS $OBJ_FILES /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a /usr/lib/Mlib.a -o "$PWD"/build/bin/AmakeCpp >> /dev/null
 
     # exit 0
     # /usr/bin/clang++ -stdlib=libc++ -std=c++23 -flto -s -O2 -march=native \
@@ -143,7 +143,8 @@ binexists() {
 cfilecomp() {
   local FILE=$(basename "$1")
   binexists clang
-  clang $C_FLAGS -I$PWD/src/include/ -o $PWD/build/obj/$FILE.o -c $PWD/src/c/$FILE
+  echo "$C_FLAGS"" -I"$PWD"/src/include/ -o "$PWD"/build/obj/"$FILE".o -c "$PWD"/src/c/""$FILE"
+  clang $C_FLAGS -I$PWD/src/include/ -o $PWD/build/obj/$FILE.o -c $PWD/src/c/$FILE >> /dev/null
 }
 
 # Compile a single cplusplus file into a .o object file.
