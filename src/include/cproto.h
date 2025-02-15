@@ -32,7 +32,7 @@ void  free_chararray(char **const array, Ulong len);
 void  stdout_printf(const char *format, ...) _PRINTFLIKE(1, 2);
 void  construct_argv(char ***arguments, const char *command);
 bool  parse_num(const char *string, long *result);
-void free_nullterm_carray(char **array);
+void  free_nullterm_carray(char **array);
 
 /* dirs.c */
 char *getpwd(void) __THROW _RETURNS_NONNULL;

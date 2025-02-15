@@ -3,3 +3,4 @@
 [2025-02-07 02:56:46]: Moved some parts to pure c code, as well as improved the compiling stage by adding checks to if files needs to be recompiled
 [2025-02-07 13:56:38]: Started work on cmd arguments handleing in pure c
 [2025-02-07 15:08:20]: Added a quick way to shallow clean by deleting all obj files thereby forcing a recompile, for now that is it
+[2025-02-12 09:57:46]: Fixed some things
