@@ -6,6 +6,7 @@
  */
 #include "../include/cproto.h"
 
+
 /* A copy of the `PWD` env variable. */
 static char *envpwd = NULL;
 /* The source directory path Amake uses. */
@@ -16,6 +17,8 @@ static char *cdir = NULL;
 static char *cppdir = NULL;
 /* The `build` directory path Amake uses. */
 static char *builddir = NULL;
+/* The `binary` directory path `Amake` uses. */
+static char *bindir = NULL;
 /* The `.o` output directory path Amake uses. */
 static char *outdir = NULL;
 /* The Amake config directory path Amake uses. */
@@ -29,9 +32,11 @@ static mutex srcdir_mutex       = static_mutex_init;
 static mutex cdir_mutex         = static_mutex_init;
 static mutex cppdir_mutex       = static_mutex_init;
 static mutex builddir_mutex     = static_mutex_init;
+static mutex bindir_mutex       = static_mutex_init;
 static mutex outdir_mutex       = static_mutex_init;
 static mutex amakedir_mutex     = static_mutex_init;
 static mutex amakecompdir_mutex = static_mutex_init;
+
 
 /* Get the pwd env variable.  This function cannot return `NULL`.  The returned ptr
  * should never be freed during runtime, only when exiting.  And only using `freepwd()`. */
@@ -85,6 +90,16 @@ char *get_builddir(void) {
   }
   mutex_unlock(&builddir_mutex);
   return builddir;
+}
+
+/* Get the path to the `binary` build directory `Amake` uses.  Should be freed using `free_bindir()` only. */
+char *get_bindir(void) {
+  mutex_lock(&bindir_mutex);
+  if (!bindir) {
+    bindir = concatpath(get_builddir(), "/bin");
+  }
+  mutex_unlock(&bindir_mutex);
+  return bindir;
 }
 
 /* Get the path to the `output` directory Amake uses.  Should be freed using `freeoutdir()` only. */
@@ -154,6 +169,14 @@ void free_builddir(void) {
   if (builddir) {
     free(builddir);
     builddir = NULL;
+  }
+}
+
+/* Free's the `bindir` ptr and sets it to `NULL`. */
+void free_bindir(void) {
+  if (bindir) {
+    free(bindir);
+    bindir = NULL;
   }
 }
 

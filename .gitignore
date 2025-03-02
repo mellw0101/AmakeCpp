@@ -1,6 +1,4 @@
-/build/*
-/build/obj/
-/build/obj/*.o
-/build/bin/*
-/module-cache
-/.amake/*
+/build
+/.amake
+/compile_commands.json
+/.cache

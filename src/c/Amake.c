@@ -25,6 +25,8 @@ void Amake_do_compile(void) {
   long    cores    = sysconf(_SC_NPROCESSORS_ONLN);
   Ulong   threadno = 0;
   thread *threads;
+  /* Check if build dirs and the structure exists.  If not, create it. */
+  Amake_make_build_dirs();
   /* Check if .amake dir for this project exists.  If not, create it. */
   Amake_make_data_dirs();
   /* Get all the entries we need to check if compalation is needed for. */
@@ -48,6 +50,22 @@ void Amake_do_compile(void) {
   }
   free(threads);
   compile_data_data_free(&data);
+}
+
+/* Create the build structure, so this can happen automaticly if user just cleaned the project. */
+void Amake_make_build_dirs(void) {
+  /* Make the main build dir for the project. */
+  if (!dir_exists(get_builddir())) {
+    amkdir(get_builddir());
+  }
+  /* Make the bin dir. */
+  if (!dir_exists(get_bindir())) {
+    amkdir(get_bindir());
+  }
+  /* Make the obj dir. */
+  if (!dir_exists(get_outdir())) {
+    amkdir(get_outdir());
+  }
 }
 
 /* Create the `.amake` direcory and its subdirs Amake needs. */

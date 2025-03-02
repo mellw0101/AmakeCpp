@@ -14,6 +14,7 @@ _BEGIN_C_LINKAGE
 /* Amake.c */
 void die(const char *format, ...) _NORETURN _NONNULL(1);
 void Amake_do_compile(void);
+void Amake_make_build_dirs(void);
 void Amake_make_data_dirs(void);
 void Amake_do_shallow_clean(void);
 
@@ -40,6 +41,7 @@ char *get_srcdir(void) __THROW _RETURNS_NONNULL;
 char *get_cdir(void) __THROW _RETURNS_NONNULL;
 char *get_cppdir(void) __THROW _RETURNS_NONNULL;
 char *get_builddir(void) __THROW _RETURNS_NONNULL;
+char *get_bindir(void) __THROW _RETURNS_NONNULL;
 char *get_outdir(void) __THROW _RETURNS_NONNULL;
 char *get_amakedir(void) __THROW _RETURNS_NONNULL;
 char *get_amakecompdir(void) __THROW _RETURNS_NONNULL;
@@ -48,6 +50,7 @@ void  free_srcdir(void) __THROW;
 void  free_cdir(void) __THROW;
 void  free_cppdir(void) __THROW;
 void  free_builddir(void) __THROW;
+void  free_bindir(void);
 void  free_outdir(void) __THROW;
 void  free_amakedir(void) __THROW;
 void  free_amakecompdir(void) __THROW;
