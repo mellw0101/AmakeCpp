@@ -6,31 +6,10 @@
  */
 #include "../include/cproto.h"
 
+
 /* The static mutex that `stdout_printf` uses. */
 static mutex stdout_printf_mutex = static_mutex_init;
 
-/* Return a ptr to the last part of a path, if there are no '/' in the path, just return `path`. */
-const char *tail(const char *const path) {
-  ASSERT(path);
-  const char *slash = strrchr(path, '/');
-  if (slash) {
-    return (slash + 1);
-  }
-  else {
-    return path;
-  }
-}
-
-/* Return the extention of `path`, if any.  Otherwise, return NULL. */
-const char *ext(const char *const path) {
-  ASSERT(path);
-  const char *pathtail = tail(path);
-  /* If the tail of the path starts with '.', then this is not a extention. */
-  if (*pathtail == '.') {
-    return NULL;
-  }
-  return (strrchr(pathtail, '.'));
-}
 
 /* Allocate a block of memory with size `howmush`. */
 void *amalloc(Ulong howmush) {

@@ -13,7 +13,8 @@ STRICT_FLAGS="\
  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always\
  -march=native -Rpass=loop-vectorize -mavx -Wno-vla\
 "
-# -Wall
+
+STATIC_LIBS="/usr/lib/libfcio.a /usr/lib/libc.a /usr/lib/libpthread.a /usr/lib/Mlib.a /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a"
 
 C_FLAGS="-std=gnu99$STRICT_FLAGS"
 CXX_FLAGS="-stdlib=libc++ -std=c++23 $STRICT_FLAGS"
@@ -84,8 +85,8 @@ link_obj() {
     OBJ_FILES=""
     collect_files OBJ_FILES "$PWD"/build/obj
     echo "/usr/bin/clang++ $CXX_FLAGS $OBJ_FILES /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a /usr/lib/Mlib.a -o "$PWD"/build/bin/AmakeCpp"
-    /usr/bin/clang++ $CXX_FLAGS $OBJ_FILES /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a /usr/lib/Mlib.a -o "$PWD"/build/bin/AmakeCpp >> /dev/null
-
+    /usr/bin/clang++ $CXX_FLAGS $OBJ_FILES -static $STATIC_LIBS -o "$PWD"/build/bin/AmakeCpp >> /dev/null
+    # /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a /usr/lib/Mlib.a
     # exit 0
     # /usr/bin/clang++ -stdlib=libc++ -std=c++23 -flto -s -O2 -march=native \
     # /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a \
@@ -153,15 +154,10 @@ cxxfilecomp() {
   clang++ $CXX_FLAGS -I"$PWD"/src/include -o "$PWD"/build/obj/"$FILE".o -c "$PWD"/src/cpp/"$FILE"
 }
 
+# Compile all c files.
 process_files "$PWD/src/c" cfilecomp
+# Compile all cpp files.
 process_files "$PWD/src/cpp" cxxfilecomp
-
-# Compile all sub parts.
-# comp_obj main
-# comp_obj utils
-# comp_obj link
-# comp_obj compile
-# comp_obj global
 
 # Link and install obj.
 link_obj

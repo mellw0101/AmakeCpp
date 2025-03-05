@@ -6,6 +6,7 @@
  */
 #include "../include/cproto.h"
 
+
 typedef struct {
   const char   *short_name;  /* The short `name` of this cmd option argument line `-h`. */
   const char   *long_name;   /* The thing that reprecents this cmd option argument like `--help`. */
@@ -23,6 +24,7 @@ typedef struct {
   };
 } cmdopt_action_t;
 
+
 /* `INTERNAL`  The map that holds the configuration for the cmd opts. */
 static cmdopt_entry_t cmdopt[] = {
   {  "-h",      "--help",  0 },
@@ -36,6 +38,7 @@ static cmdopt_entry_t cmdopt[] = {
   {  "-l",      "--link", -1 },
   { "-ch",     "--check",  0 }
 };
+
 
 /* Return `TRUE` if `arg` is a cmd option argument. */
 bool is_cmdopt(const char *arg, int *opt) {

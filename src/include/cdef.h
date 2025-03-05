@@ -25,6 +25,9 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
+/* fcio */
+#include <fcio/proto.h>
+
 /* Define c linkage macros. */
 #ifdef __cplusplus
 # define _BEGIN_C_LINKAGE  extern "C" {
@@ -35,13 +38,13 @@
 #endif
 
 /* Define boolian macros. */
-#ifdef __cplusplus
-# define TRUE   true
-# define FALSE  false
-#else
-# define TRUE   1
-# define FALSE  0
-#endif
+// #ifdef __cplusplus
+// # define TRUE   true
+// # define FALSE  false
+// #else
+// # define TRUE   1
+// # define FALSE  0
+// #endif
 
 /* Integer define */
 #undef Ulong
@@ -79,7 +82,7 @@
 
 #define DO_WHILE(...)  do {__VA_ARGS__} while (0)
 
-#define ASSIGN_IF_VALID(ptr, value)            DO_WHILE( ((ptr) ? (*(ptr) = value) : ((int)0)); )
+// #define ASSIGN_IF_VALID(ptr, value)            DO_WHILE( ((ptr) ? (*(ptr) = value) : ((int)0)); )
 #define ASSIGN_IF_VALID_ELSE_FREE(ptr, value)  DO_WHILE( ((ptr) ? (void)(*(ptr) = value) : (free(value))); )
 
 #define DEFAULT_C_COMPILER    "/usr/bin/clang"
@@ -95,19 +98,19 @@
 # define CC_DEFAULT_ARGS "-m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -Rpass=loop-vectorize -flto -Wno-vla"
 #endif
 
-#define ENSURE_PTR_ARRAY_SIZE(array, cap, size)         \
-  DO_WHILE(                                             \
-    if (size == cap) {                                  \
-      cap *= 2;                                         \
-      array = arealloc(array, (sizeof(void *) * cap));  \
-    }                                                   \
-  )
+// #define ENSURE_PTR_ARRAY_SIZE(array, cap, size)         \
+//   DO_WHILE(                                             \
+//     if (size == cap) {                                  \
+//       cap *= 2;                                         \
+//       array = arealloc(array, (sizeof(void *) * cap));  \
+//     }                                                   \
+//   )
 
-#define TRIM_PTR_ARRAY(array, cap, size)                    \
-  DO_WHILE(                                                 \
-    cap = (size + 1);                                       \
-    array = arealloc(array, (sizeof(void *) * cap));  \
-  )
+// #define TRIM_PTR_ARRAY(array, cap, size)                    \
+//   DO_WHILE(                                                 \
+//     cap = (size + 1);                                       \
+//     array = arealloc(array, (sizeof(void *) * cap));  \
+//   )
 
 /* Some defines for threading. */
 #if !defined __cplusplus
@@ -158,20 +161,20 @@ typedef enum {
 } cmdopt_type_t;
 
 /* Some structures. */
-typedef struct {
-  Uchar type;         /* The type of entry this is.  Uses `dirent->d_type`. */
-  char *name;         /* Name of the entry. */
-  char *path;         /* The full path of the entry. */
-  char *ext;          /* The extention, if any. */
-  char *clean_name;   /* When `name` has a extention, this is `name` without that extention, otherwise this is `NULL`. */
-  struct stat *stat;  /* Stat data for the entry. */
-} directory_entry_t;
+// typedef struct {
+//   Uchar type;         /* The type of entry this is.  Uses `dirent->d_type`. */
+//   char *name;         /* Name of the entry. */
+//   char *path;         /* The full path of the entry. */
+//   char *ext;          /* The extention, if any. */
+//   char *clean_name;   /* When `name` has a extention, this is `name` without that extention, otherwise this is `NULL`. */
+//   struct stat *stat;  /* Stat data for the entry. */
+// } directory_entry_t;
 
-typedef struct {
-  directory_entry_t **entries;
-  Ulong cap;
-  Ulong len;
-} directory_t;
+// typedef struct {
+//   directory_entry_t **entries;
+//   Ulong cap;
+//   Ulong len;
+// } directory_t;
 
 typedef struct {
   char *srcpath;                /* The full path to the source file of this entry. */
