@@ -905,6 +905,7 @@ inline namespace AmakeCpp {
 }
 
 int main(int argc, char **argv) {
+  fcio_set_die_callback(die);
   test_args(argc, argv);
   const auto sArgv = Args::argvToStrVec(argc, argv);
   for (Ulong i = 1; i < sArgv.size(); ++i) {

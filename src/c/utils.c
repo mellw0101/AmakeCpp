@@ -8,7 +8,7 @@
 
 
 /* The static mutex that `stdout_printf` uses. */
-static mutex stdout_printf_mutex = static_mutex_init;
+static mutex_t stdout_printf_mutex = mutex_init_static;
 
 
 /* Free `dst` and return `src`. */

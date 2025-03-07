@@ -12,21 +12,13 @@
 _BEGIN_C_LINKAGE
 
 /* Amake.c */
-void die(const char *format, ...) _NORETURN _NONNULL(1);
+void die(const char *format, ...) _NO_RETURN _NONNULL(1);
 void Amake_do_compile(void);
 void Amake_make_build_dirs(void);
 void Amake_make_data_dirs(void);
 void Amake_do_shallow_clean(void);
 
-/* fd.c */
-// bool lock_fd(int fd, short type);
-// bool unlock_fd(int fd);
-
 /* utils.c */
-// const char *tail(const char *const path);
-// const char *ext(const char *const path);
-// void *amalloc(Ulong howmush) __THROW _RETURNS_NONNULL;
-// void *arealloc(void *ptr, Ulong howmush) __THROW _RETURNS_NONNULL _NONNULL(1);
 void *free_and_assign(void *const dst, void *const src);
 int   fork_bin(const char *const restrict path, char *const argv[], char *const envp[], char **const output) __THROW _NONNULL(1, 2, 3);
 void  free_chararray(char **const array, Ulong len);
@@ -57,7 +49,6 @@ void  free_amakecompdir(void) __THROW;
 void  free_dirptrs(void) __THROW;
 void  amkdir(const char *const __restrict path) __THROW _NONNULL(1);
 
-
 /* compile.c */
 compile_data_entry_t *compile_data_entry_make(void);
 void  compile_data_entry_free(compile_data_entry_t *entry);
@@ -79,11 +70,6 @@ void install_SIGINT_handler(void (*handler)(int));
 void restore_SIGINT_handler(void);
 
 /* astring.c */
-// char  *measured_copy(const char *const __restrict string, Ulong count) __THROW _RETURNS_NONNULL _NONNULL(1);
-// char  *copy_of(const char *const __restrict string) __THROW _RETURNS_NONNULL _NONNULL(1);
-char **split_string(const char *const string, const char delim);
-// char  *fmtstr(const char *const __restrict format, ...) __THROW _RETURNS_NONNULL _NONNULL(1) _PRINTFLIKE(1, 2);
-// char  *concatpath(const char *const __restrict s1, const char *const __restrict s2) __THROW _RETURNS_NONNULL _NONNULL(1, 2);
 char  *astrcat(char *__restrict dst, const char *const __restrict src) __THROW _RETURNS_NONNULL _NONNULL(1, 2);
 char  *astrinj(char *__restrict dst, const char *const __restrict src, Ulong idx) __THROW _RETURNS_NONNULL _NONNULL(1, 2);
 

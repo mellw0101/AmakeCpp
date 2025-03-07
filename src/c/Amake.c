@@ -23,9 +23,9 @@ void die(const char *format, ...) {
 
 /* Compile the project. */
 void Amake_do_compile(void) {
-  long    cores    = sysconf(_SC_NPROCESSORS_ONLN);
-  Ulong   threadno = 0;
-  thread *threads;
+  long      cores    = sysconf(_SC_NPROCESSORS_ONLN);
+  Ulong     threadno = 0;
+  thread_t *threads;
   /* Check if build dirs and the structure exists.  If not, create it. */
   Amake_make_build_dirs();
   /* Check if .amake dir for this project exists.  If not, create it. */
