@@ -11,20 +11,6 @@
 static mutex stdout_printf_mutex = static_mutex_init;
 
 
-/* Allocate a block of memory with size `howmush`. */
-void *amalloc(Ulong howmush) {
-  void *block = malloc(howmush);
-  ALWAYS_ASSERT(block);
-  return block;
-}
-
-/* Reallocate `ptr` with size `howmush`. */
-void *arealloc(void *ptr, Ulong howmush) {
-  ptr = realloc(ptr, howmush);
-  ALWAYS_ASSERT(ptr);
-  return ptr;
-}
-
 /* Free `dst` and return `src`. */
 void *free_and_assign(void *const dst, void *const src) {
   ASSERT(dst);
@@ -56,12 +42,12 @@ int fork_bin(const char *const __restrict path, char *const argv[], char *const 
   }
   /* Parent process. */
   else {
-    readret = amalloc(sizeof(buffer));
+    readret = xmalloc(sizeof(buffer));
     /* Close parent write fd. */
     close(fdpipe[1]);
     /* Read the output from the child. */
     while ((bytes_read = read(fdpipe[0], buffer, sizeof(buffer))) > 0) {
-      readret = arealloc(readret, (total_bytes_read + bytes_read + 1));
+      readret = xrealloc(readret, (total_bytes_read + bytes_read + 1));
       memcpy((readret + total_bytes_read), buffer, bytes_read);
       total_bytes_read += bytes_read;
     }
@@ -107,18 +93,14 @@ void stdout_printf(const char *format, ...) {
   ALWAYS_ASSERT((len = vsnprintf(NULL, 0, format, dummy)) != -1);
   va_end(dummy);
   /* Allocate the return ptr. */
-  ret = amalloc(len + 1);
+  ret = xmalloc(len + 1);
   /* Then format the string into ret. */
   va_start(ap, format);
   ALWAYS_ASSERT(vsnprintf(ret, (len + 1), format, ap) != -1);
   va_end(ap);
-  mutex_lock(&stdout_printf_mutex);
-  {
-    lock_fd(STDOUT_FILENO, F_WRLCK);
-    write(STDOUT_FILENO, ret, len);
-    unlock_fd(STDOUT_FILENO);
-  }
-  mutex_unlock(&stdout_printf_mutex);
+  mutex_action(&stdout_printf_mutex, fdlock_action(STDOUT_FILENO, F_WRLCK,
+    ALWAYS_ASSERT(write(STDOUT_FILENO, ret, len) != -1);
+  ););
   free(ret);
 }
 
@@ -130,7 +112,7 @@ void construct_argv(char ***arguments, const char *command) {
   char *element = strtok(copy_of_command, " ");
   int count = 1;
   while (element) {
-    (*arguments) = arealloc(*arguments, (++count * sizeof(void *)));
+    (*arguments) = xrealloc(*arguments, (++count * sizeof(void *)));
     (*arguments)[count - 2] = copy_of(element);
     element = strtok(NULL, " ");
   }

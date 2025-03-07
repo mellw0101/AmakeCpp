@@ -8,7 +8,10 @@
 
 #define VERSION      "0.1"
 #define PROJECT_NAME "AmakeCpp"
+
+
 bool arm = false;
+
 
 /**
   Print string with color.

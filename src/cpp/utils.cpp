@@ -79,7 +79,7 @@ char **get_env_paths(Ulong *npaths) {
   }
   /* Set up the array size and cap.  Start with a cap of 10. */
   Ulong size = 0, cap = 10;
-  char **paths = (char **)amalloc(sizeof(char *) * cap);
+  char **paths = (char **)xmalloc(sizeof(char *) * cap);
   const char *start = path_env, *end = NULL;
   for (Ulong i = 0; path_env[i]; ++i) {
     if (path_env[i] == ':' || !path_env[i + 1]) {
@@ -87,14 +87,14 @@ char **get_env_paths(Ulong *npaths) {
       /* Realloc the array when needed. */
       if (size == cap) {
         cap *= 2;
-        paths = (char **)arealloc(paths, (sizeof(char *) * cap));
+        paths = (char **)xrealloc(paths, (sizeof(char *) * cap));
       }
       paths[size++] = measured_copy(start, (end - start));
       start = (end + 1);
     }
   }
   /* Resize the array to the exact number of paths, to save memory. */
-  paths = (char **)arealloc(paths, (sizeof(char *) * size));
+  paths = (char **)xrealloc(paths, (sizeof(char *) * size));
   *npaths = size;
   return paths;
 }
@@ -180,11 +180,11 @@ char *concatenate_path(const char *s1, const char *s2) {
   Ulong s1len = strlen(s1);
   char *ret = NULL;
   if ((s1[s1len - 1] == '/' && *s2 != '/') || (s1[s1len - 1] != '/' && *s2 == '/')) {
-    ret = (char *)amalloc(s1len + strlen(s2) + 1);
+    ret = (char *)xmalloc(s1len + strlen(s2) + 1);
     sprintf(ret, "%s%s", s1, s2);
   }
   else {
-    ret = (char *)amalloc(s1len + strlen(s2) + 2);
+    ret = (char *)xmalloc(s1len + strlen(s2) + 2);
     sprintf(ret, "%s%s%s", s1, "/", s2);
   }
   return ret;
@@ -352,7 +352,7 @@ void extract_zip(const char *path, const char *output_path) {
 /* Append an array onto 'array'.  Free 'append' but not any elements in it after call. */
 void append_chararray(char ***array, Ulong *len, char **append, Ulong append_len) {
   Ulong new_len = ((*len) + append_len);
-  *array = (char **)arealloc(*array, (sizeof(char *) * (new_len + 1)));
+  *array = (char **)xrealloc(*array, (sizeof(char *) * (new_len + 1)));
   for (Ulong i = 0; i < append_len; ++i) {
     (*array)[(*len) + i] = append[i];
   }
@@ -433,9 +433,9 @@ void check_config_part(config_check_type type) {
     logE("Failed to create tmp file to test '%s'", config_check_type_str(type));
     return;
   }
-  lock_fd(fd, F_WRLCK);
-  write(fd, data, datalen);
-  unlock_fd(fd);
+  fdlock_action(fd, F_WRLCK,
+    ALWAYS_ASSERT(write(fd, data, datalen) != -1);
+  );
   close(fd);
   ret = launch_bin("/usr/bin/cc", ARGV("/usr/bin/cc", "-o", outfile, tmpfile), PARENT_ENV);
   if (ret != 0) {

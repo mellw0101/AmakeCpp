@@ -6,9 +6,10 @@
  */
 #include "../include/cproto.h"
 
+
 /* Create a new blank allocated `compile_data_entry_t` structure. */
 compile_data_entry_t *compile_data_entry_make(void) {
-  compile_data_entry_t *entry = amalloc(sizeof(*entry));
+  compile_data_entry_t *entry = xmalloc(sizeof(*entry));
   entry->srcpath        = NULL;
   entry->outpath        = NULL;
   entry->compiler       = NULL;
@@ -36,7 +37,7 @@ void compile_data_data_init(compile_data_t *const output) {
   ASSERT(output);
   output->len  = 0;
   output->cap  = 10;
-  output->data = amalloc(sizeof(void *) * output->cap);
+  output->data = xmalloc(sizeof(void *) * output->cap);
 }
 
 /* Free the internal data of a `compile_data_t` structure. */
@@ -123,9 +124,9 @@ static void write_compile_data(const char *amakefile, compile_data_entry_t *cons
     entry->srcpath
   );
   /* Write the data to the file. */
-  lock_fd(fd, F_WRLCK);
-  ALWAYS_ASSERT(write(fd, wrdata, strlen(wrdata)) != -1);
-  unlock_fd(fd);
+  fdlock_action(fd, F_WRLCK,
+    ALWAYS_ASSERT(write(fd, wrdata, strlen(wrdata)) != -1);
+  );
   free(wrdata);
   close(fd);
 }
@@ -135,13 +136,13 @@ static char *read_compile_data(const char *amakefile) {
   ASSERT(amakefile);
   int   fd;
   char  buffer[4096];
-  char *ret = amalloc(1);
+  char *ret = xmalloc(1);
   long  bytes_read, total_read = 0;
   /* Open the fd in read only mode. */
   ALWAYS_ASSERT((fd = open(amakefile, O_RDONLY)) != -1);
   /* Read the .amake compile data file in 4096 byte chunks. */
   while ((bytes_read = read(fd, buffer, sizeof(buffer))) > 0) {
-    ret = arealloc(ret, (total_read + bytes_read + 1));
+    ret = xrealloc(ret, (total_read + bytes_read + 1));
     memcpy((ret + total_read), buffer, bytes_read);
     total_read += bytes_read;
   }

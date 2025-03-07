@@ -15,7 +15,7 @@ char *astrcat(char *restrict dst, const char *const restrict src) {
   Ulong dstlen = strlen(dst);
   Ulong srclen = strlen(src);
   /* Reallocate dst to fit all of the text plus a NULL-TERMINATOR. */
-  dst = arealloc(dst, (dstlen + srclen + 1));
+  dst = xrealloc(dst, (dstlen + srclen + 1));
   /* Append src to dst, and NULL-TERMINATE dst. */
   memcpy((dst + dstlen), src, srclen);
   dst[dstlen + srclen] = '\0';
@@ -33,7 +33,7 @@ char *astrinj(char *restrict dst, const char *const restrict src, Ulong idx) {
   /* Always assert that idx is valid. */
   ALWAYS_ASSERT(idx < dstlen);
   /* Reallocate dst to fit src and a NULL-TERMINATOR. */
-  dst = arealloc(dst, (dstlen + srclen + 1));
+  dst = xrealloc(dst, (dstlen + srclen + 1));
   /* First move the data at idx by srclen, then copy src into dst at idx. */
   memmove((dst + idx + srclen), (dst + idx), (dstlen - idx));
   memcpy((dst + idx), src, srclen);

@@ -229,7 +229,7 @@ bool dir_exists(const char *const __restrict path) {
 
 /* Create a new blank allocated directory entry. */
 directory_entry_t *directory_entry_make(void) {
-  directory_entry_t *entry = amalloc(sizeof(*entry));
+  directory_entry_t *entry = xmalloc(sizeof(*entry));
   entry->type       = 0;
   entry->name       = NULL;
   entry->path       = NULL;
@@ -275,7 +275,7 @@ void directory_data_init(directory_t *const dir) {
   ASSERT(dir);
   dir->len = 0;
   dir->cap = 10;
-  dir->entries = amalloc(sizeof(void *) * dir->cap);
+  dir->entries = xmalloc(sizeof(void *) * dir->cap);
 }
 
 /* Free the internal data of a `directory_t` structure. */

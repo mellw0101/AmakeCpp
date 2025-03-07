@@ -6,6 +6,7 @@
  */
 #include "../include/cproto.h"
 
+
 /* When something fatal happens we call this to terminate. */
 void die(const char *format, ...) {
   static int stabs = 0;
