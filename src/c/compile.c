@@ -217,13 +217,8 @@ void *compile_data_task(void *arg) {
   else {
     check_compile_data(amakefile, data);
   }
-  /* If there is no need to compile, just return. */
-  if (!data->compile_needed) {
-    free(amakefile);
-    return NULL;
-  }
-  /* Otherwise, compile. */
-  else {
+  /* If we need to compile, then compile. */
+  if (data->compile_needed) {
     /* Create the command as one string. */
     command = fmtstr("%s -c %s %s -o %s", data->compiler, data->srcpath, data->flags, data->outpath);
     stdout_printf("%s\n", command);

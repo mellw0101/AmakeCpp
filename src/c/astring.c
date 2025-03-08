@@ -16,9 +16,8 @@ char *astrcat(char *restrict dst, const char *const restrict src) {
   Ulong srclen = strlen(src);
   /* Reallocate dst to fit all of the text plus a NULL-TERMINATOR. */
   dst = xrealloc(dst, (dstlen + srclen + 1));
-  /* Append src to dst, and NULL-TERMINATE dst. */
-  memcpy((dst + dstlen), src, srclen);
-  dst[dstlen + srclen] = '\0';
+  /* Append src to dst, including the `NULL-TERMINATOR`. */
+  memcpy((dst + dstlen), src, (srclen + 1));
   /* Then return dst. */
   return dst;
 }

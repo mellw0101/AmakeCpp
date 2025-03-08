@@ -55,7 +55,6 @@ bool is_cmdopt(const char *arg, int *opt) {
 
 /* Return the number of args that does not match any of our opts begind `*iter` in argv. */
 static int count_args(int argc, char **argv, int *iter) {
-  ASSERT(argc);
   ASSERT(argv);
   ASSERT(iter);
   int count = 0;
@@ -72,10 +71,12 @@ static int count_args(int argc, char **argv, int *iter) {
 
 /* Return a string of `count` args in `argv` after `*iter`. */
 static char *get_args_string(int argc, char **argv, int *iter, int count) {
+  ASSERT(argv);
+  ASSERT(iter);
   char *ret = copy_of("");
   for (int i = (*iter + 1); i < (*iter + 1 + count); ++i) {
-    ret = astrcat(ret, argv[i]);
-    ret = astrcat(ret, " ");
+    ret = xstrcat(ret, argv[i]);
+    ret = xstrncat(ret, S__LEN(" "));
   }
   return ret;
 }

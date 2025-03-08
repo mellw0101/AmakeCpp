@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "../include/prototypes.h"
 
+
 #define VERSION      "0.1"
 #define PROJECT_NAME "AmakeCpp"
 
@@ -32,12 +33,13 @@ void printC(const string &str, const char *color) {
 }
 
 static void print_msg(const char *color, const char *format, ...) {
-  va_list args;
-  va_start(args, format);
-  printf("%s - [ %s", PROJECT_NAME, color);
-  vprintf(format, args);
-  printf("%s ]\n", ESC_CODE_RESET);
-  va_end(args);
+  char *args;
+  va_list va;
+  va_start(va, format);
+  args = valstr(format, va, NULL);
+  va_end(va);
+  writef("%s - [ %s%s%s ]\n", PROJECT_NAME, color, args, ESC_CODE_RESET);
+  free(args);
 }
 
 namespace Bash_Helpers {

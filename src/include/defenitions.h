@@ -48,7 +48,7 @@
 #define CC_COMPILER "clang++"
 #if defined(__x86_64__)
   #define ASM_DEFAULT_ARGS "-f elf64"
-  #define C_DEFAULT_ARGS "-m64 -funroll-loops -O3 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla"
+  // #define C_DEFAULT_ARGS "-m64 -funroll-loops -O3 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla"
   #define CC_DEFAULT_ARGS "-m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx"
 #elif defined(__aarch64__)
   #define ASM_DEFAULT_ARGS ""

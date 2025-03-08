@@ -94,4 +94,5 @@ void Amake_do_shallow_clean(void) {
     ALWAYS_ASSERT(file_exists(entry->path));
     ALWAYS_ASSERT(unlink(entry->path) != -1);
   }
+  directory_data_free(&dir);
 }

@@ -42,13 +42,13 @@ static mutex_t amakecompdir_mutex = mutex_init_static;
  * should never be freed during runtime, only when exiting.  And only using `freepwd()`. */
 char *getpwd(void) {
   const char *cenvpwd = NULL;
-  mutex_lock(&envpwd_mutex);
-  /* If the static ptr to pwd is NULL, fetch it. */
-  if (!envpwd) {
-    ALWAYS_ASSERT((cenvpwd = getenv("PWD")));
-    envpwd = copy_of(cenvpwd);
-  }
-  mutex_unlock(&envpwd_mutex);
+  mutex_action(&envpwd_mutex,
+    /* If the static ptr to pwd is NULL, fetch it. */
+    if (!envpwd) {
+      ALWAYS_ASSERT((cenvpwd = getenv("PWD")));
+      envpwd = copy_of(cenvpwd);
+    }
+  );
   return envpwd;
 }
 
@@ -64,11 +64,11 @@ char *get_srcdir(void) {
 
 /* Get the path to the `c` source dir Amake uses.  Should be freed using `freecdir()` only. */
 char *get_cdir(void) {
-  mutex_lock(&cdir_mutex);
-  if (!cdir) {
-    cdir = concatpath(get_srcdir(), "/c");
-  }
-  mutex_unlock(&cdir_mutex);
+  mutex_action(&cdir_mutex,
+    if (!cdir) {
+      cdir = concatpath(get_srcdir(), "/c");
+    }
+  );
   return cdir;
 }
 
