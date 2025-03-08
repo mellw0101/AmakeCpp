@@ -22,7 +22,6 @@ void Amake_do_shallow_clean(void);
 void *free_and_assign(void *const dst, void *const src);
 int   fork_bin(const char *const restrict path, char *const argv[], char *const envp[], char **const output) __THROW _NONNULL(1, 2, 3);
 void  free_chararray(char **const array, Ulong len);
-void  stdout_printf(const char *format, ...) _PRINTFLIKE(1, 2);
 void  construct_argv(char ***arguments, const char *command);
 bool  parse_num(const char *string, long *result);
 void  free_nullterm_carray(char **array);

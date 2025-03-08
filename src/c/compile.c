@@ -49,7 +49,7 @@ void compile_data_data_free(compile_data_t *const data) {
 }
 
 /* Base function to get entries in a Amake source folder. */
-static void compile_data_get(compile_data_t *const output, const char *const __restrict path, const char *const fileext, const char *const compiler, const char *const flags) {
+static void compile_data_get(compile_data_t *const output, const char *const restrict path, const char *const fileext, const char *const compiler, const char *const flags) {
   /* Assert all parameters.  We must ensure correctness above all. */
   ASSERT(output);
   ASSERT(output->data);
@@ -110,10 +110,11 @@ static void write_compile_data(const char *amakefile, compile_data_entry_t *cons
   ASSERT(amakefile);
   ASSERT(entry);
   char *wrdata;
-  int   fd;
+  int fd, len;
   /* Open the path as a write only fd, creating it if it does not exist. */
   ALWAYS_ASSERT((fd = open(amakefile, (O_WRONLY | O_CREAT), 0755)) != -1);
-  wrdata = fmtstr(
+  wrdata = fmtstr_len(
+    &len,
     "mtime:%ld\n"
     "size:%ld\n"
     "outpath:%s\n"
@@ -125,7 +126,7 @@ static void write_compile_data(const char *amakefile, compile_data_entry_t *cons
   );
   /* Write the data to the file. */
   fdlock_action(fd, F_WRLCK,
-    ALWAYS_ASSERT(write(fd, wrdata, strlen(wrdata)) != -1);
+    ALWAYS_ASSERT(write(fd, wrdata, len) != -1);
   );
   free(wrdata);
   close(fd);
@@ -221,7 +222,7 @@ void *compile_data_task(void *arg) {
   if (data->compile_needed) {
     /* Create the command as one string. */
     command = fmtstr("%s -c %s %s -o %s", data->compiler, data->srcpath, data->flags, data->outpath);
-    stdout_printf("%s\n", command);
+    writef("%s\n", command);
     /* Then split it into args. */
     argv = split_string(command, ' ');
     free(command);
@@ -229,7 +230,7 @@ void *compile_data_task(void *arg) {
     fork_bin(argv[0], argv, (char *[]){ NULL }, &execout);
     /* Free argv. */
     free_nullterm_carray(argv);
-    stdout_printf("%s", execout);
+    writef("%s", execout);
     free(execout);
     /* Delete the amake compile data file if it exists. */
     if (file_exists(amakefile)) {
