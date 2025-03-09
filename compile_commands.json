@@ -1,86 +1,86 @@
 [
   {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/link.o  -c /home/mellw/Projects/AmakeCpp/src/cpp/link.cpp",
-    "file": "/home/mellw/Projects/AmakeCpp/src/cpp/link.cpp",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/link.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/utils.o  -c /home/mellw/projects/AmakeCpp/src/cpp/utils.cpp",
+    "file": "/home/mellw/projects/AmakeCpp/src/cpp/utils.cpp",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/utils.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/main.o  -c /home/mellw/Projects/AmakeCpp/src/cpp/main.cpp",
-    "file": "/home/mellw/Projects/AmakeCpp/src/cpp/main.cpp",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/main.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/global.o  -c /home/mellw/projects/AmakeCpp/src/cpp/global.cpp",
+    "file": "/home/mellw/projects/AmakeCpp/src/cpp/global.cpp",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/global.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/utils.o  -c /home/mellw/Projects/AmakeCpp/src/cpp/utils.cpp",
-    "file": "/home/mellw/Projects/AmakeCpp/src/cpp/utils.cpp",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/utils.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/main.o  -c /home/mellw/projects/AmakeCpp/src/cpp/main.cpp",
+    "file": "/home/mellw/projects/AmakeCpp/src/cpp/main.cpp",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/main.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/compile.o  -c /home/mellw/Projects/AmakeCpp/src/cpp/compile.cpp",
-    "file": "/home/mellw/Projects/AmakeCpp/src/cpp/compile.cpp",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/compile.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/link.o  -c /home/mellw/projects/AmakeCpp/src/cpp/link.cpp",
+    "file": "/home/mellw/projects/AmakeCpp/src/cpp/link.cpp",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/link.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/global.o  -c /home/mellw/Projects/AmakeCpp/src/cpp/global.cpp",
-    "file": "/home/mellw/Projects/AmakeCpp/src/cpp/global.cpp",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/global.o"
-  }
-  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/fd.o  -c /home/mellw/Projects/AmakeCpp/src/c/fd.c",
-    "file": "/home/mellw/Projects/AmakeCpp/src/c/fd.c",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/fd.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/compile.o  -c /home/mellw/projects/AmakeCpp/src/cpp/compile.cpp",
+    "file": "/home/mellw/projects/AmakeCpp/src/cpp/compile.cpp",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/compile.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/thread.o  -c /home/mellw/Projects/AmakeCpp/src/c/thread.c",
-    "file": "/home/mellw/Projects/AmakeCpp/src/c/thread.c",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/thread.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/config.o  -c /home/mellw/projects/AmakeCpp/src/c/config.c",
+    "file": "/home/mellw/projects/AmakeCpp/src/c/config.c",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/config.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/args.o  -c /home/mellw/Projects/AmakeCpp/src/c/args.c",
-    "file": "/home/mellw/Projects/AmakeCpp/src/c/args.c",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/args.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/args.o  -c /home/mellw/projects/AmakeCpp/src/c/args.c",
+    "file": "/home/mellw/projects/AmakeCpp/src/c/args.c",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/args.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/chars.o  -c /home/mellw/Projects/AmakeCpp/src/c/chars.c",
-    "file": "/home/mellw/Projects/AmakeCpp/src/c/chars.c",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/chars.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/astring.o  -c /home/mellw/projects/AmakeCpp/src/c/astring.c",
+    "file": "/home/mellw/projects/AmakeCpp/src/c/astring.c",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/astring.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/Amake.o  -c /home/mellw/Projects/AmakeCpp/src/c/Amake.c",
-    "file": "/home/mellw/Projects/AmakeCpp/src/c/Amake.c",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/Amake.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/signal.o  -c /home/mellw/projects/AmakeCpp/src/c/signal.c",
+    "file": "/home/mellw/projects/AmakeCpp/src/c/signal.c",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/signal.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/compile.o  -c /home/mellw/Projects/AmakeCpp/src/c/compile.c",
-    "file": "/home/mellw/Projects/AmakeCpp/src/c/compile.c",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/compile.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/compile.o  -c /home/mellw/projects/AmakeCpp/src/c/compile.c",
+    "file": "/home/mellw/projects/AmakeCpp/src/c/compile.c",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/compile.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/dirs.o  -c /home/mellw/Projects/AmakeCpp/src/c/dirs.c",
-    "file": "/home/mellw/Projects/AmakeCpp/src/c/dirs.c",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/dirs.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/utils.o  -c /home/mellw/projects/AmakeCpp/src/c/utils.c",
+    "file": "/home/mellw/projects/AmakeCpp/src/c/utils.c",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/utils.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/files.o  -c /home/mellw/Projects/AmakeCpp/src/c/files.c",
-    "file": "/home/mellw/Projects/AmakeCpp/src/c/files.c",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/files.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/dirs.o  -c /home/mellw/projects/AmakeCpp/src/c/dirs.c",
+    "file": "/home/mellw/projects/AmakeCpp/src/c/dirs.c",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/dirs.o"
   }
 ,  {
-    "directory": "/home/mellw/Projects/AmakeCpp",
-    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/Projects/AmakeCpp/src/include/  -o /home/mellw/Projects/AmakeCpp/build/obj/utils.o  -c /home/mellw/Projects/AmakeCpp/src/c/utils.c",
-    "file": "/home/mellw/Projects/AmakeCpp/src/c/utils.c",
-    "output": "/home/mellw/Projects/AmakeCpp/build/obj/utils.o"
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/Amake.o  -c /home/mellw/projects/AmakeCpp/src/c/Amake.c",
+    "file": "/home/mellw/projects/AmakeCpp/src/c/Amake.c",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/Amake.o"
+  }
+,  {
+    "directory": "/home/mellw/projects/AmakeCpp",
+    "command": "/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99 -I/home/mellw/projects/AmakeCpp/src/include/  -o /home/mellw/projects/AmakeCpp/build/obj/thread.o  -c /home/mellw/projects/AmakeCpp/src/c/thread.c",
+    "file": "/home/mellw/projects/AmakeCpp/src/c/thread.c",
+    "output": "/home/mellw/projects/AmakeCpp/build/obj/thread.o"
   }
 ]

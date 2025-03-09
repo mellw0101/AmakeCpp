@@ -2,7 +2,7 @@
 #include "../include/prototypes.h"
 
 /* Link .o files in build/obj to binary in build/bin */
-void link_binary(const vector<string> &obj_vec, const vector<string> &strVec = {}) {
+static void link_binary(const vector<string> &obj_vec, const vector<string> &strVec = {}) {
   const string output = cwd + "/build/bin/" + projectName;
   printC("Linking Obj Files -> " + output, ESC_CODE_GREEN);
 

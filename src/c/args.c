@@ -8,37 +8,54 @@
 
 
 typedef struct {
-  const char   *short_name;  /* The short `name` of this cmd option argument line `-h`. */
-  const char   *long_name;   /* The thing that reprecents this cmd option argument like `--help`. */
-  int           argno;       /* The number of arguments this opt has, or -1 for dynamic number. */
+  const char *short_name;  /* The short `name` of this cmd option argument line `-h`. */
+  const char *long_name;   /* The thing that reprecents this cmd option argument like `--help`. */
+  int argno;               /* The number of arguments this opt has, or -1 for dynamic number. */
+  union {
+    void (*voidfunc)(void);
+    void (*argsfunc)(int argc, char **argv);
+  } action;
 } cmdopt_entry_t;
 
 typedef struct {
-  /* Only needed when `args_action` is used. */
-  int   argc;
-  /* Will be split for use later. */
-  char *args;
+  cmdopt_type_t type;
+  int argc;     /* Only needed when `argsfunc` is used. */
+  char **argv;  /* Will be split for use later. */
   union {
-    void (*void_action)(void);
-    void (*args_action)(int, char **);
-  };
+    void (*voidfunc)(void);
+    void (*argsfunc)(int argc, char **argv);
+  } action;
 } cmdopt_action_t;
 
 
 /* `INTERNAL`  The map that holds the configuration for the cmd opts. */
 static cmdopt_entry_t cmdopt[] = {
-  {  "-h",      "--help",  0 },
-  { "-cf", "--configure",  0 },
-  {  "-v",   "--version",  0 },
-  {  "-b",     "--build", -1 },
-  { "-cl",     "--clean",  0 },
-  {  "-i",   "--install", -1 },
-  { "-lb",       "--lib",  1 },
-  {  "-t",      "--test",  0 },
-  {  "-l",      "--link", -1 },
-  { "-ch",     "--check",  0 }
+  {  "-h",      "--help",  0, NULL },
+  { "-cf", "--configure",  0, NULL },
+  {  "-v",   "--version",  0, NULL },
+  {  "-b",     "--build", -1, NULL },
+  { "-cl",     "--clean",  0, { Amake_do_shallow_clean } },
+  {  "-i",   "--install", -1, NULL },
+  { "-lb",       "--lib",  1, NULL },
+  {  "-t",      "--test",  0, NULL },
+  {  "-l",      "--link", -1, NULL },
+  { "-ch",     "--check",  0, NULL }
 };
 
+
+_UNUSED static cmdopt_action_t *cmdopt_action_create(void) {
+  cmdopt_action_t *act = xmalloc(sizeof(*act));
+  act->argc            = 0;
+  act->argv            = NULL;
+  act->action.voidfunc = NULL;
+  return act;
+}
+
+_UNUSED static void cmdopt_action_free(void *arg) {
+  cmdopt_action_t *act = arg;
+  ASSERT(act);
+  free(act->argv);
+}
 
 /* Return `TRUE` if `arg` is a cmd option argument. */
 bool is_cmdopt(const char *arg, int *opt) {
@@ -73,8 +90,8 @@ static int count_args(int argc, char **argv, int *iter) {
 static char *get_args_string(int argc, char **argv, int *iter, int count) {
   ASSERT(argv);
   ASSERT(iter);
-  char *ret = copy_of("");
-  for (int i = (*iter + 1); i < (*iter + 1 + count); ++i) {
+  char *ret = COPY_OF("");
+  for (int i=(*iter + 1); i<(*iter + 1 + count) && i<argc; ++i) {
     ret = xstrcat(ret, argv[i]);
     ret = xstrncat(ret, S__LEN(" "));
   }
@@ -82,25 +99,39 @@ static char *get_args_string(int argc, char **argv, int *iter, int count) {
 }
 
 void test_args(int argc, char **argv) {
-  int opt   = -1;
-  int argno = -1;
-  for (int i = 0; i < argc; ++i) {
+  // char **array;
+  char *args;
+  int opt = -1;
+  Ulong argno;
+  for (int i=0; i<argc; ++i) {
     if (is_cmdopt(argv[i], &opt)) {
       argno = count_args(argc, argv, &i);
-      if (cmdopt[opt].argno != -1 && cmdopt[opt].argno != argno) {
-        printf("Error: Command: %s: Should have %d number of arguments.\n", cmdopt[opt].long_name, cmdopt[opt].argno);
+      if (cmdopt[opt].argno != -1 && cmdopt[opt].argno != (int)argno) {
+        printf("Error: Argument: %s: Should have %d number of arguments.\n", argv[i], cmdopt[opt].argno);
         return;
+      }
+      if (argno) {
+        args = get_args_string(argc, argv, &i, argno);
+        printf("Found cmd opt: %s: argno: %d: args: %s\n", argv[i], (int)argno, args);
       }
       switch (opt) {
         case AMAKE_CLEAN: {
           Amake_do_shallow_clean();
           exit(0);
-          break;
         }
+        // case AMAKE_LINK: {
+        //   if (argno) {
+        //     array = split_string_len(args, ' ', &argno);
+        //     free(args);
+        //     Amake_do_link(argno, array);
+        //     free(array);
+        //   }
+        //   exit(0);
+        // }
       }
-      char *args = get_args_string(argc, argv, &i, argno);
-      printf("Found cmd opt: %s: argno: %d: args: %s\n", argv[i], argno, args);
-      free(args);
+      if (argno) {
+        free(args);
+      }
     }
   }
 }

@@ -14,6 +14,7 @@ _BEGIN_C_LINKAGE
 /* Amake.c */
 void die(const char *format, ...) _NO_RETURN _NONNULL(1);
 void Amake_do_compile(void);
+void Amake_do_link(int argc, char **argv);
 void Amake_make_build_dirs(void);
 void Amake_make_data_dirs(void);
 void Amake_do_shallow_clean(void);
@@ -21,9 +22,8 @@ void Amake_do_shallow_clean(void);
 /* utils.c */
 void *free_and_assign(void *const dst, void *const src);
 int   fork_bin(const char *const restrict path, char *const argv[], char *const envp[], char **const output) __THROW _NONNULL(1, 2, 3);
-void  free_chararray(char **const array, Ulong len);
 void  construct_argv(char ***arguments, const char *command);
-bool  parse_num(const char *string, long *result);
+// bool  parse_num(const char *string, long *result);
 void  free_nullterm_carray(char **array);
 
 /* dirs.c */

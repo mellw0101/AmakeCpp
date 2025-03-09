@@ -25,6 +25,7 @@
 /* fcio */
 #include <fcio/proto.h>
 
+
 #define ASSIGN_IF_VALID_ELSE_FREE(ptr, value)  DO_WHILE( ((ptr) ? (void)(*(ptr) = value) : (free(value))); )
 
 #define DEFAULT_C_COMPILER    "/usr/bin/clang"

@@ -53,6 +53,40 @@ void Amake_do_compile(void) {
   compile_data_data_free(&data);
 }
 
+void Amake_do_link(int argc, char **argv) {
+  char *out;
+  char *cmd = COPY_OF(DEFAULT_CPP_COMPILER " ");
+  char **arguments;
+  Ulong argslen = argc;
+  directory_t dir;
+  int i;
+  bool bininst = FALSE;
+  for (i=0; i<argc; ++i) {
+    if (strcmp(argv[i], "--bin") == 0) {
+      bininst = TRUE;
+      break;
+    }
+  }
+  if (bininst) {
+    chararray_erase(argv, &argslen, i);
+    argv[argslen] = NULL;
+  }
+  directory_data_init(&dir);
+  ALWAYS_ASSERT(directory_get_recurse(get_outdir(), &dir) != -1);
+  DIRECTORY_ITER(dir, dn, entry,
+    cmd = fmtstrcat(cmd, "%s ", entry->path);
+  );
+  directory_data_free(&dir);
+  writef("%s\n", cmd);
+  arguments = split_string_len(cmd, ' ', &argslen);
+  free(cmd);
+  chararray_append(&arguments, &argslen, argv, argc);
+  fork_bin(arguments[0], arguments, (char *[]){ NULL }, &out);
+  writef("%s\n", out);
+  free(out);
+  chararray_free(arguments, argslen);
+}
+
 /* Create the build structure, so this can happen automaticly if user just cleaned the project. */
 void Amake_make_build_dirs(void) {
   /* Make the main build dir for the project. */
@@ -86,13 +120,11 @@ void Amake_do_shallow_clean(void) {
     return;
   }
   directory_t dir;
-  directory_entry_t *entry;
   directory_data_init(&dir);
   ALWAYS_ASSERT(directory_get_recurse(get_outdir(), &dir) != -1);
-  for (Ulong i = 0; i < dir.len; ++i) {
-    entry = dir.entries[i];
+  DIRECTORY_ITER(dir, i, entry,
     ALWAYS_ASSERT(file_exists(entry->path));
     ALWAYS_ASSERT(unlink(entry->path) != -1);
-  }
+  );
   directory_data_free(&dir);
 }

@@ -7,10 +7,6 @@
 #include "../include/cproto.h"
 
 
-/* The static mutex that `stdout_printf` uses. */
-// static mutex_t stdout_printf_mutex = mutex_init_static;
-
-
 /* Free `dst` and return `src`. */
 void *free_and_assign(void *const dst, void *const src) {
   ASSERT(dst);
@@ -71,39 +67,6 @@ int fork_bin(const char *const __restrict path, char *const argv[], char *const 
   return statusret;
 }
 
-/* Free the memory of the given array, which should contain len elements. */
-void free_chararray(char **const array, Ulong len) {
-  if (!array) {
-    return;
-  }
-  while (len > 0) {
-    free(array[--len]);
-  }
-  free(array);
-}
-
-// /* Print something to stdout, in a thread safe manner. */
-// void stdout_printf(const char *format, ...) {
-//   ASSERT(format);
-//   char   *ret;
-//   int     len;
-//   va_list ap, dummy;
-//   /* First get the length we need to allocate. */
-//   va_start(dummy, format);
-//   ALWAYS_ASSERT((len = vsnprintf(NULL, 0, format, dummy)) != -1);
-//   va_end(dummy);
-//   /* Allocate the return ptr. */
-//   ret = xmalloc(len + 1);
-//   /* Then format the string into ret. */
-//   va_start(ap, format);
-//   ALWAYS_ASSERT(vsnprintf(ret, (len + 1), format, ap) != -1);
-//   va_end(ap);
-//   mutex_action(&stdout_printf_mutex, fdlock_action(STDOUT_FILENO, F_WRLCK,
-//     ALWAYS_ASSERT(write(STDOUT_FILENO, ret, len) != -1);
-//   ););
-//   free(ret);
-// }
-
 /* Create arguments array from a string. */
 void construct_argv(char ***arguments, const char *command) {
   ASSERT(arguments);
@@ -117,20 +80,6 @@ void construct_argv(char ***arguments, const char *command) {
     element = strtok(NULL, " ");
   }
   (*arguments)[count - 1] = NULL;
-}
-
-/* Parse a number from a string. */
-bool parse_num(const char *string, long *result) {
-  long value;
-  char *excess;
-  /* Clear errno so we can check it after. */
-  errno = 0; 
-  value = strtol(string, &excess, 10);
-  if (errno == ERANGE || !*string || *excess) {
-    return FALSE;
-  }
-  *result = value;
-  return TRUE;
 }
 
 /* Free a NULL-TERMINATED char array where the `char *` inside the array are allocated as well. */

@@ -63,8 +63,7 @@ static void compile_data_get(compile_data_t *const output, const char *const res
   /* Always assert that this does not return an error, this is because Amake
    * should never fail to get the entries in a source folder it uses. */
   ALWAYS_ASSERT(directory_get_recurse(path, &dir) != -1);
-  for (Ulong i = 0; i < dir.len; ++i) {
-    directory_entry_t *entry = dir.entries[i];
+  DIRECTORY_ITER(dir, i, entry,
     /* Only add .c files to output. */
     if (entry->ext && strcmp(entry->ext, fileext) == 0) {
       /* Create the compile_data_entry_t structure. */
@@ -81,7 +80,7 @@ static void compile_data_get(compile_data_t *const output, const char *const res
       /* Insert the data into output->data. */
       output->data[output->len++] = compdata;
     }
-  }
+  );
   /* NULL-TERMINATE the array and trim it, this saves memory as well
    * as ensures correct iteration even when output->len is not used. . */
   TRIM_PTR_ARRAY(output->data, output->cap, output->len);
