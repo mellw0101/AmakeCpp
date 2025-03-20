@@ -99,7 +99,6 @@ static char *get_args_string(int argc, char **argv, int *iter, int count) {
 }
 
 void test_args(int argc, char **argv) {
-  // char **array;
   char *args;
   int opt = -1;
   Ulong argno;
