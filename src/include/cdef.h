@@ -71,6 +71,7 @@ typedef enum {
 /* Some structures. */
 
 typedef struct {
+  char *unique_name;            /* The name that is created by taking all directorys and changind them to `_` chars, so like `term/mv.c` would become `term_mv.c`. */
   char *srcpath;                /* The full path to the source file of this entry. */
   char *outpath;                /* The full path to the output file of this entry. */
   char *compiler;               /* The compiler this entry will use to compile. */

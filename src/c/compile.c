@@ -10,6 +10,7 @@
 /* Create a new blank allocated `compile_data_entry_t` structure. */
 compile_data_entry_t *compile_data_entry_make(void) {
   compile_data_entry_t *entry = xmalloc(sizeof(*entry));
+  entry->unique_name    = NULL;
   entry->srcpath        = NULL;
   entry->outpath        = NULL;
   entry->compiler       = NULL;
@@ -22,6 +23,7 @@ compile_data_entry_t *compile_data_entry_make(void) {
 /* Free a `compile_data_entry_t` structure. */
 void compile_data_entry_free(compile_data_entry_t *const entry) {
   ASSERT(entry);
+  free(entry->unique_name);
   free(entry->srcpath);
   free(entry->outpath);
   free(entry->compiler);
@@ -50,14 +52,12 @@ void compile_data_data_free(compile_data_t *const data) {
 
 /* Base function to get entries in a Amake source folder. */
 static void compile_data_get(compile_data_t *const output, const char *const restrict path, const char *const fileext, const char *const compiler, const char *const flags) {
-  /* Assert all parameters.  We must ensure correctness above all. */
   ASSERT(output);
   ASSERT(output->data);
   ASSERT(output->cap);
   ASSERT(path);
   ASSERT(compiler);
   ASSERT(flags);
-  char *outname;
   compile_data_entry_t *compdata;
   directory_t dir;
   directory_data_init(&dir);
@@ -69,14 +69,13 @@ static void compile_data_get(compile_data_t *const output, const char *const res
     if (entry->ext && strcmp(entry->ext, fileext) == 0) {
       /* Create the compile_data_entry_t structure. */
       compdata = compile_data_entry_make();
-      /* Populate the fields. */
       /* Ensure files with the same names in diffrent directory's get diffrent names. */
-      outname = encode_slash_to_underscore(entry->path + strlen(path) + 1);
-      compdata->outpath  = fmtstr("%s/%s.o", get_outdir(), outname);
-      free(outname);
-      compdata->srcpath  = copy_of(entry->path);
-      compdata->compiler = copy_of(compiler);
-      compdata->flags    = copy_of(flags);
+      compdata->unique_name = encode_slash_to_underscore(entry->path + strlen(path) + 1);
+      /* Populate the fields. */
+      compdata->outpath     = fmtstr("%s/%s.o", get_outdir(), compdata->unique_name);
+      compdata->srcpath     = copy_of(entry->path);
+      compdata->compiler    = copy_of(compiler);
+      compdata->flags       = copy_of(flags);
       /* Steal the entire directory_entry_t structure. */
       compdata->direntry = directory_entry_extract(&dir, i--);
       /* Resize the output array if needed. */
@@ -210,7 +209,7 @@ void *compile_data_task(void *arg) {
   char *execout;
   bool  existed;
   /* Make the path to the compile data for this file. */
-  amakefile = fmtstr("%s/%s.amake", get_amakecompdir(), data->direntry->name);
+  amakefile = fmtstr("%s/%s.amake", get_amakecompdir(), data->unique_name);
   /* Check if the file already exists. */
   existed = file_exists(amakefile);
   /* If the compile data file does not exist. */
