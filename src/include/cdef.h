@@ -33,7 +33,7 @@
 
 #if defined(__x86_64__)
 # define ASM_DEFAULT_ARGS "-f elf64"
-# define C_DEFAULT_ARGS "-m64 -funroll-loops -O3 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla " \
+# define C_DEFAULT_ARGS "-m64 -funroll-loops -O3 -static -march=native -Rpass=loop-vectorize -flto -Wno-vla " \
                         "-std=gnu99 -flto=auto -fno-fat-lto-objects -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes " \
                         "-Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute " \
                         "-Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result " \

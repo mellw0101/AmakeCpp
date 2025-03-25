@@ -57,6 +57,7 @@ static void compile_data_get(compile_data_t *const output, const char *const res
   ASSERT(path);
   ASSERT(compiler);
   ASSERT(flags);
+  char *outname;
   compile_data_entry_t *compdata;
   directory_t dir;
   directory_data_init(&dir);
@@ -69,7 +70,10 @@ static void compile_data_get(compile_data_t *const output, const char *const res
       /* Create the compile_data_entry_t structure. */
       compdata = compile_data_entry_make();
       /* Populate the fields. */
-      compdata->outpath  = fmtstr("%s/%s.o", get_outdir(), entry->name);
+      /* Ensure files with the same names in diffrent directory's get diffrent names. */
+      outname = encode_slash_to_underscore(entry->path + strlen(path) + 1);
+      compdata->outpath  = fmtstr("%s/%s.o", get_outdir(), outname);
+      free(outname);
       compdata->srcpath  = copy_of(entry->path);
       compdata->compiler = copy_of(compiler);
       compdata->flags    = copy_of(flags);

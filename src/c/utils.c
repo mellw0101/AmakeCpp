@@ -89,3 +89,12 @@ void free_nullterm_carray(char **array) {
   }
   free(array);
 }
+
+/* Return's a copy of `string` where all `/` char's are changed to `_`. */
+char *encode_slash_to_underscore(const char *const restrict string) {
+  char *ret = copy_of(string);
+  for (Ulong i=0; ret[i]; ++i) {
+    ((ret[i] == '/') ? (ret[i] = '_') : ((int)0));
+  }
+  return ret;
+}

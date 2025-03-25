@@ -25,6 +25,7 @@ int   fork_bin(const char *const restrict path, char *const argv[], char *const 
 void  construct_argv(char ***arguments, const char *command);
 // bool  parse_num(const char *string, long *result);
 void  free_nullterm_carray(char **array);
+char *encode_slash_to_underscore(const char *const restrict string);
 
 /* dirs.c */
 char *getpwd(void) __THROW _RETURNS_NONNULL;
