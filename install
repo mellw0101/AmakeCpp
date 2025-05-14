@@ -39,6 +39,16 @@ process_files() {
   done < <(find "$DIR" -type f -print0)
 }
 
+build_dir_exists() {
+  local DIR="$1"
+  if [ ! -d build ]; then
+    mkdir build
+  fi
+  if [ ! -d build/"$DIR" ]; then
+    mkdir build/"$DIR"
+  fi
+}
+
 # region append_to_var
 # 
 #   Helper function to append to a named varialble.
@@ -153,6 +163,10 @@ cxxfilecomp() {
   local FILE=$(basename "$1")
   clang++ $CXX_FLAGS -I"$PWD"/src/include -o "$PWD"/build/obj/"$FILE".o -c "$PWD"/src/cpp/"$FILE"
 }
+
+# Ensure the build directories exists.
+build_dir_exists bin
+build_dir_exists obj
 
 # Compile all c files.
 process_files "$PWD/src/c" cfilecomp
