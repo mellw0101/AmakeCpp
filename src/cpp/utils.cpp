@@ -150,17 +150,17 @@ void free_files(DirEntry *files, Ulong n) {
   free(files);
 }
 
-char *get_pwd(void) {
-  if (!pwd) {
-    const char *env_pwd = getenv("PWD");
-    if (!env_pwd) {
-      fprintf(stderr, "Could not get pwd env var.\n");
-      exit(1);
-    }
-    pwd = copy_of(env_pwd);
-  }
-  return pwd;
-}
+// char *get_pwd(void) {
+//   if (!pwd) {
+//     const char *env_pwd = getenv("PWD");
+//     if (!env_pwd) {
+//       fprintf(stderr, "Could not get pwd env var.\n");
+//       exit(1);
+//     }
+//     pwd = copy_of(env_pwd);
+//   }
+//   return pwd;
+// }
 
 char *get_src_dir(void) {
   if (!src_dir) {

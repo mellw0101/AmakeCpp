@@ -37,7 +37,7 @@ void      extract_name_and_ext(DirEntry *e) noexcept;
 bool      exec_exists(const char *name, char **fullpath_ret);
 DirEntry *files_in_dir(const char *path, Ulong *n);
 void      free_files(DirEntry *files, Ulong n);
-char     *get_pwd(void);
+// char     *get_pwd(void);
 char     *get_src_dir(void);
 char     *get_lib_src_dir(void);
 char     *concatenate_path(const char *s1, const char *s2);

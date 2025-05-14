@@ -28,7 +28,7 @@ void  free_nullterm_carray(char **array);
 char *encode_slash_to_underscore(const char *const restrict string);
 
 /* dirs.c */
-char *getpwd(void) __THROW _RETURNS_NONNULL;
+char *get_pwd(void) __THROW _RETURNS_NONNULL;
 char *get_srcdir(void) __THROW _RETURNS_NONNULL;
 char *get_cdir(void) __THROW _RETURNS_NONNULL;
 char *get_cppdir(void) __THROW _RETURNS_NONNULL;

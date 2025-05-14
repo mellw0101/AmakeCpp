@@ -40,7 +40,7 @@ static mutex_t amakecompdir_mutex = mutex_init_static;
 
 /* Get the pwd env variable.  This function cannot return `NULL`.  The returned ptr
  * should never be freed during runtime, only when exiting.  And only using `freepwd()`. */
-char *getpwd(void) {
+char *get_pwd(void) {
   const char *cenvpwd = NULL;
   mutex_action(&envpwd_mutex,
     /* If the static ptr to pwd is NULL, fetch it. */
@@ -56,7 +56,7 @@ char *getpwd(void) {
 char *get_srcdir(void) {
   mutex_lock(&srcdir_mutex);
   if (!srcdir) {
-    srcdir = concatpath(getpwd(), "/src");
+    srcdir = concatpath(get_pwd(), "/src");
   }
   mutex_unlock(&srcdir_mutex);
   return srcdir;
@@ -86,7 +86,7 @@ char *get_cppdir(void) {
 char *get_builddir(void) {
   mutex_lock(&builddir_mutex);
   if (!builddir) {
-    builddir = concatpath(getpwd(), "/build");
+    builddir = concatpath(get_pwd(), "/build");
   }
   mutex_unlock(&builddir_mutex);
   return builddir;
@@ -116,7 +116,7 @@ char *get_outdir(void) {
 char *get_amakedir(void) {
   mutex_lock(&amakedir_mutex);
   if (!amakedir) {
-    amakedir = concatpath(getpwd(), "/.amake");
+    amakedir = concatpath(get_pwd(), "/.amake");
   }
   mutex_unlock(&amakedir_mutex);
   return amakedir;
