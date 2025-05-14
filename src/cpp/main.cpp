@@ -657,7 +657,10 @@ inline namespace AmakeCpp {
 
           if (!FileSys::exists("lib/" + libName)) {
             Sys::run_binary(binary_path, args, env_vars);
-            Sys::run_binary("/usr/bin/make", {"-j", "4"});
+            long cores = sysconf(_SC_NPROCESSORS_ONLN);
+            char *cores_string = fmtstr("%ld", cores);
+            Sys::run_binary("/usr/bin/make", {"-j", cores_string});
+            free(cores_string);
           }
           if (FileSys::exists(LIB_BUILD_DIR + "/" + libName)) {
             FileSys::rmFile(LIB_BUILD_DIR + "/" + libName);
