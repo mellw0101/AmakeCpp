@@ -697,8 +697,13 @@ inline namespace AmakeCpp {
         char *glfwdir = concatenate_path(get_lib_src_dir(), "glfw");
         char *output_file = concatenate_path(glfwdir, "source.zip");
         char *bin_path;
-        if (exec_exists("wget", &bin_path) || exec_exists("axel", &bin_path)) {
+        if (exec_exists("wget", &bin_path)) {
           launch_bin(bin_path, ARGV(bin_path, "https://github.com/glfw/glfw/releases/download/3.4/glfw-3.4.zip", "-O", output_file), ARGV(NULL));
+          sync();
+          extract_zip(output_file, glfwdir);
+        }
+        else if (exec_exists("axel", &bin_path)) {
+          launch_bin(bin_path, ARGV(bin_path, "https://github.com/glfw/glfw/releases/download/3.4/glfw-3.4.zip", "-o", output_file), ARGV(NULL));
           sync();
           extract_zip(output_file, glfwdir);
         }

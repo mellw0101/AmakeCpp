@@ -341,6 +341,7 @@ void extract_tar_gz(const char *path, const char *output_path) {
   free(bin);
 }
 
+/* TODO: Fix this as this should error when `unzip` is not installed. */
 void extract_zip(const char *path, const char *output_path) {
   char *bin;
   if (exec_exists("unzip", &bin)) {
