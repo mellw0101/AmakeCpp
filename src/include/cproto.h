@@ -20,7 +20,7 @@ void Amake_make_data_dirs(void);
 void Amake_do_shallow_clean(void);
 
 /* utils.c */
-void *free_and_assign(void *const dst, void *const src);
+// void *free_and_assign(void *const dst, void *const src);
 int   fork_bin(const char *const restrict path, char *const argv[], char *const envp[], char **const output) __THROW _NONNULL(1, 2, 3);
 void  construct_argv(char ***arguments, const char *command);
 // bool  parse_num(const char *string, long *result);
