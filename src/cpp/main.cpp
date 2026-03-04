@@ -145,7 +145,7 @@ vector<string> getArgsBasedOnArch(const Uchar mode, string_view output, string_v
         "-L/usr/lib",
         "-l:libc++.a",
         "-l:libc++abi.a",
-        "-l:libz.a"
+        // "-l:libz.a"
 #elif defined(__aarch64__) || defined(_M_ARM64)
         "-stdlib=libc++",
         "-std=c++20",
@@ -159,7 +159,7 @@ vector<string> getArgsBasedOnArch(const Uchar mode, string_view output, string_v
         "-L/usr/lib",
         "-l:libc++.a",
         "-l:libc++abi.a",
-        "-l:libz.a"
+        // "-l:libz.a"
 #endif
     };
   }

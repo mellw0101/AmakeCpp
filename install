@@ -14,7 +14,8 @@ STRICT_FLAGS="\
  -march=native -Rpass=loop-vectorize -mavx -Wno-vla\
 "
 
-STATIC_LIBS="/usr/lib/libfcio.a /usr/lib/libc.a /usr/lib/libpthread.a /usr/lib/Mlib.a /usr/lib/libc++.a /usr/lib/libc++abi.a /usr/lib/libz.a"
+STATIC_LIBS="/usr/lib/libfcio.a /usr/lib/libc.a /usr/lib/libpthread.a /usr/lib/Mlib.a /usr/lib/libc++.a /usr/lib/libc++abi.a"
+# /usr/lib/libz.a
 
 C_FLAGS="-std=gnu99$STRICT_FLAGS"
 CXX_FLAGS="-stdlib=libc++ -std=c++23 $STRICT_FLAGS"
