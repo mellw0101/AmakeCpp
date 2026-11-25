@@ -7,21 +7,14 @@
 #include "../include/cproto.h"
 
 
-/* Free `dst` and return `src`. */
-// void *free_and_assign(void *const dst, void *const src) {
-//   ASSERT(dst);
-//   free(dst);
-//   return src;
-// }
-
 /* Fork a bin and return status, or -1 on error.  Assign the output from the child to `output`. */
 int fork_bin(const char *const __restrict path, char *const argv[], char *const envp[], char **const output) {
   ASSERT(path);
   ASSERT(argv);
   ASSERT(envp);
-  char buffer[4096], *readret;
-  long bytes_read, total_bytes_read = 0;
-  int fdpipe[2], status, statusret = 0;
+  char  buffer[4096], *readret;
+  long  bytes_read, total_bytes_read = 0;
+  int   fdpipe[2], status, statusret = 0;
   pid_t pid;
   ALWAYS_ASSERT(pipe(fdpipe) != -1);
   ALWAYS_ASSERT((pid = fork()) != -1);

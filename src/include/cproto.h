@@ -12,7 +12,7 @@
 _BEGIN_C_LINKAGE
 
 /* Amake.c */
-void die(const char *format, ...) _NO_RETURN _NONNULL(1);
+void die(const char *format, ...) _NO_RETURN _NONNULL(1) _PRINTFLIKE(1, 2);
 void Amake_do_compile(void);
 void Amake_do_link(int argc, char **argv);
 void Amake_make_build_dirs(void);

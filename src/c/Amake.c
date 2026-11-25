@@ -37,15 +37,15 @@ void Amake_do_compile(void) {
   compile_data_getcpp(&data);
   threads = get_nthreads(data.len);
   /* Iterate over all entries, advancing by number of cores available. */
-  for (Ulong i = 0; i < data.len; i += cores) {
+  for (Ulong i=0; i<data.len; i+=cores) {
     /* Calculate how meny threads to create. */
     threadno = (((i + cores) > data.len) ? (data.len - i) : cores);
     /* Create the threads with the task. */
-    for (Ulong t = 0; t < threadno; ++t) {
+    for (Ulong t=0; t<threadno; ++t) {
       pthread_create(&threads[t + i], NULL, compile_data_task, data.data[t + i]);
     }
     /* Wait for all current threads to finish. */
-    for (Ulong t = 0; t < threadno; ++t) {
+    for (Ulong t=0; t<threadno; ++t) {
       pthread_join(threads[t + i], NULL);
     }
   }
